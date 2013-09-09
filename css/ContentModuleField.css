@@ -1,6 +1,6 @@
-#ContentModuleField .add-fields                         {display:none;}
+.content-module-field .add-fields                         {display:none;}
 
-#ContentModuleField                                     {}
+.content-module-field                                     {}
 .content-module                                         {}
 .content-module .handle                                 {display:inline-block; float:right; height:16px; width:16px; cursor:move; background:url("/framework/admin/images/sitetree_ss_default_icons.png") no-repeat; background-position:-56px -20px;}
 .content-module .Actions                                {padding-left:20px;}
@@ -14,14 +14,14 @@
 .content-module .ContentModuleRelationshipEditor td .ui-button-text-icon-primary .ui-button-text,
 .content-module .ContentModuleRelationshipEditor td .ui-button-text-icons .ui-button-text {padding:0.4em 0.6em 0.4em 1.0em}
 
-#ContentModuleField .new-module-fields                  {padding-bottom:5px; border-bottom:1px solid rgba(201, 205, 206, 0.8);}
-#ContentModuleField .new-module-fields label            {height:28px; line-height:28px; display:inline-block; vertical-align:top;}
-#ContentModuleField .new-module-fields label.first      {width:150px;}
+.content-module-field .new-module-fields                  {padding-bottom:5px; border-bottom:1px solid rgba(201, 205, 206, 0.8);}
+.content-module-field .new-module-fields label            {height:28px; line-height:28px; display:inline-block; vertical-align:top;}
+.content-module-field .new-module-fields label.first      {width:150px;}
 
 /* dropdowns */
 .content-module .cms-actions-row .field.dropdown,
-#ContentModuleField .new-module-fields .field.dropdown,
-#ContentModuleField .add-fields .field.dropdown         {width:300px; display:inline-block; padding:0; margin:0; border:0; vertical-align:top; box-shadow:none;}
+.content-module-field .new-module-fields .field.dropdown,
+.content-module-field .add-fields .field.dropdown         {width:300px; display:inline-block; padding:0; margin:0; border:0; vertical-align:top; box-shadow:none;}
 
 .content-module .cms-actions-row .or                {display:inline-block; height:30px; line-height:30px; font-size:14px;}
 .content-module .cms-actions-row .field.dropdown    {margin-right:5px;}

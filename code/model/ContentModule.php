@@ -39,6 +39,8 @@ class ContentModule extends DataObject implements PermissionProvider
 		"Versioned('Stage', 'Live')"
 	);
 
+	public static $exclude_modules = array();
+
 	public function getCMSFields() {
 		$fields = new FieldList(
 			$rootTab = new TabSet("Root",
@@ -83,18 +85,18 @@ class ContentModule extends DataObject implements PermissionProvider
 		if (($cModField = ContentModuleField::curr()) && $this->exists()) {
 			// "unlink"
 			$minorActions->push(
-				FormAction::create('unlink', _t('ContentModule.BUTTONUNLINK', 'Unlink'), 'unlink')
+				FormAction::create('unlink_' . $this->ID, _t('ContentModule.BUTTONUNLINK', 'Unlink'), 'unlink')
 					->setDescription(_t('ContentModule.BUTTONUNLINKDESC', 'Unlink this module from the current page'))
-					->addExtraClass('ss-ui-action-destructive')->setAttribute('data-icon', 'unlink')
+					->addExtraClass('ss-ui-action-destructive unlink')->setAttribute('data-icon', 'unlink')
 			);
 		}
 
 		if ($this->isPublished() && $this->canPublish() && !$this->IsDeletedFromStage && $this->canDeleteFromLive()) {
 			// "unpublish"
 			$minorActions->push(
-				FormAction::create('unpublish', _t('ContentModule.BUTTONUNPUBLISH', 'Unpublish'), 'delete')
+				FormAction::create('unpublish_' . $this->ID, _t('ContentModule.BUTTONUNPUBLISH', 'Unpublish'), 'delete')
 					->setDescription(_t('ContentModule.BUTTONUNPUBLISHDESC', 'Remove this module from the published site'))
-					->addExtraClass('ss-ui-action-destructive')->setAttribute('data-icon', 'unpublish')
+					->addExtraClass('ss-ui-action-destructive unpublish')->setAttribute('data-icon', 'unpublish')
 			);
 		}
 
@@ -102,8 +104,9 @@ class ContentModule extends DataObject implements PermissionProvider
 			if ($this->isPublished() && $this->canEdit()) {
 				// "rollback"
 				$minorActions->push(
-					FormAction::create('rollback', _t('ContentModule.BUTTONCANCELDRAFT', 'Cancel draft changes'), 'delete')
+					FormAction::create('rollback_' . $this->ID, _t('ContentModule.BUTTONCANCELDRAFT', 'Cancel draft changes'), 'delete')
 						->setDescription(_t('ContentModule.BUTTONCANCELDRAFTDESC', 'Delete your draft and revert to the currently published module'))
+						->addExtraClass('rollback')
 				);
 			}
 		}
@@ -112,31 +115,37 @@ class ContentModule extends DataObject implements PermissionProvider
 			if ($this->IsDeletedFromStage) {
 				if ($this->ExistsOnLive) {
 					// "restore"
-					$minorActions->push(FormAction::create('revert', _t('CMSMain.RESTORE', 'Restore')));
+					$minorActions->push(
+						FormAction::create('revert_' . $this->ID, _t('CMSMain.RESTORE', 'Restore'))
+							->addExtraClass('revert ss-ui-action-destructive')
+					);
 					if ($this->canDelete() && $this->canDeleteFromLive()) {
 						// "delete from live"
 						$minorActions->push(
-							FormAction::create('deletefromlive', _t('CMSMain.DELETEFP', 'Delete'))->addExtraClass('ss-ui-action-destructive')
+							FormAction::create('deletefromlive_' . $this->ID, _t('CMSMain.DELETEFP', 'Delete'))
+								->addExtraClass('deletefromlive ss-ui-action-destructive')
 						);
 					}
 				} else {
 					// "restore"
 					$minorActions->push(
-						FormAction::create('restore', _t('CMSMain.RESTORE', 'Restore'))->setAttribute('data-icon', 'decline')
+						FormAction::create('restore_' . $this->ID, _t('CMSMain.RESTORE', 'Restore'))
+							->setAttribute('data-icon', 'decline')
+							->addExtraClass('restore')
 					);
 				}
 			} else {
 				if ($this->canDelete()) {
 					// "delete"
 					$minorActions->push(
-						FormAction::create('delete', _t('ContentModule.DELETE', 'Delete'))->addExtraClass('delete ss-ui-action-destructive')
+						FormAction::create('delete_' . $this->ID, _t('ContentModule.DELETE', 'Delete'))->addExtraClass('delete ss-ui-action-destructive')
 							->setAttribute('data-icon', 'decline')
 					);
 				}
 
 				// "save"
 				$minorActions->push(
-					FormAction::create('save', _t('CMSMain.SAVEDRAFT', 'Save Draft'))->setAttribute('data-icon', 'addpage')
+					FormAction::create('save_' . $this->ID, _t('CMSMain.SAVEDRAFT', 'Save Draft'))->setAttribute('data-icon', 'addpage')->addExtraClass('save')
 				);
 			}
 		}
@@ -144,8 +153,8 @@ class ContentModule extends DataObject implements PermissionProvider
 		if ($this->canPublish() && !$this->IsDeletedFromStage) {
 			// "publish"
 			$actions->push(
-				FormAction::create('publish', _t('ContentModule.BUTTONSAVEPUBLISH', 'Save & Publish'))
-					->addExtraClass('ss-ui-action-constructive')->setAttribute('data-icon', 'accept')
+				FormAction::create('publish_' . $this->ID, _t('ContentModule.BUTTONSAVEPUBLISH', 'Save & Publish'))
+					->addExtraClass('ss-ui-action-constructive publish')->setAttribute('data-icon', 'accept')
 			);
 		}
 
@@ -269,13 +278,16 @@ class ContentModule extends DataObject implements PermissionProvider
 	}
 
 	public static function content_module_types() {
-		$types = ClassInfo::getValidSubClasses('ContentModule');
+		$base = get_called_class();
+		$types = ClassInfo::subclassesFor($base);
 
 		$aTypes = array();
+
 		if ($types) foreach ($types as $type) {
-			if ($type != 'ContentModule')
+			if ($type != $base && !in_array($type, static::$exclude_modules))
 				$aTypes[singleton($type)->i18n_singular_name()] = singleton($type);
 		}
+
 		ksort($aTypes);
 
 		return array_values($aTypes);

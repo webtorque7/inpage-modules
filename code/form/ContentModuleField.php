@@ -59,6 +59,11 @@ class ContentModuleField extends FormField
                 }*/
         }
 
+
+	public function getRelationshipClass() {
+		return $this->getRecord()->getRelationClass($this->getName());
+	}
+
         /**
          * @todo Internationalisation
          * @return string
@@ -78,7 +83,7 @@ class ContentModuleField extends FormField
         }
 
         public function AvailableModules() {
-                $modules = ContentModule::content_module_types();
+                $modules = call_user_func(array($this->getRelationshipClass(), 'content_module_types'));
                 return new ArrayList($modules);
         }
 
@@ -86,7 +91,7 @@ class ContentModuleField extends FormField
                 $record = $this->getRecord();
 
                 if ($record) {
-                        $modules = $record->SortedContentModules();
+                        $modules = $record->{$this->getName()}();
 
                         //permission check
                         if ($modules->count()) foreach ($modules as $module) {
@@ -123,7 +128,7 @@ class ContentModuleField extends FormField
                                 $module = new $moduleType;
                                 $module->write();
 
-                                $page->ContentModules()->add($module, array('Sort' => $page->ContentModules()->max('Sort') + 1));
+                                $page->{$this->getName()}()->add($module, array('Sort' => $page->{$this->getName()}()->max('Sort') + 1));
 
                                 return ContentModuleUtilities::json_response(array(
                                         'Status' => 1,
@@ -145,7 +150,7 @@ class ContentModuleField extends FormField
                         $module = ContentModule::get()->byID($moduleID);
 
                         if ($module && ($page = Page::get()->byID($pageID))) {
-                                $page->ContentModules()->add($module, array('Sort' => $page->ContentModules()->max('Sort') + 1));
+                                $page->{$this->getName()}()->add($module, array('Sort' => $page->{$this->getName()}()->max('Sort') + 1));
 
                                 return ContentModuleUtilities::json_response(array(
                                         'Status' => 1,
@@ -172,7 +177,7 @@ class ContentModuleField extends FormField
                         if (is_subclass_of($moduleType, 'ContentModule')) {
                                 $not = '';
                                 if ($record = $this->getRecord()) {
-                                        $existingModules = $record->ContentModules();
+                                        $existingModules = $record->{$this->getName()}();
 
                                         if ($existingModules->count()) {
                                                 //todo: more efficient way to do this
@@ -225,7 +230,11 @@ class ContentModuleField extends FormField
                                 $SQL_moduleID = Convert::raw2sql($moduleID);
                                 $SQL_index = Convert::raw2sql($index);
 
-                                DB::query("UPDATE \"Page_ContentModules\" set \"Sort\" = '{$SQL_index}' WHERE \"PageID\" = '{$SQL_id}' AND \"ContentModuleID\" = '{$SQL_moduleID}'");
+				$recordClass = $this->getRecord()->ClassName;
+				$relation = $this->getName();
+				$base = $this->getRelationshipClass();
+
+                                DB::query("UPDATE \"{$recordClass}_{$relation}\" set \"Sort\" = '{$SQL_index}' WHERE \"{$recordClass}ID\" = '{$SQL_id}' AND \"{$base}ID\" = '{$SQL_moduleID}'");
                         }
 
                         return ContentModuleUtilities::json_response(array(

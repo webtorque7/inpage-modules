@@ -12,7 +12,6 @@ class TextModule extends ContentModule {
 
         public static $db = array(
                 'ContentTitle' => 'Text',
-                'Summary' => 'HTMLText',
                 'Text' => 'HTMLText'
         );
 
@@ -21,11 +20,8 @@ class TextModule extends ContentModule {
 
                 $fields->addFieldsToTab('Root.Main', array(
                         new TextField('ContentTitle', 'Content Title'),
-                        $summary = new HtmlEditorField('Summary'),
-                        new HtmlEditorField('Text', 'Read More Text')
+                        new HtmlEditorField('Text')
                 ));
-
-                $summary->setRows(5);
 
                 return $fields;
         }

@@ -5,14 +5,17 @@
 
         $.entwine('ss', function ($) {
 
-                var contentModuleField;
+		$('.content-module-field *').entwine({
+			getContentModuleField:function() {
+				return this.closest('.content-module-field');
+			}
+		});
 
-                $('#ContentModuleField').entwine({
+                $('.content-module-field').entwine({
                         PreventAccordion: false,
 
-                        onmatch: function () {
-                                contentModuleField = this;
-
+                        onadd: function () {
+				var self = this;
                                 //sorting
                                 $(this).find('.current-modules').sortable({
                                         opacity: 0.6,
@@ -30,14 +33,14 @@
                                                 //todo: make this work
                                                 //if it hasn't moved, re-enable accordion
                                                 if (ui.position.left == ui.originalPosition.left && ui.position.top == ui.originalPosition.top) {
-                                                        contentModuleField.setPreventAccordion(false);
+                                                        self.getContentModuleField().setPreventAccordion(false);
                                                 }
                                         }
                                 });
 
                                 this._super();
                         },
-                        onunmatch: function () {
+                        onremove: function () {
                                 this._super();
                         },
                         getPageID: function () {
@@ -64,6 +67,8 @@
                                 this.scrollToEnd();
                         },
                         sortModules: function (e, ui) {
+				var contentModuleField = this.getContentModuleField();
+
                                 var modules = {'Sort': {}};
 
                                 $('.content-module').each(function (index) {
@@ -138,8 +143,8 @@
                 });
 
                 //prevent change tracking
-                $('#ContentModuleField input, #ContentModuleField select, #ContentModuleField textarea').entwine({
-                        onmatch:function() {
+                $('.content-module-field input, .content-module-field select, .content-module-field textarea').entwine({
+                        onadd:function() {
                                 this.addClass('no-change-track');
                                 this._super();
                         },
@@ -148,31 +153,32 @@
                         }
                 });
 
-                $('#ContentModule_ModuleType').entwine({
+                $('.content-module-type-dropdown').entwine({
                         onchange: function () {
                                 var index = this.prop('selectedIndex');
 
                                 if (index == 0) {
-                                        contentModuleField.hideAddFields();
+					this.getContentModuleField().hideAddFields();
                                 }
                                 else {
-                                        contentModuleField.showAddFields();
+					this.getContentModuleField().showAddFields();
                                         this.loadExisting();
                                 }
                                 //prevent SS from marking as changed
                                 return false;
-
                         },
 
                         //existing modules
                         loadExisting: function () {
                                 var self = this;
+				var contentModuleField = self.getContentModuleField();
+
                                 contentModuleField.showLoading();
 
                                 $.get(contentModuleField.getExistingURL() + '/' + this.val(), function (data) {
                                         contentModuleField.hideLoading();
                                         if (data.Status) {
-                                                $('#ContentModule_ExistingModule').updateModules(data.Modules);
+                                                contentModuleField.find('.content-module-existing-dropdown').updateModules(data.Modules);
                                                 contentModuleField.showExistingFields();
                                         }
                                         else {
@@ -192,7 +198,7 @@
 
                 });
 
-                $('#ContentModule_ExistingModule').entwine({
+                $('.content-module-existing-dropdown').entwine({
                         EmptyText: 'Select an existing module',
 
                         updateModules: function (modules) {
@@ -213,11 +219,13 @@
                         }
                 });
 
-                $('#ContentModule_btnAddNew').entwine({
+                $('.content-module-add-new').entwine({
                         onclick: function (e) {
                                 e.preventDefault();
 
-                                var module = $('#ContentModule_ModuleType').val();
+				var contentModuleField = this.getContentModuleField();
+
+                                var module = contentModuleField.find('.content-module-type-dropdown').val();
 
                                 if (module) {
                                         var url = contentModuleField.getAddNewURL() + '/' + module + '/' + contentModuleField.getPageID();
@@ -237,7 +245,7 @@
                                                         statusMessage(data.Message, 'bad');
                                                 }
                                                 contentModuleField.hideAddFields();
-                                                $('#ContentModule_ModuleType').reset();
+						contentModuleField.find('.content-module-type-dropdown').reset();
                                         });
                                 }
                                 else {
@@ -247,9 +255,11 @@
                         }
                 });
 
-                $('#btnAddExisting').entwine({
+                $('.content-module-add-existing').entwine({
                         onclick: function (e) {
                                 e.preventDefault();
+
+				var contentModuleField = this.getContentModuleField();
 
                                 var module = $('#ContentModule_ExistingModule').val();
 
@@ -285,6 +295,8 @@
                 $('.content-module').entwine({
                         submitModule: function (action, callback) {
                                 var self = this;
+				var contentModuleField = self.getContentModuleField();
+
                                 var url = contentModuleField.getModuleURL() + '/' + action + '/' + this.getID();
 
                                 contentModuleField.showLoading();
@@ -321,7 +333,7 @@
                         reloadModule: function () {
                                 var self = this;
 
-                                var url = contentModuleField.getURL() + '/reload/' + this.getID();
+                                var url = self.getContentModuleField().getURL() + '/reload/' + this.getID();
 
                                 $.get(url, function (data) {
                                         if (data.Status) {
@@ -330,7 +342,7 @@
                                 });
                         },
                         updateTinyMCE: function () {
-                                contentModuleField.find('textarea').each(function () {
+				this.getContentModuleField().find('textarea').each(function () {
                                         var tEditor = tinymce.get($(this).attr('id'));
                                         if (tEditor) tEditor.save();
                                 });
@@ -371,33 +383,34 @@
                         },
                         //accordion
                         onaccordionbeforeactivate: function (e, ui) {
-                                if (contentModuleField.getPreventAccordion()) {
+                                if (this.getContentModuleField().getPreventAccordion()) {
                                         return false;
                                 }
                         }
 
                 });
 
-                $('#ContentModuleField .content-module input[type=submit]').entwine({
+                $('body .content-module-field .content-module .Actions input[type=submit].publish, body .content-module-field .content-module .Actions input[type=submit].save').entwine({
                         onclick: function (e) {
                                 e.preventDefault();
                                 e.stopPropagation();
 
                                 var name = this.attr('name');
-                                var action = name.substring(name.indexOf('_') + 1);
+				var action = name.substring(name.indexOf('_') + 1, name.lastIndexOf('_'));
 
                                 this.closest('.content-module').submitModule(action);
                                 return false;
                         }
                 });
 
-                $('#ContentModuleField .content-module input[type=submit][name=action_unlink], #ContentModuleField .content-module input[type=submit][name=action_delete]').entwine({
+                $('body .content-module-field .content-module input.unlink[type=submit],body .content-module-field .content-module input.delete[type=submit]').entwine({
                         onclick: function (e) {
                                 e.preventDefault();
                                 e.stopPropagation();
 
                                 var name = this.attr('name');
-                                var action = name.substring(name.indexOf('_') + 1);
+				var action = name.substring(name.indexOf('_') + 1, name.lastIndexOf('_'));
+
                                 var contentModule = this.closest('.content-module');
 
                                 contentModule.submitModule(action, function(){
