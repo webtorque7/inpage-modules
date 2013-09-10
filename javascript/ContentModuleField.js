@@ -21,19 +21,18 @@
                                         opacity: 0.6,
                                         handle: '.handle',
                                         update: function (e, ui) {
-                                                contentModuleField.sortModules(e, ui)
+                                                self.sortModules(e, ui)
                                         },
                                         placeholder: 'ui-state-highlight',
                                         forcePlaceholderSize: true,
                                         start: function (e, ui) {
-                                                console.log(ui.position, ui.originalPosition);
-                                                contentModuleField.setPreventAccordion(true);
+                                                self.setPreventAccordion(true);
                                         },
                                         deactivate: function(e,ui) {
                                                 //todo: make this work
                                                 //if it hasn't moved, re-enable accordion
                                                 if (ui.position.left == ui.originalPosition.left && ui.position.top == ui.originalPosition.top) {
-                                                        self.getContentModuleField().setPreventAccordion(false);
+                                                        self.setPreventAccordion(false);
                                                 }
                                         }
                                 });
@@ -67,7 +66,7 @@
                                 this.scrollToEnd();
                         },
                         sortModules: function (e, ui) {
-				var contentModuleField = this.getContentModuleField();
+				var contentModuleField = this;
 
                                 var modules = {'Sort': {}};
 

@@ -6,7 +6,7 @@
                                 var self = this;
                                 //make table rows sortable
                                 this.find('table tbody').sortable({
-                                        handle: '.handle',
+                                        handle: '.cmre-handle',
                                         helper:function(e, ui) {
                                                 ui.children().each(function() {
                                                         $(this).width($(this).width());

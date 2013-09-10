@@ -230,11 +230,9 @@ class ContentModuleField extends FormField
                                 $SQL_moduleID = Convert::raw2sql($moduleID);
                                 $SQL_index = Convert::raw2sql($index);
 
-				$recordClass = $this->getRecord()->ClassName;
-				$relation = $this->getName();
-				$base = $this->getRelationshipClass();
+				list($parentClass, $componentClass, $parentField, $componentField, $table) = $this->getRecord()->many_many($this->getName());
 
-                                DB::query("UPDATE \"{$recordClass}_{$relation}\" set \"Sort\" = '{$SQL_index}' WHERE \"{$recordClass}ID\" = '{$SQL_id}' AND \"{$base}ID\" = '{$SQL_moduleID}'");
+                                DB::query("UPDATE \"{$table}\" set \"Sort\" = '{$SQL_index}' WHERE \"{$parentField}\" = '{$SQL_id}' AND \"{$componentField}\" = '{$SQL_moduleID}'");
                         }
 
                         return ContentModuleUtilities::json_response(array(

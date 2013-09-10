@@ -50,7 +50,7 @@
             <tr class="$EvenOdd" data-id="$Item.ID">
                 <% if $Up.SortField %>
                 <td>
-                    <span class="handle"> </span>
+                    <span class="cmre-handle"> </span>
                 </td>
                 <% end_if %>
                 <% loop $Fields %><td>$Value</td><% end_loop %>
