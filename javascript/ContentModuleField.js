@@ -260,7 +260,7 @@
 
 				var contentModuleField = this.getContentModuleField();
 
-                                var module = $('#ContentModule_ExistingModule').val();
+                                var module = contentModuleField.find('.content-module-existing-dropdown').val();
 
                                 if (module) {
                                         var url = contentModuleField.getAddExistingURL() + '/' + module + '/' + contentModuleField.getPageID();
@@ -285,7 +285,7 @@
                                         });
                                 }
                                 else {
-                                        statusMessage('Please select a module type', 'bad');
+                                        statusMessage('Please select an existing module', 'bad');
                                 }
 
                         }
