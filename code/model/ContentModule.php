@@ -284,7 +284,7 @@ class ContentModule extends DataObject implements PermissionProvider
 		$aTypes = array();
 
 		if ($types) foreach ($types as $type) {
-			if ($type != $base && !in_array($type, static::$exclude_modules))
+			if ($type != $base && !in_array($type, singleton(get_called_class())->stat('exclude_modules')))
 				$aTypes[singleton($type)->i18n_singular_name()] = singleton($type);
 		}
 
