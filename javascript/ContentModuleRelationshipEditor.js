@@ -2,21 +2,8 @@
         $.entwine('ss', function ($) {
 
                 $('.ContentModuleRelationshipEditor').entwine({
-                        onmatch:function() {
+                        onadd:function() {
                                 var self = this;
-                                //make table rows sortable
-                                this.find('table tbody').sortable({
-                                        handle: '.cmre-handle',
-                                        helper:function(e, ui) {
-                                                ui.children().each(function() {
-                                                        $(this).width($(this).width());
-                                                });
-                                                return ui;
-                                        },
-                                        update: function (e, ui) {
-                                                self.sortFields(e, ui)
-                                        }
-                                }).disableSelection();
 
                                 this._super();
                         },
@@ -79,6 +66,31 @@
 
                 });
 
+		$('.ContentModuleRelationshipEditor table tbody').entwine({
+			onadd:function() {
+				var self = this;
+				//make table rows sortable
+				this.sortable({
+					handle: '.cmre-handle',
+					helper:function(e, ui) {
+						ui.children().each(function() {
+							$(this).width($(this).width());
+						});
+						return ui;
+					},
+					update: function (e, ui) {
+						self.getEditor().sortFields(e, ui);
+					}
+				}).disableSelection();
+			},
+			getEditor:function(){
+				return this.closest('.ContentModuleRelationshipEditor');
+			},
+			onremove:function(){
+				this._super();
+			}
+		});
+
                 $('.ContentModuleRelationshipEditor button.remove-link').entwine({
 			onclick: function (e) {
 				e.preventDefault();
@@ -133,7 +145,7 @@
 		});
 
                 $('.contentmoduleupload .ss-uploadfield-files li').entwine({
-                        onmatch: function () {
+                        onadd: function () {
                                 var id = this.data('fileid');
 
                                 if (id) {
@@ -141,7 +153,7 @@
                                 }
                                 this._super();
                         },
-                        onunmatch: function () {
+                        onremove: function () {
 
                         }
                 });
@@ -244,10 +256,10 @@
 
                 $('form.ContentRelationshipEditor_Form').entwine({
 
-                        onmatch:function() {
+                        onadd:function() {
                                 //this._super();
                         },
-                        onunmatch:function() {
+                        onremove:function() {
                                 this.removeClass('changed');
                                 //this._super();
                         },
