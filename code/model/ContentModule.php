@@ -14,6 +14,8 @@ class ContentModule extends DataObject implements PermissionProvider
 	 */
 	public $form;
 
+	protected $_currentModuleField, $test;
+
 	protected static $has_url = false;
 
 	public static $db = array(
@@ -242,10 +244,24 @@ class ContentModule extends DataObject implements PermissionProvider
 				$field->setRecord($this);
 			}
 
+			//composite field
+			if ($field->hasMethod('getSubFields')) {
+				foreach ($field->getSubFields() as $subfield) {
+					$name = $subfield->getName();
+
+					//rename the field to tie it to the module
+					$newFieldName = "ContentModule[{$this->ID}][{$name}]";
+
+					if ($subfield->hasMethod('setContentModuleNames')) {
+						$subfield->setContentModuleNames($name, $newFieldName);
+					}
+					$subfield->setName($newFieldName);
+				}
+			}
 
 			if ($this->form) $field->setForm($this->form);
 
-			if (($contentModuleField = ContentModuleField::curr()) && $contentModuleField->getForm()) $field->setForm($contentModuleField->getForm());
+			if (($contentModuleField = $this->getCurrentModuleField()) && $contentModuleField->getForm()) $field->setForm($contentModuleField->getForm());
 
 			$returnFields->push($field);
 
@@ -858,5 +874,15 @@ class ContentModule extends DataObject implements PermissionProvider
 
 	public function CurrentPage() {
 		return Controller::curr();
+	}
+
+	protected static $_currentModuleFields = array();
+
+	public function setCurrentModuleField($v) {
+		self::$_currentModuleFields[$this->ID] = $v;
+	}
+
+	public function getCurrentModuleField() {
+		return isset(self::$_currentModuleFields[$this->ID]) ? self::$_currentModuleFields[$this->ID] : ContentModuleField::curr();
 	}
 }

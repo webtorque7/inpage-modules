@@ -90,7 +90,9 @@ class ContentModuleField extends FormField
         public function CurrentModules() {
                 $record = $this->getRecord();
 
-                if ($record) {
+	        self::$curr = $this;
+
+	        if ($record) {
                         $modules = $record->{$this->getName()}();
 
                         //permission check
@@ -100,6 +102,8 @@ class ContentModuleField extends FormField
                                 }
                                 else {
                                         $module->form = $this->getForm();
+	                                $module->setCurrentModuleField($this);
+	                                //var_dump($module->getCurrentModuleField());exit;
                                 }
                         }
 
@@ -307,7 +311,6 @@ class ContentModuleField extends FormField
         public function modulefield() {
 
                 if (($fieldName = $this->request->param('ID'))) {
-
                         $matches = array();
                         if (preg_match('/ContentModule\[([0-9]{1,})\]/i',$fieldName, $matches)) {
                                 $moduleID = $matches[1];
@@ -320,10 +323,20 @@ class ContentModuleField extends FormField
                                         preg_match('/ContentModule\[[0-9]{1,}\]\[([a-zA-Z0-9]{1,})\\]/i', $fieldName, $matches2);
                                         $originalFieldName = (!empty($matches2[1])) ? $matches2[1] : '';
 
+	                                //composite field
+	                                /*if (strpos($fieldName, '[')) {
+		                                $openingBracket = strpos($fieldName, '[') - 1;
+		                                $closingBracket = strpos($fieldName, ']') - 1;
+		                                $fieldName = substr($fieldName, 0, $openingBracket);
+		                                $subFieldName = substr($fieldName, $openingBracket + 2, $closingBracket - $openingBracket + 2);
+		                                echo $fieldName . ' ' . $subFieldName;exit;
+	                                }*/
+
                                         //find the field
                                         $fields = $module->EditFields();
 
                                         if ($fields) foreach ($fields as $field) {
+
                                                 if ($field->getName() == $fieldName) {
                                                         //setup field name(s)
                                                         if ($field->hasMethod('setContentModuleNames')) {
