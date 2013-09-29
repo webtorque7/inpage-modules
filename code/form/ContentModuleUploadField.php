@@ -25,7 +25,7 @@ class ContentModuleUploadField extends UploadField {
                 $link = '';
                 //pass the id so $OtherID is always parsed
                 if ($cModField) {
-                        $link = $cModField->Link('modulefield') . '/' . $this->getName();
+                        $link = $cModField->Link('modulefield') . '/' . ($this->contentModuleFieldName ? $this->contentModuleFieldName : $this->getName());
                         if ($action) $link .= '/' . $action;
                 }
                 else {
