@@ -83,7 +83,7 @@ class ContentModuleRelationshipEditor extends FormField
          * @param $bool Bool
          */
         public function setCanEdit($bool) {
-                $this->_canEdit = false;
+                $this->_canEdit = $bool;
                 return $this;
         }
 
