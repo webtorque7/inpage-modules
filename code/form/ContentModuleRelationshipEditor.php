@@ -185,9 +185,9 @@ class ContentModuleRelationshipEditor extends FormField
                                         $SQL_id = Convert::raw2sql($id);
                                         $SQL_index = Convert::raw2sql($index);
 
-                                        $table = "{$this->record->ClassName}_{$this->_relationship}";
+	                                list($parentClass, $componentClass, $parentField, $componentField, $table) = $this->getRecord()->many_many($this->_relationship);
 
-                                        DB::query("UPDATE \"{$table}\" set \"{$this->getSortField()}\" = '{$SQL_index}' WHERE ID = '{$SQL_id}'");
+                                        DB::query("UPDATE \"{$table}\" set \"{$this->getSortField()}\" = '{$SQL_index}' WHERE \"{$parentField}\" = '{$this->getRecord()->ID}' AND \"{$componentField}\" = '{$SQL_id}'");
                                 }
                                 else if ($this->isHasMany()) { //todo: versioned?
                                         $SQL_id = Convert::raw2sql($id);
