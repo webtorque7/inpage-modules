@@ -272,6 +272,7 @@ class ContentModuleField extends FormField
 
                         $method = 'do' . ucfirst($action);
                         if ($module && $module->hasMethod($method)) {
+	                        $module->setCurrentModuleField($this);
                                 if (!empty($_REQUEST['ContentModule'][$id])) {
 
                                         //set booleans to false if not set

@@ -674,7 +674,14 @@ class ContentModule extends DataObject implements PermissionProvider
 
 	public function doUnlink() {
 		if (isset($_REQUEST['PageID']) && ($pageID = $_REQUEST['PageID'])) {
+			/**
+			 * @var $page Page
+			 */
 			if ($page = Page::get()->byID($pageID)) {
+				if ($this->getCurrentModuleField() && $page->hasMethod($this->getCurrentModuleField()->getName())) {
+					$relation = $this->getCurrentModuleField()->getName();
+					$page->{$relation}()->remove($this);
+				}
 				$page->ContentModules()->remove($this);
 				return "{$this->Title} removed successfully";
 			}
