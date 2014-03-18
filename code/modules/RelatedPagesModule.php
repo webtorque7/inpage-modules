@@ -6,15 +6,15 @@
  */
 class RelatedPagesModule extends ContentModule {
 
-        public static $singular_name = 'Related Content';
-        public static $plural_name = 'Related Content';
+	private static $singular_name = 'Related Content';
+	private static $plural_name = 'Related Content';
 
-	public static $limit_top_results = 4;
-        public static $limit_bottom_results = 30;
+	private static $limit_top_results = 4;
+	private static $limit_bottom_results = 30;
 
-	public static $date_options = array('days', 'years', 'months', 'weeks');
+	private static $date_options = array('days', 'years', 'months', 'weeks');
 
-        public static $db = array(
+	private static $db = array(
                 'ContentTitle' => 'Text',
                 'ShowSearch' => 'Boolean',
                 'HasCategories' => 'Boolean',
@@ -27,33 +27,33 @@ class RelatedPagesModule extends ContentModule {
 		'DefaultLayout' => 'Enum("Tile, List", "Tile")',
         );
 
-        public static $styles = array(
+	private static $styles = array(
                 'blue' => 'Blue',
                 'violet' => 'Violet'
         );
 
-	public static $has_one = array(
+	private static $has_one = array(
 		'TopLevelPage' => 'Page'
 	);
 
-        public static $many_many = array(
+	private static $many_many = array(
                 'Pages' => 'Page'
         );
 
-        public static $many_many_extraFields = array(
+	private static $many_many_extraFields = array(
                 'Pages' => array(
                         'SortOrder' => 'Int(1)'
                 )
         );
 
-        public static $casting = array(
+	private static $casting = array(
                 'Keyword' => 'Varchar',
 		'CategoryFilter' => 'Varchar',
 		'DateFilter' => 'Varchar',
 		'KeywordFilter' => 'Varchar'
         );
 
-	public static $defaults = array(
+	private static $defaults = array(
 		'DefaultLayout' => 'Tile',
                 'LimitTopResults' => 4,
                 'LimitBottomResults' => 30,

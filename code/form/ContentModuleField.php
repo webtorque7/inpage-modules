@@ -13,12 +13,12 @@ class ContentModuleField extends FormField
 
         protected static $curr = null;
 
-        public static $url_handlers = array(
+        private static $url_handlers = array(
                 'modulefield/$ID' => 'modulefield',
                 '$Action!/$ID/$OtherID' => '$Action'
         );
 
-        public static $allowed_actions = array(
+        private static $allowed_actions = array(
                 'addNewModule', 'addExistingModule', 'getExistingModules', 'module', 'sort', 'modulefield', 'reload'
         );
 
@@ -117,9 +117,10 @@ class ContentModuleField extends FormField
                 return $this->getForm()->getRecord();
         }
 
-        public function handleAction() {
-                $action = $this->request->param('Action');
-
+        public function handleAction($request, $action) {
+	        //echo $action;
+                //$action = $this->request->param('Action');
+		//echo $action;exit;
                 if ($this->hasMethod($action)) {
                         return $this->{$action}();
                 }

@@ -6,19 +6,19 @@
  */
 class ContentModuleHistoryController extends ContentModuleMain {
 
-	static $url_segment = 'content-modules/history';
-	static $url_rule = '/$Action/$ID/$VersionID/$OtherVersionID';
-	static $url_priority = 42;
-	static $menu_title = 'History';
-	static $required_permission_codes = 'CMS_ACCESS_ContentModuleMain';
-	static $session_namespace = 'ContentModuleMain';
-	
-	static $allowed_actions = array(
+	private static $url_segment = 'content-modules/history';
+	private static $url_rule = '/$Action/$ID/$VersionID/$OtherVersionID';
+	private static $url_priority = 42;
+	private static $menu_title = 'History';
+	private static $required_permission_codes = 'CMS_ACCESS_ContentModuleMain';
+	private static $session_namespace = 'ContentModuleMain';
+
+	private static $allowed_actions = array(
 		'VersionsForm',
 		'compare'
 	);
-	
-	public static $url_handlers = array(
+
+	private static $url_handlers = array(
 		'$Action/$ID/$VersionID/$OtherVersionID' => 'handleAction'
 	);
 
@@ -27,7 +27,7 @@ class ContentModuleHistoryController extends ContentModuleMain {
 		$controller = $this;
 		$negotiator->setCallback('CurrentForm', function() use(&$controller) {
 			$form = $controller->ShowVersionForm($controller->getRequest()->param('VersionID'));
-			if($form) return $form->forTemplate();
+			if($form) return $form->forTemplate()->RAW();
 			else return $controller->renderWith($controller->getTemplatesWithSuffix('_Content'));
 		});
 		$negotiator->setCallback('default', function() use(&$controller) {
@@ -45,7 +45,7 @@ class ContentModuleHistoryController extends ContentModuleMain {
 		$negotiator = $this->getResponseNegotiator();
 		$controller = $this;
 		$negotiator->setCallback('CurrentForm', function() use(&$controller, &$form) {
-			return $form ? $form->forTemplate() : $controller->renderWith($controller->getTemplatesWithSuffix('_Content'));
+			return $form ? $form->forTemplate()->RAW() : $controller->renderWith($controller->getTemplatesWithSuffix('_Content'));
 		});
 		$negotiator->setCallback('default', function() use(&$controller, &$form) {
 			return $controller->customise(array('EditForm' => $form))->renderWith($controller->getViewer('show'));
@@ -66,7 +66,7 @@ class ContentModuleHistoryController extends ContentModuleMain {
 		$negotiator = $this->getResponseNegotiator();
 		$controller = $this;
 		$negotiator->setCallback('CurrentForm', function() use(&$controller, &$form) {
-			return $form ? $form->forTemplate() : $controller->renderWith($controller->getTemplatesWithSuffix('_Content'));
+			return $form ? $form->forTemplate()->RAW() : $controller->renderWith($controller->getTemplatesWithSuffix('_Content'));
 		});
 		$negotiator->setCallback('default', function() use(&$controller, &$form) {
 			return $controller->customise(array('EditForm' => $form))->renderWith($controller->getViewer('show'));

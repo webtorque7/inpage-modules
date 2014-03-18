@@ -7,28 +7,28 @@
 class ImageModule extends ContentModule
 {
 
-	public static $singular_name = 'Image';
-	public static $plural_name = 'Image';
+	private static $singular_name = 'Image';
+	private static $plural_name = 'Image';
 
-        public static $db = array(
+	private static $db = array(
 		'ContentTitle' => 'Varchar(150)',
                 'ResizeMethod' => 'Enum("Cropped, SetWidth, SetHeight", "Cropped")',
                 'ResizeWidth' => 'Int',
                 'ResizeHeight' => 'Int'
         );
 
-        public static $many_many = array(
+	private static $many_many = array(
                 'Images' => 'Image',
         );
 
-        public static $many_many_extraFields = array(
+	private static $many_many_extraFields = array(
                 'Images' => array(
                         'SortOrder' => 'Int'
                 )
         );
 
-        private static $default_width = 960;
-        private static $default_height = 300;
+	private static $default_width = 960;
+	private static $default_height = 300;
 
         public function set_default_size($width, $height) {
                 self::$default_width = $width;

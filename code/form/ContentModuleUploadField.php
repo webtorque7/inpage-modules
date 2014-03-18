@@ -49,6 +49,10 @@ class ContentModuleUploadField extends UploadField {
          * @param SS_HTTPRequest $request
          * @return string json
          */
+	private static $allowed_actions = array(
+		'upload'
+	);
+
         public function upload(SS_HTTPRequest $request) {
 
                 if ($this->contentModuleFieldName) {

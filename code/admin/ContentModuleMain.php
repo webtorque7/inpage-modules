@@ -8,26 +8,26 @@
  * @package inpage-modules
  */
 class ContentModuleMain extends LeftAndMain implements PermissionProvider {
-	
-	static $url_segment = 'content-modules';
-	
-	static $url_rule = '/$Action/$ID/$OtherID';
+
+	private static $url_segment = 'content-modules';
+
+	private static $url_rule = '/$Action/$ID/$OtherID';
 	
 	// Maintain a lower priority than other administration sections
 	// so that Director does not think they are actions of CMSMain
-	static $url_priority = 30;
-	
-	static $menu_title = 'Edit Module';
+	private static $url_priority = 30;
 
-        static $tree_class = 'ContentModule';
-	
-	static $menu_priority = 50;
+	private static $menu_title = 'Edit Module';
 
-        static $page_id = 0;
+	private static $tree_class = 'ContentModule';
 
-	static $subitem_class = "Member";
-	
-	static $allowed_actions = array(
+	private static $menu_priority = 50;
+
+	private static $page_id = 0;
+
+	private static $subitem_class = "Member";
+
+	private static $allowed_actions = array(
 		'deleteitems',
 		'DeleteItemsForm',
 		'dialog',
@@ -90,7 +90,7 @@ class ContentModuleMain extends LeftAndMain implements PermissionProvider {
 		$negotiator = parent::getResponseNegotiator();
 		$controller = $this;
 		$negotiator->setCallback('ListViewForm', function() use(&$controller) {
-			return $controller->ListViewForm()->forTemplate();
+			return $controller->ListViewForm()->forTemplate()->RAW();
 		});
 		return $negotiator;
 	}
@@ -1138,7 +1138,7 @@ class ContentModuleMain extends LeftAndMain implements PermissionProvider {
 			// Reload form, data and actions might have changed
 			$form = $this->getEditForm($newPage->ID);
 			
-			return $form->forTemplate();
+			return $form->forTemplate()->RAW();
 		} else {
 			user_error("CMSMain::duplicate() Bad ID: '$id'", E_USER_WARNING);
 		}
@@ -1158,7 +1158,7 @@ class ContentModuleMain extends LeftAndMain implements PermissionProvider {
 			// Reload form, data and actions might have changed
 			$form = $this->getEditForm($newPage->ID);
 			
-			return $form->forTemplate();
+			return $form->forTemplate()->RAW();
 		} else {
 			user_error("CMSMain::duplicate() Bad ID: '$id'", E_USER_WARNING);
 		}

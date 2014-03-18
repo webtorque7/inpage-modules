@@ -18,30 +18,30 @@ class ContentModule extends DataObject implements PermissionProvider
 
 	protected static $has_url = false;
 
-	public static $db = array(
+	private static $db = array(
 		'Title' => 'Varchar',
 		'Reuseable' => 'Boolean',
 		'URLSegment' => 'Varchar'
 	);
 
-	public static $defaults = array(
+	private static $defaults = array(
 		'WorkflowDefinitionID' => 1
 	);
 
-	public static $summary_fields = array(
+	private static $summary_fields = array(
 		'Title',
 		'Type'
 	);
 
-	public static $casting = array(
+	private static $casting = array(
 		'Type' => 'Varchar'
 	);
 
-	public static $extensions = array(
+	private static $extensions = array(
 		"Versioned('Stage', 'Live')"
 	);
 
-	public static $exclude_modules = array();
+	private static $exclude_modules = array();
 
 	public function getCMSFields() {
 		$fields = new FieldList(

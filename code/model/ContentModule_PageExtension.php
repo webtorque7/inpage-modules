@@ -9,11 +9,11 @@ class ContentModule_PageExtension extends DataExtension
 {
 
 
-        public static $many_many = array(
+	private static $many_many = array(
                 'ContentModules' => 'ContentModule'
         );
 
-        public static $many_many_extraFields = array(
+	private static $many_many_extraFields = array(
                 'ContentModules' => array(
                         'Sort' => 'Int'
                 )
@@ -44,7 +44,7 @@ class ContentModule_PageExtension extends DataExtension
  */
 class ContentModule_PageController_Extension extends Extension
 {
-        public static $allowed_actions = array(
+	private static $allowed_actions = array(
                 'm'
         );
 

@@ -7,10 +7,10 @@
  */
 class TextModule extends ContentModule {
 
-        public static $singular_name = 'Text';
-        public static $plural_name = 'Text';
+	private static $singular_name = 'Text';
+	private static $plural_name = 'Text';
 
-        public static $db = array(
+	private static $db = array(
                 'ContentTitle' => 'Text',
                 'Text' => 'HTMLText'
         );

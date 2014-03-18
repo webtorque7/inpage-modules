@@ -16,7 +16,7 @@ class ContentModuleRelationshipEditor extends FormField
 
 	protected $maxItems = null;
 
-        public static $url_handlers = array(
+	private static $url_handlers = array(
                 'remove/$ID' => 'remove',
 		'deleteitem/$ID' => 'deleteitem',
                 'edititem/$ID' => 'edititem',
@@ -26,7 +26,7 @@ class ContentModuleRelationshipEditor extends FormField
 
         );
 
-        public static $allowed_actions = array(
+        private static $allowed_actions = array(
                 'remove',
                 'ItemEditForm',
                 'edititem',
@@ -151,9 +151,11 @@ class ContentModuleRelationshipEditor extends FormField
         }
 
         public function getExistingDropdown() {
-                $drop = new DropdownField('ExistingItems', 'Existing Items', $this->getExistingItems()->map(), null, null, 'Select Existing Item');
-		$drop->addExtraClass('no-change-track');
-                $html = str_replace('id="ExistingItems"', 'id="ExistingItems_' . rand() . '"', $drop->forTemplate());
+                //$drop = new DropdownField('ExistingItems', 'Existing Items', $this->getExistingItems()->map(), null, null, 'Select Existing Item');
+	        $drop = DropdownField::create('ExistingItems', 'Existing Items', $this->getExistingItems()->map(), null, null)
+		       ->setEmptyString('Select Existing Item')
+		       ->addExtraClass('no-change-track');
+                $html = str_replace('id="ExistingItems"', 'id="ExistingItems_' . rand() . '"', $drop->forTemplate()->RAW());
                 return $html;
         }
 
@@ -218,7 +220,7 @@ class ContentModuleRelationshipEditor extends FormField
 	public function reload() {
 		return ContentModuleUtilities::json_response(array(
 			'Status' => 1,
-			'Content' => $this->forTemplate()
+			'Content' => $this->forTemplate()->RAW()
 		));
 	}
 
@@ -328,7 +330,7 @@ class ContentModuleRelationshipEditor extends FormField
                                 return ContentModuleUtilities::json_response(array(
                                         'Status' => 1,
                                         'Message' => "Item removed from {$this->Title()}",
-                                        'Content' => $this->forTemplate()
+                                        'Content' => $this->forTemplate()->RAW()
                                 ));
                         }
                 }
@@ -357,7 +359,7 @@ class ContentModuleRelationshipEditor extends FormField
 				return ContentModuleUtilities::json_response(array(
 					'Status' => 1,
 					'Message' => "Item {$obj->Title} deleted",
-					'Content' => $this->forTemplate()
+					'Content' => $this->forTemplate()->RAW()
 				));
 			}
 		}
@@ -412,7 +414,7 @@ class ContentModuleRelationshipEditor extends FormField
                 if ($form = $this->ItemEditForm()) {
                         return ContentModuleUtilities::json_response(array(
                                 'Status' => 1,
-                                'Content' => $form->forAjaxTemplate()
+                                'Content' => $form->forAjaxTemplate()->RAW()
                         ));
                 }
 
@@ -432,7 +434,7 @@ class ContentModuleRelationshipEditor extends FormField
                                 return ContentModuleUtilities::json_response(array(
                                         "Status" => 1,
                                         "Message" => "{$item->Title} added successfully",
-                                        "Content" => $this->forTemplate()
+                                        "Content" => $this->forTemplate()->RAW()
                                 ));
                         }
                 }
@@ -624,7 +626,7 @@ class ContentModuleRelationshipEditor extends FormField
                         return ContentModuleUtilities::json_response(array(
                                 "Status" => 1,
                                 "Message" => "{$className} saved successfully",
-                                "Content" => $this->ItemEditForm($record->ID)->forAjaxTemplate()
+                                "Content" => $this->ItemEditForm($record->ID)->forAjaxTemplate()->RAW()
                         ));
 
                 }

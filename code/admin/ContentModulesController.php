@@ -4,13 +4,13 @@
  * @package cms
  */
 class ContentModulesController extends ContentModuleMain {
-	
-	static $url_segment = 'content-modules';
-	static $url_rule = '/$Action/$ID/$OtherID';
-	static $url_priority = 30;
-	static $menu_title = 'Content Modules';
-	static $required_permission_codes = 'CMS_ACCESS_ContentModule';
-	static $session_namespace = 'ContentModuleMain';
+
+	private static $url_segment = 'content-modules';
+	private static $url_rule = '/$Action/$ID/$OtherID';
+	private static $url_priority = 30;
+	private static $menu_title = 'Content Modules';
+	private static $required_permission_codes = 'CMS_ACCESS_ContentModule';
+	private static $session_namespace = 'ContentModuleMain';
 
 	public function LinkPreview() {
 		return false;
