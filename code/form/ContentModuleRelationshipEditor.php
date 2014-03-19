@@ -388,7 +388,7 @@ class ContentModuleRelationshipEditor extends FormField
                         if ($form = $this->ItemEditForm($id)) {
                                 return ContentModuleUtilities::json_response(array(
                                         'Status' => 1,
-                                        'Content' => $form->forAjaxTemplate()
+                                        'Content' => $form->forAjaxTemplate()->RAW()
                                 ));
                         }
                 }

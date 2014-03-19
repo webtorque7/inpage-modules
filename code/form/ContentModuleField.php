@@ -137,7 +137,7 @@ class ContentModuleField extends FormField
 
                                 return ContentModuleUtilities::json_response(array(
                                         'Status' => 1,
-                                        'Content' => $module->EditForm(),
+                                        'Content' => $module->EditForm()->RAW(),
                                         'Message' => "{$moduleType} created"
                                 ));
                         }
@@ -159,7 +159,7 @@ class ContentModuleField extends FormField
 
                                 return ContentModuleUtilities::json_response(array(
                                         'Status' => 1,
-                                        'Content' => $module->EditForm(),
+                                        'Content' => $module->EditForm()->RAW(),
                                         'Message' => "{$module->Title} added"
                                 ));
                         }
@@ -258,7 +258,7 @@ class ContentModuleField extends FormField
                         $module = ContentModule::get()->byID($id);
                         return ContentModuleUtilities::json_response(array(
                                 'Status' => 1,
-                                'Content' => $module->EditForm()
+                                'Content' => $module->EditForm()->RAW()
                         ));
                 }
         }
@@ -293,7 +293,7 @@ class ContentModuleField extends FormField
                                 return ContentModuleUtilities::json_response(array(
                                         'Status' => 1,
                                         'Message' => $message,
-                                        'Content' => $module->EditForm()
+                                        'Content' => $module->EditForm()->RAW()
                                 ));
                         }
                 }
