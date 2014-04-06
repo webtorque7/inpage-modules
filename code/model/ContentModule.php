@@ -216,7 +216,7 @@ class ContentModule extends DataObject implements PermissionProvider
 	 * to make it suitable to work with ContentModuleField
 	 * @return FieldList
 	 */
-	public function EditFields() {
+	public function EditFields($values = null) {
 		$fields = $this->getCMSFields();
 
 		$returnFields = new FieldList();
@@ -234,11 +234,16 @@ class ContentModule extends DataObject implements PermissionProvider
 			}
 			$field->setName($newFieldName);
 
-			if (isset($this->{$name}) || $this->hasMethod('set' . ucfirst($name))) {
-				$field->setValue($this->{$name});
+			$value = null;
+			if (isset($this->{$name}) || $this->hasMethod('get' . ucfirst($name))) {
+				$value = $this->{$name};
 			} else if ($this->hasMethod($name)) {
-				$field->setValue($this->{$name}());
+				$value = $this->{$name}();
 			}
+
+			$value = (!empty($values) && !empty($values[$name])) ? $values[$name] : $value;
+
+			$field->setValue($value);
 
 			if ($field->hasMethod('setRecord')) {
 				$field->setRecord($this);
@@ -598,6 +603,9 @@ class ContentModule extends DataObject implements PermissionProvider
 
 			//editing modules
 			if (isset($_REQUEST['ContentModule'][$this->ID])) {
+				/*8foreach ($this->EditFields($_REQUEST['ContentModule'][$this->ID]) as $field) {
+					$field->saveInto($this);
+				}*/
 				$this->update($_REQUEST['ContentModule'][$this->ID]);
 			}
 

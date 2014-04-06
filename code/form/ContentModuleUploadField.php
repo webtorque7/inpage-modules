@@ -15,7 +15,7 @@ class ContentModuleUploadField extends UploadField {
 
         public function setContentModuleNames($name, $contentName, $id = null) {
                 $this->_idField = $id;
-                $this->setName($name);
+                $this->setName($contentName);
                 $this->originalFieldName = $name;
                 $this->contentModuleFieldName = $contentName;
         }
@@ -53,14 +53,6 @@ class ContentModuleUploadField extends UploadField {
 		'upload'
 	);
 
-        public function upload(SS_HTTPRequest $request) {
-
-                if ($this->contentModuleFieldName) {
-                        return $this->modifiedUpload($request);
-                }
-
-                return parent::upload($request);
-        }
 
         public function modifiedUpload(SS_HTTPRequest $request) {
                 if($this->isDisabled() || $this->isReadonly() || !$this->canUpload()) {
@@ -204,4 +196,80 @@ class ContentModuleUploadField extends UploadField {
                 }
                 return $this->items;
         }
+
+	public function saveInto(DataObjectInterface $record) {
+		// Check required relation details are available
+		$fieldname = !empty($this->contentModuleFieldName) ? $this->originalFieldName : $this->getName();
+		if(!$fieldname) return $this;
+
+		echo $this->Value();exit;
+		// Get details to save
+		$idList = $this->getItemIDs();
+
+		// Check type of relation
+		$relation = $record->hasMethod($fieldname) ? $record->$fieldname() : null;
+		if($relation && ($relation instanceof RelationList || $relation instanceof UnsavedRelationList)) {
+			// has_many or many_many
+			$relation->setByIDList($idList);
+		} elseif($record->has_one($fieldname)) {
+			// has_one
+			$record->{"{$fieldname}ID"} = $idList ? reset($idList) : 0;
+		}
+		return $this;
+	}
+
+	/**
+	 * Given an array of post variables, extract all temporary file data into an array
+	 *
+	 * @param array $postVars Array of posted form data
+	 * @return array List of temporary file data
+	 */
+	protected function extractUploadedFileData($postVars) {
+
+		$tmpFiles = array();
+
+		if (!empty($this->contentModuleFieldName)) {
+			$postVars = $this->request->postVar('ContentModule');
+			//bit of a hack, but it stopped working for some reason
+			if (empty($postVars) && !empty($_FILES['ContentModule'])) $postVars = $_FILES['ContentModule'];
+			if(	!empty($postVars['tmp_name'])
+				&& is_array($postVars['tmp_name'])
+			) {
+				foreach ($postVars['tmp_name'] as $index => $tmp) {
+					for($i = 0; $i < count($postVars['tmp_name'][$index][$this->originalFieldName]['Uploads']); $i++) {
+						// Skip if "empty" file
+						if(empty($postVars['tmp_name'][$index][$this->originalFieldName]['Uploads'][$i])) continue;
+						$tmpFile = array();
+						foreach(array('name', 'type', 'tmp_name', 'error', 'size') as $field) {
+							$tmpFile[$field] = $postVars[$field][$index][$this->originalFieldName]['Uploads'][$i];
+						}
+						$tmpFiles[] = $tmpFile;
+					}
+				}
+			}
+			return $tmpFiles;
+		}
+
+		// Note: Format of posted file parameters in php is a feature of using
+		// <input name='{$Name}[Uploads][]' /> for multiple file uploads
+		if(	!empty($postVars['tmp_name'])
+			&& is_array($postVars['tmp_name'])
+			&& !empty($postVars['tmp_name']['Uploads'])
+		) {
+			for($i = 0; $i < count($postVars['tmp_name']['Uploads']); $i++) {
+				// Skip if "empty" file
+				if(empty($postVars['tmp_name']['Uploads'][$i])) continue;
+				$tmpFile = array();
+				foreach(array('name', 'type', 'tmp_name', 'error', 'size') as $field) {
+					$tmpFile[$field] = $postVars[$field]['Uploads'][$i];
+				}
+				$tmpFiles[] = $tmpFile;
+			}
+		} elseif(!empty($postVars['tmp_name'])) {
+			// Fallback to allow single file uploads (method used by AssetUploadField)
+			$tmpFiles[] = $postVars;
+		}
+
+		return $tmpFiles;
+	}
 }
