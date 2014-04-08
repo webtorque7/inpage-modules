@@ -337,8 +337,6 @@
                 $.get(url, function (data) {
                     if (data.Status) {
                         self.updateFromServer(data.Content);
-                        //reload preview iframe
-                        $('iframe[name=cms-preview-iframe]').attr('src', $('iframe[name=cms-preview-iframe]').attr('src'));
                     }
                 });
             },
@@ -367,8 +365,6 @@
 
                 var form = $content.find('.form').html();
                 if (form) this.find('.form').html(form);
-                //reload preview iframe
-                $('iframe[name=cms-preview-iframe]').attr('src', $('iframe[name=cms-preview-iframe]'));
 
                 this.resize();
             },
@@ -406,7 +402,7 @@
             }
         });
 
-        $('body .content-module-field .content-module input.unlink[type=submit],body .content-module-field .content-module input.delete[type=submit]').entwine({
+        $('body .content-module-field .content-module input.unlink[type=submit],body .content-module-field .content-module input.delete[type=submit],body .content-module-field .content-module input.unpublish[type=submit]').entwine({
             onclick: function (e) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -417,7 +413,12 @@
                 var contentModule = this.closest('.content-module');
 
                 contentModule.submitModule(action, function () {
-                    contentModule.remove();
+                    if (action == 'unpublish') {
+                        contentModule.reload();
+                    }
+                    else {
+                        contentModule.remove();
+                    }
                 });
 
                 return false;
