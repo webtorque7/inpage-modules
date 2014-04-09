@@ -230,6 +230,7 @@ class ContentModuleField extends FormField
 
                 if (($id = $this->request->param('ID')) && !empty($_REQUEST['Sort'])) {
 
+	               // Debug::dump($_REQUEST['Sort']);exit;
                         $SQL_id = Convert::raw2sql($id);
                         foreach ($_REQUEST['Sort'] as $moduleID => $index) {
                                 $SQL_moduleID = Convert::raw2sql($moduleID);
@@ -237,6 +238,7 @@ class ContentModuleField extends FormField
 
 				list($parentClass, $componentClass, $parentField, $componentField, $table) = $this->getRecord()->many_many($this->getName());
 
+	                        $queries[] = "UPDATE \"{$table}\" set \"Sort\" = '{$SQL_index}' WHERE \"{$parentField}\" = '{$SQL_id}' AND \"{$componentField}\" = '{$SQL_moduleID}'";
                                 DB::query("UPDATE \"{$table}\" set \"Sort\" = '{$SQL_index}' WHERE \"{$parentField}\" = '{$SQL_id}' AND \"{$componentField}\" = '{$SQL_moduleID}'");
                         }
 

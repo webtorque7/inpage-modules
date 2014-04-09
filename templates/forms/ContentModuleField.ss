@@ -30,10 +30,13 @@
         <div class="current-modules">
                 <h3><% _t('CURRENTCONTENTMODULES', 'Current Modules') %></h3>
                 <p class="message"><% _t('CONTENTMODULESTOSORT', 'To sort used modules on this page, drag them up and down.') %></p>
+
                 <% if $CurrentModules %>
+                    <div class="modules">
                         <% loop $CurrentModules %>
                                 $EditForm
                         <% end_loop %>
+                    </div>
                 <% else %>
                 <p>You haven't added any modules</p>
                 <% end_if %>

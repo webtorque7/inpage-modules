@@ -16,32 +16,16 @@
 
             onadd: function () {
                 var self = this;
-                //sorting
-                $(this).find('.current-modules').sortable({
-                    opacity: 0.6,
-                    handle: '.handle',
-                    update: function (e, ui) {
-                        self.sortModules(e, ui)
-                    },
-                    placeholder: 'ui-state-highlight',
-                    forcePlaceholderSize: true,
-                    start: function (e, ui) {
-                        self.setPreventAccordion(true);
-                    },
-                    deactivate: function (e, ui) {
-                        //todo: make this work
-                        //if it hasn't moved, re-enable accordion
-                        if (ui.position.left == ui.originalPosition.left && ui.position.top == ui.originalPosition.top) {
-                            self.setPreventAccordion(false);
-                        }
-                    }
-                });
-
                 this._super();
             },
             onremove: function () {
                 this._super();
             },
+            /*fromTabSet: {
+             ontabsshow: function() {
+             this.find('.content-module').accordion("resize");
+             }
+             },*/
             getPageID: function () {
                 return $('#Form_EditForm_ID').val();
             },
@@ -139,6 +123,45 @@
                 this.closest('.cms-content').removeClass('loading');
             }
 
+        });
+
+        $('.content-module-field .current-modules .modules').entwine({
+            onadd: function () {
+                var self = this;
+                this
+                    .accordion({
+                        header: '> div > h4',
+                        collapsible: true,
+                        active: false
+                    })
+
+                    .sortable({
+                        opacity: 0.6,
+                        update: function (e, ui) {
+                            self.closest('.content-module-field').sortModules(e, ui);
+                        },
+                        //placeholder: 'ui-state-highlight',
+                        forcePlaceholderSize: true
+                        //start: function (e, ui) {
+                            //self.setPreventAccordion(true);
+                        //},
+                       /* deactivate: function (e, ui) {
+                            //todo: make this work
+                            //if it hasn't moved, re-enable accordion
+                            if (ui.position.left == ui.originalPosition.left && ui.position.top == ui.originalPosition.top) {
+                                self.setPreventAccordion(false);
+                            }
+                        }*/
+                    });
+                this._super();
+            },
+            onremove: function () {
+                this
+                    .accordion('destroy')
+                    .sortable('destroy');
+                this._super();
+
+            }
         });
 
         //prevent change tracking
@@ -377,16 +400,53 @@
                     form.height(form.scrollHeight);
                 }
 
-                if (this.hasClass('ui-accordion'))
-                    this.accordion('resize');
+                //if (this.hasClass('ui-accordion'))
+                //this.find('.ss-toggle').accordion('resize');
+            }
+        });
+
+        //accordian
+        $('.content-module .ss-toggle').entwine({
+            onadd: function () {
+
+            },
+            onremove: function () {
+
+            },
+            fromTabSet: {
             },
             //accordion
             onaccordionbeforeactivate: function (e, ui) {
                 if (this.getContentModuleField().getPreventAccordion()) {
                     return false;
                 }
-            }
 
+                //close previous one
+                var shouldContinue = true;
+                /*$('.content-module .ss-toggle').each(function(){
+                 if ($(this).accordion('option', 'active')) {
+                 $(this.accordion('toggle'));
+                 return false;
+                 }
+                 });*/
+            },
+
+            onaccordionactivate: function (e, ui) {
+                console.log(this.accordion('option', 'active'));
+                //hide buttons
+                if (this.accordion('option', 'active')) {
+
+                    this.parent().find('.Actions').fadeIn();
+
+                }
+                else {
+                    this.parent().find('.Actions').fadeOut();
+                }
+            },
+
+            onaccordionchange: function (e, ui) {
+
+            }
         });
 
         $('body .content-module-field .content-module .Actions input[type=submit].publish, body .content-module-field .content-module .Actions input[type=submit].save').entwine({
