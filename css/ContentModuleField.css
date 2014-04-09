@@ -1,6 +1,6 @@
 .content-module-field .add-fields                         {display:none;}
 
-.content-module-field                                     {}
+.content-module-field                                   {padding-bottom:60px;}
 .content-module                                         {}
 .content-module .cmre-handle,
 .content-module .handle                                 {display:inline-block; float:right; height:16px; width:16px; cursor:move; background:url("/framework/admin/images/sitetree_ss_default_icons.png") no-repeat; background-position:-56px -20px;}
@@ -19,6 +19,8 @@
 .content-module-field .new-module-fields label            {height:28px; line-height:28px; display:inline-block; vertical-align:top;}
 .content-module-field .new-module-fields label.first      {width:150px;}
 
+.content-module-field .content-module-field-actions        {display:none; width:100%; position:fixed; bottom:55px; right:0; background-color:rgba(201, 205, 206, 0.6); }
+.content-module-field .content-module-field-actions .Actions {padding:12px !important;}
 /* dropdowns */
 .content-module .cms-actions-row .field.dropdown,
 .content-module-field .new-module-fields .field.dropdown,

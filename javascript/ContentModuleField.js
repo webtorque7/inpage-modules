@@ -132,7 +132,17 @@
                     .accordion({
                         header: '> div > h4',
                         collapsible: true,
-                        active: false
+                        active: false,
+                        activate: function(e,ui) {
+                            console.log(ui);
+
+                            if (ui.newPanel.length) {
+                                $(ui.newPanel).closest('.content-module').loadActions();
+                            }
+                            else {
+                                self.getContentModuleField().find('.content-module-field-actions').fadeOut();
+                            }
+                        }
                     })
 
                     .sortable({
@@ -142,16 +152,6 @@
                         },
                         //placeholder: 'ui-state-highlight',
                         forcePlaceholderSize: true
-                        //start: function (e, ui) {
-                            //self.setPreventAccordion(true);
-                        //},
-                       /* deactivate: function (e, ui) {
-                            //todo: make this work
-                            //if it hasn't moved, re-enable accordion
-                            if (ui.position.left == ui.originalPosition.left && ui.position.top == ui.originalPosition.top) {
-                                self.setPreventAccordion(false);
-                            }
-                        }*/
                     });
                 this._super();
             },
@@ -389,6 +389,8 @@
                 var form = $content.find('.form').html();
                 if (form) this.find('.form').html(form);
 
+                this.loadActions();
+
                 this.resize();
             },
             resize: function () {
@@ -399,55 +401,42 @@
                 if (form.scrollHeight > currentHeight) {
                     form.height(form.scrollHeight);
                 }
-
-                //if (this.hasClass('ui-accordion'))
-                //this.find('.ss-toggle').accordion('resize');
+            },
+            onwindowresize:function() {
+                this.loadActions();
+            },
+            loadActions:function() {
+                var cmsActions = this.closest('form').find('.cms-content-actions');
+                this.getContentModuleField()
+                    .find('.content-module-field-actions')
+                    .css({
+                        left: cmsActions.offset().left,
+                        bottom: cmsActions.outerHeight()
+                    })
+                    .fadeIn()
+                    .find('.Actions')
+                        .css({
+                            width: cmsActions.width()
+                        })
+                        .html(this.find('.Actions').html());
             }
         });
 
-        //accordian
-        $('.content-module .ss-toggle').entwine({
-            onadd: function () {
+        //global controls for active module, triggers action on active module
+        $('body .content-module-field .content-module-field-actions .Actions button, body .content-module-field .content-module-field-actions .Actions input[type=submit]').entwine({
+            onclick:function(e) {
+                e.preventDefault();
 
-            },
-            onremove: function () {
+                //active module
+                var activeModule = this.getContentModuleField().find('.content-module').eq(
+                    this.getContentModuleField().find('.current-modules .modules').accordion('option', 'active')
+                );
 
-            },
-            fromTabSet: {
-            },
-            //accordion
-            onaccordionbeforeactivate: function (e, ui) {
-                if (this.getContentModuleField().getPreventAccordion()) {
-                    return false;
-                }
-
-                //close previous one
-                var shouldContinue = true;
-                /*$('.content-module .ss-toggle').each(function(){
-                 if ($(this).accordion('option', 'active')) {
-                 $(this.accordion('toggle'));
-                 return false;
-                 }
-                 });*/
-            },
-
-            onaccordionactivate: function (e, ui) {
-                console.log(this.accordion('option', 'active'));
-                //hide buttons
-                if (this.accordion('option', 'active')) {
-
-                    this.parent().find('.Actions').fadeIn();
-
-                }
-                else {
-                    this.parent().find('.Actions').fadeOut();
-                }
-            },
-
-            onaccordionchange: function (e, ui) {
-
+                //trigger click on real button
+                activeModule.find('[name="' + this.attr('name') + '"]').trigger('click');
             }
         });
+
 
         $('body .content-module-field .content-module .Actions input[type=submit].publish, body .content-module-field .content-module .Actions input[type=submit].save').entwine({
             onclick: function (e) {
