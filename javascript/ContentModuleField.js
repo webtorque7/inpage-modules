@@ -133,9 +133,8 @@
                         header: '> div > h4',
                         collapsible: true,
                         active: false,
+                        heightStyle: 'content',
                         activate: function(e,ui) {
-                            console.log(ui);
-
                             if (ui.newPanel.length) {
                                 $(ui.newPanel).closest('.content-module').loadActions();
                             }
@@ -170,7 +169,7 @@
                 this.addClass('no-change-track');
                 this._super();
             },
-            onunmatch: function () {
+            onremove: function () {
                 this._super();
             }
         });
@@ -401,6 +400,8 @@
                 if (form.scrollHeight > currentHeight) {
                     form.height(form.scrollHeight);
                 }
+
+                this.closest('.modules').accordion('resize');
             },
             onwindowresize:function() {
                 this.loadActions();
