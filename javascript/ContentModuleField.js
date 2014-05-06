@@ -46,7 +46,7 @@
                 return this.find('.current-modules .modules');
             },
             addModule: function (module) {
-                this.getModulesContainer().append(module);
+                this.getModulesContainer().append(module).reloadAccordion();
                 this.scrollToEnd();
             },
             sortModules: function (e, ui) {
@@ -128,6 +128,15 @@
         $('.content-module-field .current-modules .modules').entwine({
             onadd: function () {
                 var self = this;
+                this.setupAccordion();
+                this._super();
+            },
+            reloadAccordion:function() {
+                this.accordion('destroy')
+                    .setupAccordion();
+                return this;
+            },
+            setupAccordion:function() {
                 this
                     .accordion({
                         header: '> div > h4',
@@ -152,7 +161,7 @@
                         //placeholder: 'ui-state-highlight',
                         forcePlaceholderSize: true
                     });
-                this._super();
+                return this;
             },
             onremove: function () {
                 this
