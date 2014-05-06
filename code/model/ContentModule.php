@@ -243,7 +243,16 @@ class ContentModule extends DataObject implements PermissionProvider
 
 			$value = (!empty($values) && !empty($values[$name])) ? $values[$name] : $value;
 
-			$field->setValue($value);
+			switch ($field->class) {
+				case 'UploadField':
+			        case 'ContentModuleUploadField':
+					$field->setValue(null, $value);
+					break;
+				default:
+					$field->setValue($value);
+					break;
+			}
+
 
 			if ($field->hasMethod('setRecord')) {
 				$field->setRecord($this);

@@ -43,7 +43,7 @@
 
             //modules
             getModulesContainer: function () {
-                return this.find('.current-modules');
+                return this.find('.current-modules .modules');
             },
             addModule: function (module) {
                 this.getModulesContainer().append(module);
@@ -433,6 +433,7 @@
                     this.getContentModuleField().find('.current-modules .modules').accordion('option', 'active')
                 );
 
+                this.addClass('loading');
                 //trigger click on real button
                 activeModule.find('[name="' + this.attr('name') + '"]').trigger('click');
             }
