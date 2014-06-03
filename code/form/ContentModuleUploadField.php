@@ -197,12 +197,82 @@ class ContentModuleUploadField extends UploadField {
                 return $this->items;
         }
 
+	public function setValue($value, $record = null) {
+		$items = new ArrayList();
+
+		// Determine format of presented data
+		if(empty($value) && $record) {
+			// If a record is given as a second parameter, but no submitted values,
+			// then we should inspect this instead for the form values
+
+			if(($record instanceof DataObject) && $record->hasMethod($this->getFieldName())) {
+				// If given a dataobject use reflection to extract details
+
+				$data = $record->{$this->getFieldName()}();
+
+				if($data instanceof DataObject) {
+					// If has_one, add sole item to default list
+					$items->push($data);
+				} elseif($data instanceof SS_List) {
+					// For many_many and has_many relations we can use the relation list directly
+					$items = $data;
+				}
+			} elseif($record instanceof SS_List) {
+				// If directly passing a list then save the items directly
+				$items = $record;
+			}
+		} elseif(!empty($value['Files'])) {
+			// If value is given as an array (such as a posted form), extract File IDs from this
+			$class = $this->getRelationAutosetClass();
+			$items = DataObject::get($class)->byIDs($value['Files']);
+		}
+
+		// If javascript is disabled, direct file upload (non-html5 style) can
+		// trigger a single or multiple file submission. Note that this may be
+		// included in addition to re-submitted File IDs as above, so these
+		// should be added to the list instead of operated on independently.
+		if($uploadedFiles = $this->extractUploadedFileData($value)) {
+			foreach($uploadedFiles as $tempFile) {
+				$file = $this->saveTemporaryFile($tempFile, $error);
+				if($file) {
+					$items->add($file);
+				} else {
+					throw new ValidationException($error);
+				}
+			}
+		}
+
+		// Filter items by what's allowed to be viewed
+		$filteredItems = new ArrayList();
+		$fileIDs = array();
+		foreach($items as $file) {
+			if($file->exists() && $file->canView()) {
+				$filteredItems->push($file);
+				$fileIDs[] = $file->ID;
+			}
+		}
+
+		// Filter and cache updated item list
+		$this->items = $filteredItems;
+		// Same format as posted form values for this field. Also ensures that
+		// $this->setValue($this->getValue()); is non-destructive
+		$value = $fileIDs ? array('Files' => $fileIDs) : null;
+
+		// Set value using parent
+		return parent::setValue($value, $record);
+	}
+
+	public function getFieldName() {
+		return !empty($this->contentModuleFieldName) ? $this->originalFieldName : $this->getName();
+	}
+
 	public function saveInto(DataObjectInterface $record) {
 		// Check required relation details are available
-		$fieldname = !empty($this->contentModuleFieldName) ? $this->originalFieldName : $this->getName();
+		$fieldname = $this->getFieldName();
+
 		if(!$fieldname) return $this;
 
-		echo $this->Value();exit;
+		//echo $this->Value();exit;
 		// Get details to save
 		$idList = $this->getItemIDs();
 

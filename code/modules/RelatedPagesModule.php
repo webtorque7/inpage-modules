@@ -123,8 +123,8 @@ class RelatedPagesModule extends ContentModule {
                 return $this->getManyManyComponents('Pages')->sort('SortOrder');
         }
 
-        public function EditFields($values = null) {
-                $fields = parent::EditFields($values);
+        public function EditFields($values = null, $rename = false) {
+                $fields = parent::EditFields($values, $rename);
 
                 $tree = $fields->fieldByName('ContentModule[{$this->ID}][NewPage]');
                 if ($tree) {

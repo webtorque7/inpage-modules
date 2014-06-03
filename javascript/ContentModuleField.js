@@ -138,7 +138,7 @@
             },
             setupAccordion:function() {
                 var self = this;
-                
+
                 this
                     .accordion({
                         header: '> div > h4',

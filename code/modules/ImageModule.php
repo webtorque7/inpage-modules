@@ -30,11 +30,6 @@ class ImageModule extends ContentModule
 	private static $default_width = 960;
 	private static $default_height = 300;
 
-        public function set_default_size($width, $height) {
-                self::$default_width = $width;
-                self::$default_height = $height;
-        }
-
         public function getCMSFields() {
                 $fields = parent::getCMSFields();
 

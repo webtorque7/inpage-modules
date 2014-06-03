@@ -216,7 +216,7 @@ class ContentModule extends DataObject implements PermissionProvider
 	 * to make it suitable to work with ContentModuleField
 	 * @return FieldList
 	 */
-	public function EditFields($values = null) {
+	public function EditFields($values = null, $rename = true) {
 		$fields = $this->getCMSFields();
 
 		$returnFields = new FieldList();
@@ -229,10 +229,13 @@ class ContentModule extends DataObject implements PermissionProvider
 			//rename the field to tie it to the module
 			$newFieldName = "ContentModule[{$this->ID}][{$name}]";
 
-			if ($field->hasMethod('setContentModuleNames')) {
-				$field->setContentModuleNames($name, $newFieldName);
+			//we don't rename when using for updating record
+			if ($rename) {
+				if ($field->hasMethod('setContentModuleNames')) {
+					$field->setContentModuleNames($name, $newFieldName);
+				}
+				$field->setName($newFieldName);
 			}
-			$field->setName($newFieldName);
 
 			$value = null;
 			if (isset($this->{$name}) || $this->hasMethod('get' . ucfirst($name))) {
@@ -246,10 +249,10 @@ class ContentModule extends DataObject implements PermissionProvider
 			switch ($field->class) {
 				case 'UploadField':
 			        case 'ContentModuleUploadField':
-					$field->setValue(null, $value);
+					$field->setValue(!empty($values) && !empty($values[$name]) ? $values[$name] : null, $this);
 					break;
 				default:
-					$field->setValue($value);
+					$field->setValue($value, $this);
 					break;
 			}
 
@@ -280,6 +283,7 @@ class ContentModule extends DataObject implements PermissionProvider
 			$returnFields->push($field);
 
 		}
+
 		$this->extend('updateEditFields', $fields);
 
 
@@ -612,10 +616,10 @@ class ContentModule extends DataObject implements PermissionProvider
 
 			//editing modules
 			if (isset($_REQUEST['ContentModule'][$this->ID])) {
-				/*8foreach ($this->EditFields($_REQUEST['ContentModule'][$this->ID]) as $field) {
+				foreach ($this->EditFields($_REQUEST['ContentModule'][$this->ID], false) as $field) {
 					$field->saveInto($this);
-				}*/
-				$this->update($_REQUEST['ContentModule'][$this->ID]);
+				}
+				//$this->update($_REQUEST['ContentModule'][$this->ID]);
 			}
 
 			$original = Versioned::get_one_by_stage("SiteTree", "Live", "\"SiteTree\".\"ID\" = $this->ID");
