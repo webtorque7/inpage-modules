@@ -645,7 +645,10 @@ class ContentModule extends DataObject implements PermissionProvider
 		if ($this->canEdit()) {
 
 			if (isset($_REQUEST['ContentModule'][$this->ID])) {
-				$this->update($_REQUEST['ContentModule'][$this->ID]);
+				foreach ($this->EditFields($_REQUEST['ContentModule'][$this->ID], false) as $field) {
+					$field->saveInto($this);
+				}
+				//$this->update($_REQUEST['ContentModule'][$this->ID]);
 				$this->write();
 			}
 
