@@ -3,7 +3,7 @@
 		<form $FormAttributes data-layout-type="border">
 			<div class="cms-content-header north">
 				<div class="cms-content-header-info">
-					<h2><% _t('ContentModuleAddController.Title','Add module') %></h2>
+					<h2 class="page-title-heading"><% _t('ContentModuleAddController.Title','Add module') %></h2>
 				</div>
 			</div>
 
