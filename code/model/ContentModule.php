@@ -68,7 +68,11 @@ class ContentModule extends DataObject implements PermissionProvider
 		return $fields;
 	}
 
-	public function getCMSActions() {
+	/**
+	 * @param bool $renameActions if set renames actions with record id appended to prevent naming conflicts
+	 * @return an|FieldList
+	 */
+	public function getCMSActions($renameActions = false) {
 		$minorActions = CompositeField::create()->setTag('fieldset')->addExtraClass('ss-ui-buttonset');
 		$actions = new FieldList($minorActions);
 
@@ -87,7 +91,7 @@ class ContentModule extends DataObject implements PermissionProvider
 		if (($cModField = ContentModuleField::curr()) && $this->exists()) {
 			// "unlink"
 			$minorActions->push(
-				FormAction::create('unlink_' . $this->ID, _t('ContentModule.BUTTONUNLINK', 'Unlink'), 'unlink')
+				FormAction::create($renameActions ? 'unlink_' . $this->ID : 'unlink', _t('ContentModule.BUTTONUNLINK', 'Unlink'), 'unlink')
 					->setDescription(_t('ContentModule.BUTTONUNLINKDESC', 'Unlink this module from the current page'))
 					->addExtraClass('ss-ui-action-destructive unlink')->setAttribute('data-icon', 'unlink')
 			);
@@ -96,7 +100,7 @@ class ContentModule extends DataObject implements PermissionProvider
 		if ($this->isPublished() && $this->canPublish() && !$this->IsDeletedFromStage && $this->canDeleteFromLive()) {
 			// "unpublish"
 			$minorActions->push(
-				FormAction::create('unpublish_' . $this->ID, _t('ContentModule.BUTTONUNPUBLISH', 'Unpublish'), 'delete')
+				FormAction::create($renameActions ? 'unpublish_' . $this->ID : 'unpublish', _t('ContentModule.BUTTONUNPUBLISH', 'Unpublish'), 'delete')
 					->setDescription(_t('ContentModule.BUTTONUNPUBLISHDESC', 'Remove this module from the published site'))
 					->addExtraClass('ss-ui-action-destructive unpublish')->setAttribute('data-icon', 'unpublish')
 			);
@@ -106,7 +110,7 @@ class ContentModule extends DataObject implements PermissionProvider
 			if ($this->isPublished() && $this->canEdit()) {
 				// "rollback"
 				$minorActions->push(
-					FormAction::create('rollback_' . $this->ID, _t('ContentModule.BUTTONCANCELDRAFT', 'Cancel draft changes'), 'delete')
+					FormAction::create($renameActions ? 'rollback_' . $this->ID : 'rollback', _t('ContentModule.BUTTONCANCELDRAFT', 'Cancel draft changes'), 'delete')
 						->setDescription(_t('ContentModule.BUTTONCANCELDRAFTDESC', 'Delete your draft and revert to the currently published module'))
 						->addExtraClass('rollback')
 				);
@@ -118,20 +122,20 @@ class ContentModule extends DataObject implements PermissionProvider
 				if ($this->ExistsOnLive) {
 					// "restore"
 					$minorActions->push(
-						FormAction::create('revert_' . $this->ID, _t('CMSMain.RESTORE', 'Restore'))
+						FormAction::create($renameActions ? 'revert_' . $this->ID : 'revert', _t('CMSMain.RESTORE', 'Restore'))
 							->addExtraClass('revert ss-ui-action-destructive')
 					);
 					if ($this->canDelete() && $this->canDeleteFromLive()) {
 						// "delete from live"
 						$minorActions->push(
-							FormAction::create('deletefromlive_' . $this->ID, _t('CMSMain.DELETEFP', 'Delete'))
+							FormAction::create($renameActions ? 'deletefromlive_' . $this->ID : 'deletefromlive', _t('CMSMain.DELETEFP', 'Delete'))
 								->addExtraClass('deletefromlive ss-ui-action-destructive')
 						);
 					}
 				} else {
 					// "restore"
 					$minorActions->push(
-						FormAction::create('restore_' . $this->ID, _t('CMSMain.RESTORE', 'Restore'))
+						FormAction::create($renameActions ? 'restore_' . $this->ID : 'restore', _t('CMSMain.RESTORE', 'Restore'))
 							->setAttribute('data-icon', 'decline')
 							->addExtraClass('restore')
 					);
@@ -140,14 +144,14 @@ class ContentModule extends DataObject implements PermissionProvider
 				if ($this->canDelete()) {
 					// "delete"
 					$minorActions->push(
-						FormAction::create('delete_' . $this->ID, _t('ContentModule.DELETE', 'Delete'))->addExtraClass('delete ss-ui-action-destructive')
+						FormAction::create($renameActions ? 'delete_' . $this->ID : 'delete', _t('ContentModule.DELETE', 'Delete'))->addExtraClass('delete ss-ui-action-destructive')
 							->setAttribute('data-icon', 'decline')
 					);
 				}
 
 				// "save"
 				$minorActions->push(
-					FormAction::create('save_' . $this->ID, _t('CMSMain.SAVEDRAFT', 'Save Draft'))->setAttribute('data-icon', 'addpage')->addExtraClass('save')
+					FormAction::create($renameActions ? 'save_' . $this->ID : 'save', _t('CMSMain.SAVEDRAFT', 'Save Draft'))->setAttribute('data-icon', 'addpage')->addExtraClass('save')
 				);
 			}
 		}
@@ -155,7 +159,7 @@ class ContentModule extends DataObject implements PermissionProvider
 		if ($this->canPublish() && !$this->IsDeletedFromStage) {
 			// "publish"
 			$actions->push(
-				FormAction::create('publish_' . $this->ID, _t('ContentModule.BUTTONSAVEPUBLISH', 'Save & Publish'))
+				FormAction::create($renameActions ? 'publish_' . $this->ID : 'publish', _t('ContentModule.BUTTONSAVEPUBLISH', 'Save & Publish'))
 					->addExtraClass('ss-ui-action-constructive publish')->setAttribute('data-icon', 'accept')
 			);
 		}
@@ -291,7 +295,7 @@ class ContentModule extends DataObject implements PermissionProvider
 	}
 
 	public function EditActions() {
-		$actions = $this->getCMSActions();
+		$actions = $this->getCMSActions(true);
 
 		return $actions;
 	}
@@ -613,22 +617,21 @@ class ContentModule extends DataObject implements PermissionProvider
 	 */
 	public function doPublish() {
 		if ($this->canPublish()) {
-
 			//editing modules
 			if (isset($_REQUEST['ContentModule'][$this->ID])) {
 				foreach ($this->EditFields($_REQUEST['ContentModule'][$this->ID], false) as $field) {
 					$field->saveInto($this);
 				}
 				//$this->update($_REQUEST['ContentModule'][$this->ID]);
+				$this->write();
 			}
 
-			$original = Versioned::get_one_by_stage("SiteTree", "Live", "\"SiteTree\".\"ID\" = $this->ID");
-			if (!$original) $original = new SiteTree();
+			$original = Versioned::get_one_by_stage("ContentModule", "Live", "\"ContentModule\".\"ID\" = $this->ID");
+			if (!$original) $original = new ContentModule();
 
 			// Handle activities undertaken by extensions
 			$this->invokeWithExtensions('onBeforePublish', $original);
-			//$this->PublishedByID = Member::currentUser()->ID;
-			$this->write();
+			//$this->PublisherID = Member::currentUser()->ID;
 			$this->publish('Stage', 'Live');
 
 			return $this->Title ? "{$this->Title} ({$this->i18n_singular_name()}) published" : "{$this->i18n_singular_name()} published";

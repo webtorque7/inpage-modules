@@ -49,9 +49,12 @@ class ContentModuleMain extends LeftAndMain implements PermissionProvider {
 		if(Object::has_extension('ContentModule', 'Translatable') && !$this->request->isAjax()) {
 			Translatable::choose_site_locale(array_keys(Translatable::get_existing_content_languages('ContentModule')));
 		}
-		
+
 		parent::init();
-		
+
+
+		Versioned::reading_stage("Stage");
+
 		Requirements::css(CMS_DIR . '/css/screen.css');
 		Requirements::css(INPAGE_MODULES_DIR . '/css/ContentModule_Admin.css');
 
@@ -424,7 +427,7 @@ class ContentModuleMain extends LeftAndMain implements PermissionProvider {
 		if(!$id) $id = $this->currentPageID();
 
 		$form = parent::getEditForm($id);
-		
+
 		// TODO Duplicate record fetching (see parent implementation)
 		$record = $this->getRecord($id);
 		if($record && !$record->canView()) return Security::permissionFailure($this);
@@ -478,8 +481,10 @@ class ContentModuleMain extends LeftAndMain implements PermissionProvider {
 			} else {
 				$validator = new RequiredFields();
 			}
+
 			
 			$form = new Form($this, "EditForm", $fields, $actions, $validator);
+
 			$form->loadDataFrom($record);
 			$form->disableDefaultAction();
 			$form->addExtraClass('cms-edit-form content-module');
@@ -716,10 +721,6 @@ class ContentModuleMain extends LeftAndMain implements PermissionProvider {
 			if(!singleton($this->stat('tree_class'))->canCreate()) return Security::permissionFailure($this);
 			$record = $this->getNewItem($SQL_id, false);
 		}
-		
-
-
-		if (!$record->ObsoleteClassName) $record->writeWithoutVersion();
 
 		// Update the class instance if necessary
 		if(isset($data['ClassName']) && $data['ClassName'] != $record->ClassName) {
@@ -740,19 +741,12 @@ class ContentModuleMain extends LeftAndMain implements PermissionProvider {
 		// If the 'Save & Publish' button was clicked, also publish the page
 		if (isset($data['publish']) && $data['publish'] == 1) {
 
-			$record->doPublish();
-
-
-			// Update classname with original and get new instance (see above for explanation)
-			if(isset($data['ClassName'])) {
-				$record->setClassName($data['ClassName']);
-				$publishedRecord = $record->newClassInstance($record->ClassName);
-			}
+			$response = $record->doPublish();
 			
 			$this->response->addHeader(
 				'X-Status',
 				rawurlencode(_t(
-					'LeftAndMain.STATUSPUBLISHEDSUCCESS', 
+					'LeftAndMain.STATUSPUBLISHEDSUCCESS',
 					"Published '{title}' successfully",
 					'Status message after publishing a module, showing the module title',
 					array('title' => $record->Title)
@@ -1198,6 +1192,52 @@ class ContentModuleMain extends LeftAndMain implements PermissionProvider {
 				'sort' => -99 // below "CMS_ACCESS_LeftAndMain", but above everything else
 			)
 		);
+	}
+
+	/**
+	 * Populates an array of classes in the CMS
+	 * which allows the user to change the page type.
+	 *
+	 * @return SS_List
+	 */
+	public function ModuleTypes() {
+		$classes = ContentModule::content_module_types();
+
+		$result = new ArrayList();
+
+		foreach($classes as $instance) {
+
+			$class = $instance->class;
+
+			if($instance instanceof HiddenClass) continue;
+
+			if(!$instance->canCreate()) continue;
+
+			// skip this type if it is restricted
+			if($instance->stat('need_permission') && !$this->can(singleton($class)->stat('need_permission'))) continue;
+
+			$addAction = $instance->i18n_singular_name();
+
+			// Get description (convert 'Page' to 'SiteTree' for correct localization lookups)
+			$description = _t($class . '.DESCRIPTION');
+
+			if(!$description) {
+				$description = $instance->uninherited('description');
+			}
+
+			$result->push(new ArrayData(array(
+				'ClassName' => $class,
+				'AddAction' => $addAction,
+				'Description' => $description,
+				// TODO Sprite support
+				'IconURL' => $instance->stat('icon'),
+				'Title' => singleton($class)->i18n_singular_name(),
+			)));
+		}
+
+		$result = $result->sort('AddAction');
+
+		return $result;
 	}
 
 }

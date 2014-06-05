@@ -6,6 +6,8 @@
 .content-module .handle                                 {display:inline-block; float:right; height:16px; width:16px; cursor:move; background:url("/framework/admin/images/sitetree_ss_default_icons.png") no-repeat; background-position:-56px -20px;}
 .content-module .Actions                                {padding-left:20px; display:none;}
 
+.ContentModuleEditController .content-module .Actions   {display:block;}
+
 .content-module .cms-actions-row                        {height:30px; margin-bottom:10px;}
 
 /* table widths */

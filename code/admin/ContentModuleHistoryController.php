@@ -14,6 +14,7 @@ class ContentModuleHistoryController extends ContentModuleMain {
 	private static $session_namespace = 'ContentModuleMain';
 
 	private static $allowed_actions = array(
+		'show',
 		'VersionsForm',
 		'compare'
 	);

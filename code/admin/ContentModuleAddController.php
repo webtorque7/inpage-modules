@@ -18,19 +18,19 @@ class ContentModuleAddController extends ContentModuleEditController {
 	public function AddForm() {
 		$record = $this->currentPage();
 		
-		$pageTypes = array();
-		foreach($this->PageTypes() as $type) {
+		$moduleTypes = array();
+		foreach($this->ModuleTypes() as $type) {
 			$html = sprintf('<span class="page-icon class-%s"></span><strong class="title">%s</strong><span class="description">%s</span>',
 				$type->getField('Title'),
 				$type->getField('AddAction'),
 				$type->getField('Description')
 			);
-			$pageTypes[$type->getField('ClassName')] = $html;
+			$moduleTypes[$type->getField('ClassName')] = $html;
 		}
 		// Ensure generic page type shows on top
-		if(isset($pageTypes['Page'])) {
-			$pageTitle = $pageTypes['Page'];
-			$pageTypes = array_merge(array('Page' => $pageTitle), $pageTypes);
+		if(isset($moduleTypes['Page'])) {
+			$pageTitle = $moduleTypes['Page'];
+			$moduleTypes = array_merge(array('Page' => $pageTitle), $moduleTypes);
 		}
 
 		$numericLabelTmpl = '<span class="step-label"><span class="flyout">%d</span><span class="arrow"></span><span class="title">%s</span></span>';
@@ -41,41 +41,13 @@ class ContentModuleAddController extends ContentModuleEditController {
 		$fields = new FieldList(
 			// new HiddenField("ParentID", false, ($this->parentRecord) ? $this->parentRecord->ID : null),
 			// TODO Should be part of the form attribute, but not possible in current form API
-			$hintsField = new LiteralField('Hints', sprintf('<span class="hints" data-hints="%s"></span>', $this->SiteTreeHints())),
-			new LiteralField('PageModeHeader', sprintf($numericLabelTmpl, 1, _t('CMSMain.ChoosePageParentMode', 'Choose where to create this page'))),
-			
-			$parentModeField = new SelectionGroup(
-				"ParentModeField",
-				array(
-					"top//$topTitle" => null, //new LiteralField("Dummy", ''),
-					"child//$childTitle" => $parentField = new TreeDropdownField(
-						"ParentID", 
-						"",
-						'SiteTree',
-						'ID',
-						'TreeTitle'
-					)
-				)
-			),
+
 			$typeField = new OptionsetField(
-				"PageType", 
-				sprintf($numericLabelTmpl, 2, _t('CMSMain.ChoosePageType', 'Choose page type')), 
-				$pageTypes, 
-				'Page'
+				"ModuleType",
+				sprintf($numericLabelTmpl, 1, _t('ContentModuleMain.ChooseModuleType', 'Choose module type')),
+				$moduleTypes
 			)
 		);
-		// TODO Re-enable search once it allows for HTML title display, 
-		// see http://open.silverstripe.org/ticket/7455
-		// $parentField->setShowSearch(true);
-		$parentModeField->setValue($this->request->getVar('ParentID') ? 'child' : 'top');
-		$parentModeField->addExtraClass('parent-mode');
-
-		// CMSMain->currentPageID() automatically sets the homepage,
-		// which we need to counteract in the default selection (which should default to root, ID=0)
-		$homepageSegment = RootURLController::get_homepage_link();
-		if($record && $record->URLSegment != $homepageSegment) {
-			$parentField->setValue($record->ID);	
-		}
 		
 		$actions = new FieldList(
 			// $resetAction = new ResetFormAction('doCancel', _t('CMSMain.Cancel', 'Cancel')),
@@ -84,7 +56,7 @@ class ContentModuleAddController extends ContentModuleEditController {
 				->setUseButtonTag(true)
 		);
 		
-		$this->extend('updatePageOptions', $fields);
+		$this->extend('updateModuleOptions', $fields);
 		
 		$form = new Form($this, "AddForm", $fields, $actions);
 		$form->addExtraClass('cms-add-form stacked cms-content center cms-edit-form ' . $this->BaseCSSClasses());
@@ -98,51 +70,31 @@ class ContentModuleAddController extends ContentModuleEditController {
 	}
 
 	public function doAdd($data, $form) {
-		$className = isset($data['PageType']) ? $data['PageType'] : "Page";
-		$parentID = isset($data['ParentID']) ? (int)$data['ParentID'] : 0;
+		$className = isset($data['ModuleType']) ? $data['ModuleType'] : "TextModule";
 
-		$suffix = isset($data['Suffix']) ? "-" . $data['Suffix'] : null;
-
-		if(!$parentID && isset($data['Parent'])) {
-			$page = SiteTree:: get_by_link(Convert::raw2sql($data['Parent']));
-			if($page) $parentID = $page->ID;
-		}
-
-		if(is_numeric($parentID) && $parentID > 0) $parentObj = DataObject::get_by_id("SiteTree", $parentID);
-		else $parentObj = null;
-		
-		if(!$parentObj || !$parentObj->ID) $parentID = 0;
-
-		if($parentObj) {
-			if(!$parentObj->canAddChildren()) return Security::permissionFailure($this);
-			if(!singleton($className)->canCreate()) return Security::permissionFailure($this);
-		} else {
-			if(!SiteConfig::current_site_config()->canCreateTopLevel())
-				return Security::permissionFailure($this);
-		}
-
-		$record = $this->getNewItem("new-$className-$parentID".$suffix, false);
+		$record = Injector::inst()->get($className);
 		if(class_exists('Translatable') && $record->hasExtension('Translatable') && isset($data['Locale'])) {
 			$record->Locale = $data['Locale'];
 		}
 
 		try {
 			$record->write();
+			$record->writeToStage('Stage');
 		} catch(ValidationException $ex) {
 			$form->sessionMessage($ex->getResult()->message(), 'bad');
 			return $this->getResponseNegotiator()->respond($this->request);
 		}
 
-		$editController = singleton('CMSPageEditController');
+		$editController = singleton('ContentModuleEditController');
 		$editController->setCurrentPageID($record->ID);
 
 		Session::set(
 			"FormInfo.Form_EditForm.formError.message", 
-			_t('CMSMain.PageAdded', 'Successfully created page')
+			_t('CMSMain.PageAdded', 'Successfully created module')
 		);
 		Session::set("FormInfo.Form_EditForm.formError.type", 'good');
 		
-		return $this->redirect(Controller::join_links(singleton('CMSPageEditController')->Link('show'), $record->ID));
+		return $this->redirect(Controller::join_links($editController->Link('show'), $record->ID));
 	}
 
 }

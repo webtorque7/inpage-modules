@@ -33,3 +33,16 @@
 .cms-container .ContentModuleEditController .cms-edit-form, .cms-container .ContentModuleSettingsController .cms-edit-form, .cms-container .ContentModuleHistoryController .cms-edit-form {
 	background: none repeat scroll 0 0 #E6EAED;
 }
+
+#ModuleType ul { padding-left: 20px; }
+#ModuleType ul li { float: none; width: 100%; padding: 9px 0 9px 15px; overflow: hidden; border-bottom-width: 2px; border-bottom: 2px groove rgba(255, 255, 255, 0.8); -webkit-border-image: url(../images/textures/bg_fieldset_elements_border.png) 2 stretch stretch; border-image: url(../images/textures/bg_fieldset_elements_border.png) 2 stretch stretch; }
+#ModuleType ul li:last-child { border-bottom: none; }
+#ModuleType ul li:hover, #ModuleType ul li.selected { background-color: rgba(255, 255, 102, 0.3); }
+#ModuleType ul li.disabled { color: #aaaaaa; filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50); opacity: 0.5; }
+#ModuleType ul li.disabled:hover { background: none; }
+#ModuleType ul li input { margin: inherit; }
+#ModuleType ul li label { padding-left: 0; padding-bottom: 0; }
+#ModuleType ul li input, #ModuleType ul li label, #ModuleType ul li .page-icon, #ModuleType ul li .title { float: left; line-height: 1.3em; }
+#ModuleType ul li .page-icon { margin: 0 4px; }
+#ModuleType ul li .title { width: 200px; font-weight: bold; padding-right: 10px; }
+#ModuleType ul li .description { font-style: italic; display: inline; clear: none; margin: 0; }
