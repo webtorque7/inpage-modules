@@ -248,7 +248,7 @@ class ContentModule extends DataObject implements PermissionProvider
 				$value = $this->{$name}();
 			}
 
-			$value = (!empty($values) && !empty($values[$name])) ? $values[$name] : $value;
+			$value = (!empty($values) && isset($values[$name])) ? $values[$name] : $value;
 
 			switch ($field->class) {
 				case 'UploadField':
