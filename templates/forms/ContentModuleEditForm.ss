@@ -1,6 +1,6 @@
 
 <div class="content-module $ClassName" id="{$ClassName}_{$ID}" data-id="$ID">
-        <h4><% if $Title %>$Title - <% end_if %> $i18n_singular_name</h4>
+        <h4><% if $Title %>$Title - <% end_if %><strong>$i18n_singular_name</strong></h4>
         <div class="form">
                 <fieldset class="fields">
                         <% loop $EditFields %>
