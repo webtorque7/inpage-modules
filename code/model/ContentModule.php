@@ -253,8 +253,16 @@ class ContentModule extends DataObject implements PermissionProvider
 			switch ($field->class) {
 				case 'UploadField':
 			        case 'ContentModuleUploadField':
-					$field->setValue(!empty($values) && !empty($values[$name]) ? $values[$name] : null, $this);
-					break;
+                                        if (!empty($values) && !empty($values[$name])) {
+                                                $field->setValue($values[$name], $this);
+                                        }
+                                        else if (!empty($values)) {
+                                                $field->setItems(null, null);
+                                        }
+                                        else {
+                                                $field->setValue(null, $this);
+                                        }
+                                break;
 				default:
 					$field->setValue($value, $this);
 					break;
@@ -622,7 +630,6 @@ class ContentModule extends DataObject implements PermissionProvider
 				foreach ($this->EditFields($_REQUEST['ContentModule'][$this->ID], false) as $field) {
 					$field->saveInto($this);
 				}
-				//$this->update($_REQUEST['ContentModule'][$this->ID]);
 				$this->write();
 			}
 
