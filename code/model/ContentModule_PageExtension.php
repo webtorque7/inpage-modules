@@ -56,44 +56,67 @@ class ContentModule_PageController_Extension extends Extension
 	 * Action for the module, finds the appropriate module and passes the request handling on
 	 * @return mixed
 	 */
-	public function m($request) {
+	public function m($request = null) {
+		if($request){
+			if (($urlSegment = $request->param('Module')) && ($moduleAction = $request->param('ModuleAction'))) {
+				$request->shift(2);
+				$module = ContentModule::get()->filter('URLSegment', $urlSegment)->first();
+				if ($module && $module->hasMethod($moduleAction)) {
+					$response = $module->{$moduleAction}();
 
-		if (($urlSegment = $request->param('Module')) && ($moduleAction = $request->param('ModuleAction'))) {
-			$request->shift(2);
-			$module = ContentModule::get()->filter('URLSegment', $urlSegment)->first();
-
-			if ($module && $module->hasMethod($moduleAction)) {
-				$response = $module->{$moduleAction}();
-
-				if (is_subclass_of($response, 'RequestHandler')) {
-					return $response->handleRequest($request, new DataModel());
+					if (is_subclass_of($response, 'RequestHandler')) {
+						return $response->handleRequest($request, new DataModel());
+					}
+					return $response;
 				}
-				return $response;
 			}
-		}
-		else if ($urlSegment = $request->param('Module')) {//default index action
-			$request->shift(1);
+			else if ($urlSegment = $request->param('Module')) {//default index action
+				$request->shift(1);
 
-			$module = ContentModule::get()->filter('URLSegment', $urlSegment)->first();
+				$module = ContentModule::get()->filter('URLSegment', $urlSegment)->first();
 
-			if ($module && $module->hasMethod('index')) {
-				$return = $module->index();
+				if ($module && $module->hasMethod('index')) {
+					$return = $module->index();
 
-				if (is_subclass_of($return, 'RequestHandler')) {
-					$return = $return->handleRequest();
+					if (is_subclass_of($return, 'RequestHandler')) {
+						$return = $return->handleRequest();
+					}
+					//ajax request the module handles the response
+					if ($this->owner->request->isAjax()) {
+						return $return;
+					}
+
+					//for normal request, the module can change its state, but the request is handled by the page
+					return $this->owner->index();
 				}
-				//ajax request the module handles the response
-				if ($this->owner->request->isAjax()) {
-					return $return;
-				}
-
-				//for normal request, the module can change its state, but the request is handled by the page
-				return $this->owner->index();
 			}
+
+			$this->owner->redirect($this->owner->Link());
 		}
+		else{
+			if (($urlSegment = $this->owner->request->param('ID')) && ($moduleAction = $this->owner->request->param('OtherID'))) {
+				$module = ContentModule::get()->filter('URLSegment', $urlSegment)->first();
 
-		$this->owner->redirect($this->owner->Link());
+				if ($module && $module->hasMethod($moduleAction)) {
+					return $module->{$moduleAction}();
+				}
+			}
+			else if ($urlSegment = $this->owner->request->param('ID')) {//default index action
+				$module = ContentModule::get()->filter('URLSegment', $urlSegment)->first();
+				if ($module && $module->hasMethod('index')) {
+					$return = $module->index();
 
-                //return error
+					//ajax request the module handles the response
+					if ($this->owner->request->isAjax()) {
+						return $return;
+					}
+
+					//for normal request, the module can change its state, but the request is handled by the page
+					return $this->owner->index();
+				}
+			}
+
+			$this->owner->redirect($this->owner->Link());
+		}
         }
 }
