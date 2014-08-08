@@ -48,24 +48,40 @@ class ContentModule_PageController_Extension extends Extension
                 'm'
         );
 
+	private static $url_handlers = array(
+		'm//$Module/$ModuleAction' => 'm'
+	);
+
 	/**
 	 * Action for the module, finds the appropriate module and passes the request handling on
 	 * @return mixed
 	 */
-	public function m() {
+	public function m($request) {
 
-                if (($urlSegment = $this->owner->request->param('ID')) && ($moduleAction = $this->owner->request->param('OtherID'))) {
-                        $module = ContentModule::get()->filter('URLSegment', $urlSegment)->first();
+		if (($urlSegment = $request->param('Module')) && ($moduleAction = $request->param('ModuleAction'))) {
+			$request->shift(2);
+			$module = ContentModule::get()->filter('URLSegment', $urlSegment)->first();
 
-                        if ($module && $module->hasMethod($moduleAction)) {
-                                return $module->{$moduleAction}();
-                        }
-                }
-                else if ($urlSegment = $this->owner->request->param('ID')) {//default index action
-                        $module = ContentModule::get()->filter('URLSegment', $urlSegment)->first();
-                        if ($module && $module->hasMethod('index')) {
-                                $return = $module->index();
+			if ($module && $module->hasMethod($moduleAction)) {
+				$response = $module->{$moduleAction}();
 
+				if (is_subclass_of($response, 'RequestHandler')) {
+					return $response->handleRequest($request, new DataModel());
+				}
+				return $response;
+			}
+		}
+		else if ($urlSegment = $request->param('Module')) {//default index action
+			$request->shift(1);
+
+			$module = ContentModule::get()->filter('URLSegment', $urlSegment)->first();
+
+			if ($module && $module->hasMethod('index')) {
+				$return = $module->index();
+
+				if (is_subclass_of($return, 'RequestHandler')) {
+					$return = $return->handleRequest();
+				}
 				//ajax request the module handles the response
 				if ($this->owner->request->isAjax()) {
 					return $return;
@@ -73,10 +89,10 @@ class ContentModule_PageController_Extension extends Extension
 
 				//for normal request, the module can change its state, but the request is handled by the page
 				return $this->owner->index();
-                        }
-                }
+			}
+		}
 
-                $this->owner->redirect($this->owner->Link());
+		$this->owner->redirect($this->owner->Link());
 
                 //return error
         }
