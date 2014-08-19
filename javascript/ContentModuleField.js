@@ -27,7 +27,12 @@
              }
              },*/
             getPageID: function () {
-                return $('#Form_EditForm_ID').val();
+		var id = $('#Form_EditForm_ID').val();
+		    if(!id){
+			    var pathname = window.location.pathname.match(/\d+/)
+			    id = pathname[0];
+		    }
+                return id;
             },
 
             getScrollContainer: function () {
