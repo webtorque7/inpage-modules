@@ -818,6 +818,10 @@ class ContentModuleMain extends LeftAndMain implements PermissionProvider {
 		$record->doPublish();
 	}
 
+	public function canView($member = null) {
+		return true;
+	}
+
 	/**
  	 * Reverts a page by publishing it to live.
  	 * Use {@link restorepage()} if you want to restore a page
