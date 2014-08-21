@@ -51,7 +51,14 @@
                 return this.find('.current-modules .modules');
             },
             addModule: function (module) {
-                this.getModulesContainer().append(module).reloadAccordion();
+		if(this.getModulesContainer().length){
+			this.getModulesContainer().append(module).reloadAccordion();
+		}
+		else{
+			this.find('.current-modules p').hide();
+			this.find('.current-modules .message').show();
+			this.find('.current-modules').append('<div class="modules ui-accordion ui-widget ui-helper-reset ui-sortable" role="tablist">' + module + '</div>').reloadAccordion();
+		}
                 this.scrollToEnd();
             },
             sortModules: function (e, ui) {
@@ -305,13 +312,12 @@
                     contentModuleField.showLoading();
                     $.get(url, function (data) {
                         contentModuleField.hideLoading();
+			if (data.Content) {
+			    contentModuleField.addModule(data.Content);
+			}
                         if (data.Status) {
                             if (data.Message) {
                                 statusMessage(data.Message, 'good');
-                            }
-
-                            if (data.Content) {
-                                contentModuleField.addModule(data.Content);
                             }
                         }
                         else {
