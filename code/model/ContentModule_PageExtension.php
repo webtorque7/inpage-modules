@@ -70,9 +70,10 @@ class ContentModule_PageController_Extension extends Extension
 
 
 
-					if (is_subclass_of($response, 'RequestHandler')) {
+					if (is_subclass_of($response, 'RequestHandler') && !($response instanceof Form)) {
 						return $response->handleRequest($request, new DataModel());
 					}
+
 					return $response;
 				}
 			}
