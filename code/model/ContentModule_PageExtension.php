@@ -48,29 +48,36 @@ class ContentModule_PageController_Extension extends Extension
                 'm'
         );
 
-	private static $url_handlers = array(
-		'm//$Module/$ModuleAction' => 'm'
-	);
+//	private static $url_handlers = array(
+//		'm//$Module/$ModuleAction' => 'm'
+//	);
 
 	/**
 	 * Action for the module, finds the appropriate module and passes the request handling on
 	 * @return mixed
 	 */
 	public function m($request = null) {
+
+		if (!$request) $request = $this->owner->request;
+
 		if($request){
-			if (($urlSegment = $request->param('Module')) && ($moduleAction = $request->param('ModuleAction'))) {
+			if (($urlSegment = $request->param('ID')) && ($moduleAction = $request->param('OtherID'))) {
+
 				$request->shift(2);
 				$module = ContentModule::get()->filter('URLSegment', $urlSegment)->first();
 				if ($module && $module->hasMethod($moduleAction)) {
 					$response = $module->{$moduleAction}();
 
-					if (is_subclass_of($response, 'RequestHandler')) {
+
+
+					if (is_subclass_of($response, 'RequestHandler') && !($response instanceof Form)) {
 						return $response->handleRequest($request, new DataModel());
 					}
+
 					return $response;
 				}
 			}
-			else if ($urlSegment = $request->param('Module')) {//default index action
+			else if ($urlSegment = $request->param('ID')) {//default index action
 				$request->shift(1);
 
 				$module = ContentModule::get()->filter('URLSegment', $urlSegment)->first();
