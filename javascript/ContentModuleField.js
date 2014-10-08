@@ -477,6 +477,7 @@
 
         $('body .content-module-field .content-module input.unlink[type=submit],body .content-module-field .content-module input.delete[type=submit],body .content-module-field .content-module input.unpublish[type=submit]').entwine({
             onclick: function (e) {
+		    var self = this;
                 e.preventDefault();
                 e.stopPropagation();
 
@@ -490,7 +491,12 @@
                         contentModule.reload();
                     }
                     else {
+			    contentModule.getContentModuleField()
+				    .find('.content-module-field-actions').hide()
+				    	.find('.Actions').html('');
+
                         contentModule.remove();
+
                     }
                 });
 
