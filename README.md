@@ -44,6 +44,12 @@ modules, and have them render with their own templates:
 <% end_loop %>
 ```
 
+## Templates
+
+Create a template with same name as the module e.g. ImageModule.ss. Uses the same template
+inheritance model as SiteTree objects to get the template. By convention it is a good idea to
+add module templates to `themes/<yourtheme>/templates/modules`
+
 ## Multiple Sections
 
 Multiple sections for modules can be added to a page creating a new base class e.g. SideBarModule
