@@ -23,6 +23,9 @@ both for sidebar-style content and flexible main content areas.
 ## Installation
 
 Install the module into a `inpage-modules\` folder inside the webroot.
+
+With composer - composer require webtorque7/inpage-modules
+
 Then add the `ContentModule_PageExtension` class to either your base `Page` class or select subclasses.
 
 ```yml
@@ -39,4 +42,30 @@ modules, and have them render with their own templates:
 <% loop $SortedContentModules %>
 	$forTemplate
 <% end_loop %>
+```
+
+## Multiple Sections
+
+Multiple sections for modules can be added to a page creating a new base class e.g. SideBarModule
+and setting up a many_many relationship
+
+```php
+$many_many = array(
+    'SideBarModules' => 'SideBarModule'
+);
+
+$many_many_extraFields = array(
+    'SideBarModules' => array(
+        'Sort' => 'Int'
+    )
+);
+```
+
+Make sure to add the Sort field. To simplify getting the sorted modules you can overwrite the
+many many function
+
+```php
+public function SideBarModules() {
+    return $this->getManyManyComponents('SideBarModules')->sort('Sort');
+}
 ```
