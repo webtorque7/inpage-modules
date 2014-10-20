@@ -21,7 +21,8 @@ class ContentModule extends DataObject implements PermissionProvider
 	private static $db = array(
 		'Title' => 'Varchar',
 		'Reuseable' => 'Boolean',
-		'URLSegment' => 'Varchar'
+		'URLSegment' => 'Varchar',
+		'ShowFirst' => 'Boolean'
 	);
 
 	private static $defaults = array(
@@ -48,7 +49,8 @@ class ContentModule extends DataObject implements PermissionProvider
 			$rootTab = new TabSet("Root",
 				$tabMain = new Tab('Main',
 					new TextField('Title', 'Module Name'),
-					new CheckboxField('Reuseable', 'Save to library?')
+					new CheckboxField('Reuseable', 'Save to library?'),
+	                                new CheckboxField('ShowFirst', 'Show this module first on the page')
 				)
 			)
 		);
