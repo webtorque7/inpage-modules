@@ -1,0 +1,16 @@
+{
+	"name": "webtorque7/inpage-modules",
+	"description": "Adds module blocks to a SilverStripe website.",
+	"type": "silverstripe-module",
+	"keywords": ["silverstripe", "module", "blocks"],
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Conrad Dobbs",
+			"email": "conrad@webtorque.co.nz"
+		}],
+	"require": {
+		"silverstripe/framework": "~3.1"
+	}
+
+}
