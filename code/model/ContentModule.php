@@ -305,6 +305,12 @@ class ContentModule extends DataObject implements PermissionProvider
 	public function EditActions() {
 		$actions = $this->getCMSActions(true);
 
+                foreach ($actions as $field) {
+                    if ($this->form) $field->setForm($this->form);
+
+                    if (($contentModuleField = $this->getCurrentModuleField()) && $contentModuleField->getForm()) $field->setForm($contentModuleField->getForm());
+                }
+            
 		return $actions;
 	}
 
