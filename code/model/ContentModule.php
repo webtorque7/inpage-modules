@@ -91,7 +91,7 @@ class ContentModule extends DataObject implements PermissionProvider
 		if (($cModField = ContentModuleField::curr()) && $this->exists()) {
 			// "unlink"
 			$minorActions->push(
-				FormAction::create($renameActions ? 'unlink_' . $this->ID : 'unlink', _t('ContentModule.BUTTONUNLINK', 'Unlink'), 'unlink')
+				FormAction::create($renameActions ? 'unlink_' . $this->ID : 'unlink', _t('ContentModule.BUTTONUNLINK', 'Unlink'))
 					->setDescription(_t('ContentModule.BUTTONUNLINKDESC', 'Unlink this module from the current page'))
 					->addExtraClass('ss-ui-action-destructive unlink')->setAttribute('data-icon', 'unlink')
 			);
@@ -100,7 +100,7 @@ class ContentModule extends DataObject implements PermissionProvider
 		if ($this->isPublished() && $this->canPublish() && !$this->IsDeletedFromStage && $this->canDeleteFromLive()) {
 			// "unpublish"
 			$minorActions->push(
-				FormAction::create($renameActions ? 'unpublish_' . $this->ID : 'unpublish', _t('ContentModule.BUTTONUNPUBLISH', 'Unpublish'), 'delete')
+				FormAction::create($renameActions ? 'unpublish_' . $this->ID : 'unpublish', _t('ContentModule.BUTTONUNPUBLISH', 'Unpublish'))
 					->setDescription(_t('ContentModule.BUTTONUNPUBLISHDESC', 'Remove this module from the published site'))
 					->addExtraClass('ss-ui-action-destructive unpublish')->setAttribute('data-icon', 'unpublish')
 			);
@@ -110,7 +110,7 @@ class ContentModule extends DataObject implements PermissionProvider
 			if ($this->isPublished() && $this->canEdit()) {
 				// "rollback"
 				$minorActions->push(
-					FormAction::create($renameActions ? 'rollback_' . $this->ID : 'rollback', _t('ContentModule.BUTTONCANCELDRAFT', 'Cancel draft changes'), 'delete')
+					FormAction::create($renameActions ? 'rollback_' . $this->ID : 'rollback', _t('ContentModule.BUTTONCANCELDRAFT', 'Cancel draft changes'))
 						->setDescription(_t('ContentModule.BUTTONCANCELDRAFTDESC', 'Delete your draft and revert to the currently published module'))
 						->addExtraClass('rollback')
 				);
