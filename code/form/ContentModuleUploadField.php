@@ -306,7 +306,7 @@ class ContentModuleUploadField extends UploadField {
 				&& is_array($postVars['tmp_name'])
 			) {
 				foreach ($postVars['tmp_name'] as $index => $tmp) {
-					for($i = 0; $i < count($postVars['tmp_name'][$index][$this->originalFieldName]['Uploads']); $i++) {
+					if (isset($postVars['tmp_name'][$index][$this->originalFieldName])) for($i = 0; $i < count($postVars['tmp_name'][$index][$this->originalFieldName]['Uploads']); $i++) {
 						// Skip if "empty" file
 						if(empty($postVars['tmp_name'][$index][$this->originalFieldName]['Uploads'][$i])) continue;
 						$tmpFile = array();
