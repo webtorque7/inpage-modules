@@ -497,5 +497,27 @@
                 return false;
             }
         });
+
+        //make sure first tab is active so accordian fully expands
+        $('.content-module-field .content-module > h4').entwine({
+            onclick:function() {
+                var tabset = this.parent().find('.ss-tabset');
+
+                if (tabset.length) {
+                    //check for open tab
+                    var panelVisible = false;
+                    tabset.find('.ui-tabs-panel').each(function(){
+                       if ($(this).is(':visible')) {
+                           panelVisible = true;
+                           return false;
+                       }
+                    });
+
+                    if (!panelVisible) {
+                        tabset.find('.ui-tabs-panel').first().show();
+                    }
+                }
+            }
+        });
     });
 })(jQuery);

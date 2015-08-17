@@ -223,8 +223,15 @@ class ContentModule extends DataObject implements PermissionProvider
 	public function EditFields($values = null, $rename = true) {
 		$fields = $this->getCMSFields();
 
-		$returnFields = new FieldList();
-		if ($fields) foreach ($fields->dataFields() as $field) {
+		$this->renameFields($fields, $values, $rename);
+
+		$this->extend('updateEditFields', $fields);
+
+		return $fields;
+	}
+
+	public function renameFields($fields, $values, $rename) {
+		if ($fields) foreach ($fields as $field) {
 			/**
 			 * @var $field FormField
 			 */
@@ -252,17 +259,17 @@ class ContentModule extends DataObject implements PermissionProvider
 
 			switch ($field->class) {
 				case 'UploadField':
-			        case 'ContentModuleUploadField':
-                                        if (!empty($values) && !empty($values[$name])) {
-                                                $field->setValue($values[$name], $this);
-                                        }
-                                        else if (!empty($values)) {
-                                                $field->setItems(null, null);
-                                        }
-                                        else {
-                                                $field->setValue(null, $this);
-                                        }
-                                break;
+				case 'ContentModuleUploadField':
+					if (!empty($values) && !empty($values[$name])) {
+						$field->setValue($values[$name], $this);
+					}
+					else if (!empty($values)) {
+						$field->setItems(null, null);
+					}
+					else {
+						$field->setValue(null, $this);
+					}
+					break;
 				default:
 					$field->setValue($value, $this);
 					break;
@@ -274,32 +281,14 @@ class ContentModule extends DataObject implements PermissionProvider
 			}
 
 			//composite field
-			if ($field->hasMethod('getSubFields')) {
-				foreach ($field->getSubFields() as $subfield) {
-					$name = $subfield->getName();
-
-					//rename the field to tie it to the module
-					$newFieldName = "ContentModule[{$this->ID}][{$name}]";
-
-					if ($subfield->hasMethod('setContentModuleNames')) {
-						$subfield->setContentModuleNames($name, $newFieldName);
-					}
-					$subfield->setName($newFieldName);
-				}
+			if ($field->hasMethod('getChildren')) {
+				$this->renameFields($field->getChildren(), $rename, $values);
 			}
 
 			if ($this->form) $field->setForm($this->form);
 
 			if (($contentModuleField = $this->getCurrentModuleField()) && $contentModuleField->getForm()) $field->setForm($contentModuleField->getForm());
-
-			$returnFields->push($field);
-
 		}
-
-		$this->extend('updateEditFields', $fields);
-
-
-		return $returnFields;
 	}
 
 	public function EditActions() {
@@ -629,11 +618,11 @@ class ContentModule extends DataObject implements PermissionProvider
 	 * CMS action for publishing ContentModule, returns a message
 	 * @return string
 	 */
-	public function doPublish() {
+	public function doPublish($fields) {
 		if ($this->canPublish()) {
 			//editing modules
-			if (isset($_REQUEST['ContentModule'][$this->ID])) {
-				foreach ($this->EditFields($_REQUEST['ContentModule'][$this->ID], false) as $field) {
+			if (!empty($fields)) {
+				foreach ($this->EditFields($fields, false)->dataFields() as $field) {
 					$field->saveInto($this);
 				}
 				$this->write();
@@ -644,7 +633,6 @@ class ContentModule extends DataObject implements PermissionProvider
 
 			// Handle activities undertaken by extensions
 			$this->invokeWithExtensions('onBeforePublish', $original);
-			//$this->PublisherID = Member::currentUser()->ID;
 			$this->publish('Stage', 'Live');
 
 			return $this->Title ? "{$this->Title} ({$this->i18n_singular_name()}) published" : "{$this->i18n_singular_name()} published";
@@ -657,14 +645,14 @@ class ContentModule extends DataObject implements PermissionProvider
 	 * CMS action for saving draft version of ContentModule, returns a message
 	 * @return string
 	 */
-	public function doSave() {
+	public function doSave($fields) {
 		if ($this->canEdit()) {
 
-			if (isset($_REQUEST['ContentModule'][$this->ID])) {
-				foreach ($this->EditFields($_REQUEST['ContentModule'][$this->ID], false) as $field) {
+			if (!empty($fields)) {
+				foreach ($this->EditFields($fields, false) as $field) {
 					$field->saveInto($this);
 				}
-				//$this->update($_REQUEST['ContentModule'][$this->ID]);
+
 				$this->write();
 			}
 
