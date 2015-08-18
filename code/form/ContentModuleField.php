@@ -22,6 +22,7 @@ class ContentModuleField extends FormField
 		'addNewModule',
 		'addExistingModule',
 		'getExistingModules',
+		'copyModule',
 		'module',
 		'sort',
 		'modulefield',
@@ -155,6 +156,38 @@ class ContentModuleField extends FormField
 			array(
 				'Status' => 0,
 				'Message' => "There was an error creating module '{$moduleType}'"
+			)
+		);
+	}
+
+	public function copyModule() {
+		if (($moduleID = $this->request->param('ID')) && ($pageID = $this->request->param('OtherID'))) {
+
+			$module = ContentModule::get()->byID($moduleID);
+
+			if ($module && ($page = Page::get()->byID($pageID))) {
+				$newModule = $module->duplicate(true);
+
+				$page->{$this->getName()}()->add(
+					$newModule,
+					array('Sort' => $page->{$this->getName()}()->max('Sort') + 1)
+				);
+
+				return ContentModuleUtilities::json_response(
+					array(
+						'Status' => 1,
+						'Content' => $newModule->EditForm()->RAW(),
+						'Message' => "{$newModule->Title} copied"
+					)
+				);
+			}
+
+		}
+
+		return ContentModuleUtilities::json_response(
+			array(
+				'Status' => 0,
+				'Message' => "There was an error copying the module to the current page"
 			)
 		);
 	}

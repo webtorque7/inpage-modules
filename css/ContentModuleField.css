@@ -30,3 +30,5 @@
 
 .content-module .cms-actions-row .or                {display:inline-block; height:30px; line-height:30px; font-size:14px;}
 .content-module .cms-actions-row .field.dropdown    {margin-right:5px;}
+
+.content-module .ui-tabs .ui-tabs-panel             {padding:10px;}

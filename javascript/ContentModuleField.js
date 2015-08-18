@@ -120,6 +120,9 @@
             getAddExistingURL: function () {
                 return this.data('add_existing_url');
             },
+            getCopyURL: function () {
+                return this.data('copy_url');
+            },
             getSortURL: function () {
                 return this.data('sort_url');
             },
@@ -315,6 +318,42 @@
 			if (data.Content) {
 			    contentModuleField.addModule(data.Content);
 			}
+                        if (data.Status) {
+                            if (data.Message) {
+                                statusMessage(data.Message, 'good');
+                            }
+                        }
+                        else {
+                            contentModuleField.hideLoading();
+                            statusMessage(data.Message, 'bad');
+                        }
+                        contentModuleField.hideAddFields();
+                        $('#ContentModule_ModuleType').reset();
+                    });
+                }
+                else {
+                    statusMessage('Please select an existing module', 'bad');
+                }
+
+            }
+        });
+
+        $('.content-module-copy').entwine({
+            onclick: function (e) {
+                e.preventDefault();
+
+                var contentModuleField = this.getContentModuleField();
+
+                var module = contentModuleField.find('.content-module-existing-dropdown').val();
+
+                if (module) {
+                    var url = contentModuleField.getCopyURL() + '/' + module + '/' + contentModuleField.getPageID();
+                    contentModuleField.showLoading();
+                    $.get(url, function (data) {
+                        contentModuleField.hideLoading();
+                        if (data.Content) {
+                            contentModuleField.addModule(data.Content);
+                        }
                         if (data.Status) {
                             if (data.Message) {
                                 statusMessage(data.Message, 'good');
