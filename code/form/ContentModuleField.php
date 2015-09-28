@@ -411,7 +411,7 @@ class ContentModuleField extends FormField
 					}*/
 
 					//find the field
-					$fields = $module->EditFields();
+					$fields = $module->EditFields()->dataFields();
 
 					if ($fields) {
 						foreach ($fields as $field) {

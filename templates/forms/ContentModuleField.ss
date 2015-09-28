@@ -27,8 +27,8 @@
             <br>
             <button class="existing content-module-add-existing">Add Existing</button>
             <button class="existing content-module-copy">Copy</button>
-            <label for="$Name_ContentModule_btnAddNew" class="existing">or</label>
-            <button id="$Name_ContentModule_btnAddNew" class="content-module-add-new">Add New</button>
+            <label for="{$Name}_ContentModule_btnAddNew" class="existing">or</label>
+            <button id="{$Name}_ContentModule_btnAddNew" class="content-module-add-new">Add New</button>
         </div>
     </div>
 
