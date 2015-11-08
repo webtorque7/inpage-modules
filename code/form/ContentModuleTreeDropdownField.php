@@ -56,26 +56,35 @@ class ContentModuleTreeDropdownField extends TreeDropdownField {
                 Requirements::css(FRAMEWORK_DIR . '/thirdparty/jquery-ui-themes/smoothness/jquery-ui.css');
                 Requirements::css(FRAMEWORK_DIR . '/css/TreeDropdownField.css');
 
-                $record = $this->Value() ? $this->objectForKey($this->Value()) : null;
-                if($record) {
-                        $title = $record->{$this->labelField};
+                if($this->showSearch) {
+                        $emptyTitle = _t('DropdownField.CHOOSESEARCH', '(Choose or Search)', 'start value of a dropdown');
                 } else {
-                        $title = _t('DropdownField.CHOOSE', '(Choose)', 'start value of a dropdown');
+                        $emptyTitle = _t('DropdownField.CHOOSE', '(Choose)', 'start value of a dropdown');
+                }
+
+                $record = $this->Value() ? $this->objectForKey($this->Value()) : null;
+                if($record instanceof ViewableData) {
+                        $title = $record->obj($this->labelField)->forTemplate();
+                } elseif($record) {
+                        $title = Convert::raw2xml($record->{$this->labelField});
+                }
+                else {
+                        $title = $emptyTitle;
                 }
 
                 // TODO Implement for TreeMultiSelectField
                 $metadata = array(
-                        'id' => $record ? $record->ID : null,
-                        'ClassName' => $record ? $record->ClassName : $this->sourceObject
+                    'id' => $record ? $record->ID : null,
+                    'ClassName' => $record ? $record->ClassName : $this->sourceObject
                 );
 
                 $properties = array_merge(
-                        $properties,
-                        array(
-                                'Title' => $title,
-                                'TitleURLEncoded' => rawurlencode($title),
-                                'Metadata' => ($metadata) ? Convert::raw2att(Convert::raw2json($metadata)) : null
-                        )
+                    $properties,
+                    array(
+                        'Title' => $title,
+                        'EmptyTitle' => $emptyTitle,
+                        'Metadata' => ($metadata) ? Convert::raw2att(Convert::raw2json($metadata)) : null
+                    )
                 );
 
                 return $this->customise($properties)->renderWith('ContentModuleTreeDropdownField');
