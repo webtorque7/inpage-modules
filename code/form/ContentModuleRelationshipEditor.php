@@ -691,7 +691,7 @@ class ContentModuleRelationshipEditor_Item extends ViewableData
                                         $idField = $relationMethod . 'ID';
                                         if ($j == sizeof($fieldNameParts) - 1) {
                                                 if ($tmpItem) $value = $tmpItem->$relationMethod;
-                                        } else {
+                                        } else if ($tmpItem->hasMethod($relationMethod)) {
                                                 if ($tmpItem) $tmpItem = $tmpItem->$relationMethod();
                                         }
                                 }
