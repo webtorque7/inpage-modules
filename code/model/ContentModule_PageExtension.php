@@ -1,23 +1,23 @@
 <?php
+
 /**
  * Extension class for adding ContentModule functionality to pages
  *
  * @package inpage-modules
  */
-
 class ContentModule_PageExtension extends DataExtension
 {
 
 
 	private static $many_many = array(
-                'ContentModules' => 'ContentModule'
-        );
+		'ContentModules' => 'ContentModule'
+	);
 
 	private static $many_many_extraFields = array(
-                'ContentModules' => array(
-                        'Sort' => 'Int'
-                )
-        );
+		'ContentModules' => array(
+			'Sort' => 'Int'
+		)
+	);
 
 	/**
 	 * Returns the ContentModules sorted
@@ -25,15 +25,15 @@ class ContentModule_PageExtension extends DataExtension
 	 * @return DataList
 	 */
 	public function SortedContentModules() {
-                return ContentModule::get()
-                        ->innerJoin('Page_ContentModules', '"ContentModule"."ID" = "Page_ContentModules"."ContentModuleID"')
-                        ->where("\"Page_ContentModules\".\"PageID\" = '{$this->owner->ID}'")
-                        ->sort('"Sort" ASC');
-        }
+		return ContentModule::get()
+			->innerJoin('Page_ContentModules', '"ContentModule"."ID" = "Page_ContentModules"."ContentModuleID"')
+			->where("\"Page_ContentModules\".\"PageID\" = '{$this->owner->ID}'")
+			->sort('"Sort" ASC');
+	}
 
-        public function updateCMSFields(FieldList $fields) {
-                $fields->addFieldToTab('Root.Modules', new ContentModuleField('ContentModules'));
-        }
+	public function updateCMSFields(FieldList $fields) {
+		$fields->addFieldToTab('Root.Modules', new ContentModuleField('ContentModules'));
+	}
 
 }
 
@@ -45,8 +45,8 @@ class ContentModule_PageExtension extends DataExtension
 class ContentModule_PageController_Extension extends Extension
 {
 	private static $allowed_actions = array(
-                'm'
-        );
+		'm'
+	);
 
 //	private static $url_handlers = array(
 //		'm//$Module/$ModuleAction' => 'm'
@@ -58,9 +58,11 @@ class ContentModule_PageController_Extension extends Extension
 	 */
 	public function m($request = null) {
 
-		if (!$request) $request = $this->owner->request;
+		if (!$request) {
+			$request = $this->owner->request;
+		}
 
-		if($request){
+		if ($request) {
 			if (($urlSegment = $request->param('ID')) && ($moduleAction = $request->param('OtherID'))) {
 
 				$request->shift(2);
@@ -69,15 +71,13 @@ class ContentModule_PageController_Extension extends Extension
 					$response = $module->{$moduleAction}();
 
 
-
 					if (is_subclass_of($response, 'RequestHandler') && !($response instanceof Form)) {
 						return $response->handleRequest($request, new DataModel());
 					}
 
 					return $response;
 				}
-			}
-			else if ($urlSegment = $request->param('ID')) {//default index action
+			} else if ($urlSegment = $request->param('ID')) {//default index action
 				$request->shift(1);
 
 				$module = ContentModule::get()->filter('URLSegment', $urlSegment)->first();
@@ -99,16 +99,17 @@ class ContentModule_PageController_Extension extends Extension
 			}
 
 			$this->owner->redirect($this->owner->Link());
-		}
-		else{
-			if (($urlSegment = $this->owner->request->param('ID')) && ($moduleAction = $this->owner->request->param('OtherID'))) {
+		} else {
+			if (($urlSegment = $this->owner->request->param('ID')) && ($moduleAction = $this->owner->request->param(
+					'OtherID'
+				))
+			) {
 				$module = ContentModule::get()->filter('URLSegment', $urlSegment)->first();
 
 				if ($module && $module->hasMethod($moduleAction)) {
 					return $module->{$moduleAction}();
 				}
-			}
-			else if ($urlSegment = $this->owner->request->param('ID')) {//default index action
+			} else if ($urlSegment = $this->owner->request->param('ID')) {//default index action
 				$module = ContentModule::get()->filter('URLSegment', $urlSegment)->first();
 				if ($module && $module->hasMethod('index')) {
 					$return = $module->index();
@@ -125,5 +126,5 @@ class ContentModule_PageController_Extension extends Extension
 
 			$this->owner->redirect($this->owner->Link());
 		}
-        }
+	}
 }
