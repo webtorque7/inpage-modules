@@ -6,9 +6,10 @@
  * Date: 9/11/2015
  * Time: 5:28 PM
  */
-class ContentModuleTranslatableExtension extends DataExtension
+class ContentModuleSiteTreeTranslatableExtension extends DataExtension
 {
 	public function onTranslatableCreate($saveTranslation) {
+
 		if ($saveTranslation) {
 			//create new modules
 			if ($original = $this->owner->getTranslation(Translatable::default_locale())) {
@@ -16,6 +17,8 @@ class ContentModuleTranslatableExtension extends DataExtension
 					//create new module
 					$newModule = Object::create(get_class($module));
 					$newModule->Title = $module->Title . ' - ' . Translatable::get_current_locale();
+					$newModule->Locale = Translatable::get_current_locale();
+					$newModule->OriginalID = $original->ID;
 					$newModule->write();
 					$this->owner->ContentModules()->add($newModule);
 				}
