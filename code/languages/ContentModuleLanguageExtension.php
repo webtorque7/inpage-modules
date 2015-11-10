@@ -39,4 +39,12 @@ class ContentModuleLanguageExtension extends DataExtension
 			$query->addWhere($qry);
 		}
 	}
+
+	public function onBeforeWrite() {
+		parent::onBeforeWrite();
+
+		if (!$this->owner->Locale) {
+			$this->owner->Locale = Translatable::get_current_locale();
+		}
+	}
 }

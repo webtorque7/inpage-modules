@@ -343,6 +343,7 @@ class ContentModuleField extends FormField
 		if (($action = $this->request->param('ID')) && ($id = $this->request->param('OtherID'))) {
 			$module = ContentModule::get()->byID($id);
 			$method = 'do' . ucfirst($action);
+
 			if ($module && $module->hasMethod($method)) {
 				$module->setCurrentModuleField($this);
 				$postFields = $request->requestVar('ContentModule');

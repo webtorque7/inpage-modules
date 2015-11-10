@@ -189,7 +189,6 @@
 							}
 						}
 					})
-
 					.sortable({
 						opacity: 0.6,
 						update: function (e, ui) {
@@ -545,15 +544,29 @@
 			}
 		});
 
+		/**
+		 * prevent creating more editors when module is sorted (this triggers onadd)
+		 */
+		$('.content-module textarea.htmleditor').entwine({
+			onadd:function() {
+				if (!this.data('tinymce-added')) {
+					this.data('tinymce-added', true);
+					this._super();
+				} else {
+					this.siblings().remove();
+					this._super();
+				}
+			}
+		});
+
 		//global controls for active module, triggers action on active module
 		$('body .content-module-field .content-module-field-actions .Actions button, body .content-module-field .content-module-field-actions .Actions input[type=submit]').entwine({
 			onclick: function (e) {
 				e.preventDefault();
 
 				//active module
-				var activeModule = this.getContentModuleField().find('.content-module').eq(
-					this.getContentModuleField().find('.current-modules .modules').accordion('option', 'active')
-				);
+				var open = this.getContentModuleField().find('.ui-accordion-content-active'),
+					activeModule = open.closest('.content-module');
 
 				this.addClass('loading');
 				//trigger click on real button
