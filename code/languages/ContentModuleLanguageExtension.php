@@ -26,4 +26,17 @@ class ContentModuleLanguageExtension extends DataExtension
 
 		DB::alteration_message('Updated ContentModule for Translatable', 'changed');
 	}
+
+	public function augmentSQL(SQLQuery &$query, DataQuery $dataQuery = null) {
+		if($this->owner->ID && !empty($this->owner->Locale)) {
+			$locale = $this->owner->Locale;
+		} else {
+			$locale = Translatable::get_current_locale();
+		}
+
+		if ($locale && Translatable::locale_filter_enabled()) {
+			$qry = sprintf('"ContentModule"."Locale" = \'%s\'', Convert::raw2sql($locale));
+			$query->addWhere($qry);
+		}
+	}
 }

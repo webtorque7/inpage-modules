@@ -17,7 +17,7 @@ class ContentModuleMainTranslatableExtension extends Extension
 		$member = Member::currentUser(); //check to see if the current user can switch langs or not
 		if (Permission::checkMember($member, 'VIEW_LANGS')) {
 			$field = new LanguageDropdownField(
-				'q[Locale]',
+				'Locale',
 				_t('CMSMain.LANGUAGEDROPDOWNLABEL', 'Language'),
 				array(),
 				'SiteTree',
@@ -25,12 +25,10 @@ class ContentModuleMainTranslatableExtension extends Extension
 				singleton('SiteTree')
 			);
 
-			$query = $this->owner->getRequest()->requestVar('q');
-			$value = ($query && !empty($query['Locale'])) ? $query['Locale'] : Translatable::get_current_locale();
-
 			$field
-				->setValue($value)
+				->setValue(Translatable::get_current_locale())
 				->setForm($form);
+			
 		} else {
 			// user doesn't have permission to switch langs
 			// so just show a string displaying current language

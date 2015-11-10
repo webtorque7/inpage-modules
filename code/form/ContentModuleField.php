@@ -125,6 +125,7 @@ class ContentModuleField extends FormField
 	}
 
 	public function handleAction($request, $action) {
+		$this->extend('onBeforeHandleAction', $request, $action);
 		if ($this->hasMethod($action)) {
 			return $this->{$action}($request);
 		}

@@ -242,11 +242,9 @@
 
 				contentModuleField.showLoading();
 
-				var urlComponents = getURLComponents(contentModuleField.getExistingURL()),
-					existingURL = urlComponents.url,
-					query = urlComponents.query ? '?' + urlComponents.query : '';
+				var url = getURLComponents(contentModuleField.getExistingURL());
 
-				$.get(existingURL + '/' + this.val() + query, function (data) {
+				$.get(url.url + '/' + this.val() + url.query, function (data) {
 					contentModuleField.hideLoading();
 					if (data.Status) {
 						contentModuleField.find('.content-module-existing-dropdown').updateModules(data.Modules);

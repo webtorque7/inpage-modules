@@ -13,6 +13,7 @@ LeftAndMain::require_css(INPAGE_MODULES_DIR . '/css/ContentModuleField.css');
 
 if (class_exists('Translatable') && SiteTree::has_extension('Translatable')) {
 	Config::inst()->update('ContentModule', 'extensions', array('ContentModuleLanguageExtension'));
+	Config::inst()->update('ContentModuleField', 'extensions', array('ContentModuleFieldTranslatableExtension'));
 	Config::inst()->update('SiteTree', 'extensions', array('ContentModuleSiteTreeTranslatableExtension'));
 	Config::inst()->update('ContentModuleMain', 'extensions', array('ContentModuleMainTranslatableExtension'));
 }
