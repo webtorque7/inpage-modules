@@ -43,6 +43,14 @@ class ContentModule extends DataObject implements PermissionProvider
 
 	private static $exclude_modules = array();
 
+	/**
+	 * Sets tabs to all the same height
+	 *
+	 * @var bool
+	 * @config
+	 */
+	private static $fix_tab_heights = false;
+
 	public function getCMSFields() {
 		$fields = new FieldList(
 			$rootTab = new TabSet("Root",
@@ -919,5 +927,9 @@ class ContentModule extends DataObject implements PermissionProvider
 
 	public function getCurrentModuleField() {
 		return isset(self::$_currentModuleFields[$this->ID]) ? self::$_currentModuleFields[$this->ID] : ContentModuleField::curr();
+	}
+
+	public function getFixTabHeights() {
+		return static::config()->fix_tab_heights;
 	}
 }

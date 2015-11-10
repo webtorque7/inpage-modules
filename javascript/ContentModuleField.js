@@ -405,6 +405,35 @@
 		});
 
 		$('.content-module').entwine({
+			onadd:function() {
+				if (this.data('fix-tab-size')) {
+					this.fixTabSize();
+				}
+			},
+			fixTabSize:function() {
+				if (this.find('ul.ui-tabs-nav li').length > 1) {
+					var form = this.find('.form'),
+						tabs = this.find('div.tab'),
+						formVisible = form.is(':visible');
+
+					if (!formVisible) form.show().css('visibility', 'hidden');
+
+					var maxHeight = 0;
+					tabs.each(function(){
+						var tab = $(this),
+							visible = tab.is(':visible');
+
+						if (!visible) tab.show().css('visibility', 'hidden');
+						maxHeight = Math.max(maxHeight, tab.height());
+						if (!visible) tab.hide().css('visibility', 'visible');
+					});
+
+
+					tabs.height(maxHeight);
+
+					if (!formVisible) form.hide().css('visibility', 'visible');
+				}
+			},
 			submitModule: function (action, callback) {
 				var self = this,
 					contentModuleField = self.getContentModuleField(),
