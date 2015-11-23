@@ -75,7 +75,7 @@ class ContentModuleRelationshipEditor extends FormField
                 $link .= '/' . $action;
             }
 
-            $link .= $link . $query;
+            $link .= $query;
 
         } else {
             $link = parent::Link($action);
