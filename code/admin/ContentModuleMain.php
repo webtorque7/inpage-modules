@@ -169,7 +169,7 @@ class ContentModuleMain extends LeftAndMain implements PermissionProvider
 		$base = singleton('ContentModuleEditController')->Link('show');
 		$query = '';
 
-		if (stripos($base, '?')) {
+		if (stripos($base, '?') !== false) {
 			$parts = explode('?', $base);
 			$base = $parts[0];
 			$query = $parts[1];
