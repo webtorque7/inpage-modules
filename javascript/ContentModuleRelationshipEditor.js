@@ -1,5 +1,20 @@
 (function ($) {
     $.entwine('ss', function ($) {
+        function getURLComponents(url) {
+            var urlComponent = url,
+                queryComponent = '';
+
+            if (urlComponent.indexOf('?') !== -1) {
+                var parts = urlComponent.split('?');
+                urlComponent = parts[0];
+                queryComponent = '?' + parts[1];
+            }
+
+            return {
+                url: urlComponent,
+                query: queryComponent
+            };
+        }
 
         $('.ContentModuleRelationshipEditor').entwine({
             onadd: function () {
@@ -224,8 +239,11 @@
 
                 if (eItems && eItems.val()) {
                     this.closest('.cms-content').addClass('loading');
+
+                    var urlComponents = getURLComponents(url);
+
                     $.ajax({
-                        url: url + '/' + eItems.val(),
+                        url: urlComponents.url + '/' + eItems.val() + '/' + urlComponents.query,
                         method: 'POST',
                         complete: function () {
                             self.closest('.cms-content').removeClass('loading');

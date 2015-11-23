@@ -55,7 +55,7 @@ class ContentModuleRelationshipEditor extends FormField
         }
     }
 
-    public function Link($action = null)
+    public function Link($action = null, $id = null)
     {
         $cModField = ContentModuleField::curr();
         $link = '';
@@ -69,13 +69,7 @@ class ContentModuleRelationshipEditor extends FormField
                 $query = '?' . $parts[1];
             }
 
-            $link .= '/' . $this->getName();
-
-            if ($action) {
-                $link .= '/' . $action;
-            }
-
-            $link .= $query;
+            $link = Controller::join_links($link, $this->getName(), $action, $id, $query);
 
         } else {
             $link = parent::Link($action);
