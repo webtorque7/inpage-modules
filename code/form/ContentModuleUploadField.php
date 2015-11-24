@@ -25,8 +25,18 @@ class ContentModuleUploadField extends UploadField {
                 $link = '';
                 //pass the id so $OtherID is always parsed
                 if ($cModField) {
-                        $link = $cModField->Link('modulefield') . '/' . ($this->contentModuleFieldName ? $this->contentModuleFieldName : $this->getName());
-                        if ($action) $link .= '/' . $action;
+                        $name = $this->contentModuleFieldName ? $this->contentModuleFieldName : $this->getName();
+
+                        $link = $cModField->Link('modulefield');
+
+                        $query = '';
+                        if (stripos($link, '?') !== false) {
+                                $parts = explode('?', $link);
+                                $link = $parts[0];
+                                $query = '?' . $parts[1];
+                        }
+
+                        $link = Controller::join_links($link, $name, $action, $query);
                 }
                 else {
                         $link = parent::Link($action);
