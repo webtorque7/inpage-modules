@@ -24,8 +24,15 @@ class ContentModuleTreeDropdownField extends TreeDropdownField {
                 $cModField = ContentModuleField::curr();
                 $link = '';
                 if ($cModField) {
-                        $link = ContentModuleField::curr()->Link('modulefield') . '/' . $this->getName();
-                        if ($action) $link .= '/' . $action;
+                        $link = ContentModuleField::curr()->Link('modulefield');
+                        $query = '';
+                        if (stripos($link, '?') !== false) {
+                                $parts = explode('?', $link);
+                                $link = $parts[0];
+                                $query = '?' . $parts[1];
+                        }
+
+                        $link = Controller::join_links($link, $this->getName(), $action, $query);
                 }
                 else {
                         $link = parent::Link($action);
