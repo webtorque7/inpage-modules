@@ -70,7 +70,6 @@ class ContentModuleRelationshipEditor extends FormField
             }
 
             $link = Controller::join_links($link, $this->getName(), $action, $id, $query);
-
         } else {
             $link = parent::Link($action);
         }
@@ -212,7 +211,6 @@ class ContentModuleRelationshipEditor extends FormField
     public function sort()
     {
         if (!empty($_REQUEST['Sort'])) {
-
             foreach ($_REQUEST['Sort'] as $id => $index) {
 
                 //many many or has many
@@ -393,8 +391,8 @@ class ContentModuleRelationshipEditor extends FormField
 
     public function remove(SS_HTTPRequest $request)
     {
-
-        $id = $request->param('ID');;
+        $id = $request->param('ID');
+        ;
         if (!$id) {
             $id = $request->param('OtherID');
         }
@@ -423,8 +421,8 @@ class ContentModuleRelationshipEditor extends FormField
 
     public function deleteitem(SS_HTTPRequest $request)
     {
-
-        $id = $request->param('ID');;
+        $id = $request->param('ID');
+        ;
         if (!$id) {
             $id = $request->param('OtherID');
         }
@@ -587,7 +585,6 @@ class ContentModuleRelationshipEditor extends FormField
      */
     public function ItemEditForm($id = null, $fields = null)
     {
-
         if ($this->record) {
             $className = $this->getItemClassName();
 
@@ -752,7 +749,6 @@ class ContentModuleRelationshipEditor extends FormField
                             "Content" => $this->ItemEditForm($record->ID)->forAjaxTemplate()->RAW()
                     )
             );
-
         }
 
         return ContentModuleUtilities::json_response(
@@ -761,7 +757,6 @@ class ContentModuleRelationshipEditor extends FormField
                         "Message" => "Error saving"
                 )
         );
-
     }
 
     /**
@@ -788,8 +783,6 @@ class ContentModuleRelationshipEditor extends FormField
             return false;
         }
     }
-
-
 }
 
 class ContentModuleRelationshipEditor_Item extends ViewableData

@@ -5,24 +5,26 @@
  *
  * @package inpage-modules
  */
-class TextModule extends ContentModule {
+class TextModule extends ContentModule
+{
 
-	private static $singular_name = 'Text';
-	private static $plural_name = 'Text';
+    private static $singular_name = 'Text';
+    private static $plural_name = 'Text';
 
-	private static $db = array(
+    private static $db = array(
                 'ContentTitle' => 'Text',
                 'Text' => 'HTMLText'
         );
 
-        public function getCMSFields() {
-                $fields = parent::getCMSFields();
+    public function getCMSFields()
+    {
+        $fields = parent::getCMSFields();
 
-                $fields->addFieldsToTab('Root.Main', array(
+        $fields->addFieldsToTab('Root.Main', array(
                         new TextField('ContentTitle', 'Content Title'),
                         new HtmlEditorField('Text')
                 ));
 
-                return $fields;
-        }
+        return $fields;
+    }
 }
