@@ -8,9 +8,10 @@
  */
 class ContentModuleFieldTranslatableExtension extends Extension
 {
-	public function onBeforeHandleAction(SS_HTTPRequest $request, $action) {
-		if ($locale = $request->getVar('Locale')) {
-			Translatable::set_current_locale($locale);
-		}
-	}
+    public function onBeforeHandleAction(SS_HTTPRequest $request, $action)
+    {
+        if ($locale = $request->getVar('Locale')) {
+            Translatable::set_current_locale($locale);
+        }
+    }
 }
