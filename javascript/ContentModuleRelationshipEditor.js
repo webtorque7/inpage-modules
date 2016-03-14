@@ -109,6 +109,7 @@
         $('.ContentModuleRelationshipEditor button.remove-link').entwine({
             onclick: function (e) {
                 e.preventDefault();
+                e.stopImmediatePropagation();
 
                 var self = this;
 
