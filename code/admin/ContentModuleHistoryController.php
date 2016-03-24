@@ -41,14 +41,14 @@ class ContentModuleHistoryController extends ContentModuleMain
         });
         return $negotiator;
     }
-    
+
     /**
      * @return array
      */
     public function show($request)
     {
         $form = $this->ShowVersionForm($request->param('VersionID'));
-        
+
         $negotiator = $this->getResponseNegotiator();
         $controller = $this;
         $negotiator->setCallback('CurrentForm', function () use (&$controller, &$form) {
@@ -60,7 +60,7 @@ class ContentModuleHistoryController extends ContentModuleMain
 
         return $negotiator->respond($request);
     }
-    
+
     /**
      * @return array
      */
@@ -82,13 +82,13 @@ class ContentModuleHistoryController extends ContentModuleMain
 
         return $negotiator->respond($request);
     }
-    
+
     /**
-     * Returns the read only version of the edit form. Detaches all {@link FormAction} 
+     * Returns the read only version of the edit form. Detaches all {@link FormAction}
      * instances attached since only action relates to revert.
      *
      * Permission checking is done at the {@link CMSMain::getEditForm()} level.
-     * 
+     *
      * @param int $id ID of the record to show
      * @param array $fields optional
      * @param int $versionID
@@ -101,10 +101,10 @@ class ContentModuleHistoryController extends ContentModuleMain
         if (!$id) {
             $id = $this->currentPageID();
         }
-        
+
         $record = $this->getRecord($id, $versionID);
         $versionID = ($record) ? $record->Version : $versionID;
-        
+
         $form = parent::getEditForm($record, ($record) ? $record->getCMSFields() : null);
         // Respect permission failures from parent implementation
         if (!($form instanceof Form)) {
@@ -117,15 +117,15 @@ class ContentModuleHistoryController extends ContentModuleMain
             $revert = FormAction::create('doRollback', _t('CMSPageHistoryController.REVERTTOTHISVERSION', 'Revert to this version'))->setUseButtonTag(true),
             $navField = new LiteralField('ArchivedLink', $nav->getHTML())
         ));
-        
+
         $fields = $form->Fields();
         $fields->removeByName("Status");
         $fields->push(new HiddenField("ID"));
         $fields->push(new HiddenField("Version"));
-        
+
         $fields = $fields->makeReadonly();
         $navField->setAllowHTML(true);
-        
+
         if ($compareID) {
             $link = Controller::join_links(
                 $this->Link('show'),
@@ -133,7 +133,7 @@ class ContentModuleHistoryController extends ContentModuleMain
             );
 
             $view = _t('CMSPageHistoryController.VIEW', "view");
-            
+
             $message = _t(
                 'CMSPageHistoryController.COMPARINGVERSION',
                 "Comparing versions {version1} and {version2}.",
@@ -142,7 +142,7 @@ class ContentModuleHistoryController extends ContentModuleMain
                     'version2' => sprintf('%s (<a href="%s">%s</a>)', $compareID, Controller::join_links($link, $compareID), $view)
                 )
             );
-            
+
             $revert->setReadonly(true);
         } else {
             $message = _t(
@@ -151,7 +151,7 @@ class ContentModuleHistoryController extends ContentModuleMain
                 array('version' => $versionID)
             );
         }
-        
+
         $fields->addFieldToTab('Root.Main',
             new LiteralField('CurrentlyViewingMessage', $this->customise(array(
                 'Content' => $message,
@@ -165,23 +165,23 @@ class ContentModuleHistoryController extends ContentModuleMain
             "ID" => $id,
             "Version" => $versionID,
         ));
-        
+
         if (($record && $record->isLatestVersion())) {
             $revert->setReadonly(true);
         }
-        
+
         $form->removeExtraClass('cms-content');
 
         return $form;
     }
-    
-    
+
+
     /**
-     * Version select form. Main interface between selecting versions to view 
+     * Version select form. Main interface between selecting versions to view
      * and comparing multiple versions.
-     *  
+     *
      * Because we can reload the page directly to a compare view (history/compare/1/2/3)
-     * this form has to adapt to those parameters as well. 
+     * this form has to adapt to those parameters as well.
      *
      * @return Form
      */
@@ -194,7 +194,7 @@ class ContentModuleHistoryController extends ContentModuleMain
         $action = $this->request->param('Action');
         $versionID = $this->request->param('VersionID');
         $otherVersionID = $this->request->param('OtherVersionID');
-        
+
         $showUnpublishedChecked = 0;
         $compareModeChecked = ($action == "compare");
 
@@ -205,10 +205,10 @@ class ContentModuleHistoryController extends ContentModuleMain
             if ($versions) {
                 foreach ($versions as $k => $version) {
                     $active = false;
-                    
+
                     if ($version->Version == $versionID || $version->Version == $otherVersionID) {
                         $active = true;
-                        
+
                         if (!$version->WasPublished) {
                             $showUnpublishedChecked = 1;
                         }
@@ -217,9 +217,9 @@ class ContentModuleHistoryController extends ContentModuleMain
                     $version->Active = ($active);
                 }
             }
-            
+
             $vd = new ViewableData();
-            
+
             $versionsHtml = $vd->customise(array(
                 'Versions' => $versions
             ))->renderWith('CMSPageHistoryController_versions');
@@ -260,19 +260,19 @@ class ContentModuleHistoryController extends ContentModuleMain
             $fields,
             $actions
         );
-        
+
         $form->loadDataFrom($this->request->requestVars());
         $hiddenID->setValue($id);
         $form->unsetValidator();
-        
+
         $form
             ->addExtraClass('cms-versions-form') // placeholder, necessary for $.metadata() to work
             ->setAttribute('data-link-tmpl-compare', Controller::join_links($this->Link('compare'), '%s', '%s', '%s'))
             ->setAttribute('data-link-tmpl-show', Controller::join_links($this->Link('show'), '%s', '%s'));
-        
+
         return $form;
     }
-    
+
     /**
      * Process the {@link VersionsForm} compare function between two pages.
      *
@@ -287,7 +287,7 @@ class ContentModuleHistoryController extends ContentModuleMain
         if (count($versions) < 2) {
             return null;
         }
-        
+
         $id = $this->currentPageID();
         $version1 = array_shift($versions);
         $version2 = array_shift($versions);
@@ -303,7 +303,7 @@ class ContentModuleHistoryController extends ContentModuleMain
                 'LeftAndMain_Content'
             ));
         }
-        
+
         // non javascript, redirect the user to the page
         $this->redirect(Controller::join_links(
             $this->Link('compare'),
@@ -324,15 +324,15 @@ class ContentModuleHistoryController extends ContentModuleMain
     public function doShowVersion($data, $form)
     {
         $versionID = null;
-        
+
         if (isset($data['Versions']) && is_array($data['Versions'])) {
             $versionID  = array_shift($data['Versions']);
         }
-        
+
         if (!$versionID) {
             return;
         }
-        
+
         if ($this->request->isAjax()) {
             return $this->customise(array(
                 "EditForm" => $this->ShowVersionForm($versionID)
@@ -363,7 +363,7 @@ class ContentModuleHistoryController extends ContentModuleMain
 
         return $form;
     }
-    
+
     /**
      * @return Form
      */
@@ -380,10 +380,10 @@ class ContentModuleHistoryController extends ContentModuleMain
         if (!$toVersion || !$toVersion) {
             return false;
         }
-        
+
         $id = $this->currentPageID();
         $page = DataObject::get_by_id($this->stat('tree_class'), $id);
-        
+
         if ($page && !$page->canView()) {
             return Security::permissionFailure($this);
         }
@@ -392,11 +392,11 @@ class ContentModuleHistoryController extends ContentModuleMain
 
         $fromVersionRecord = Versioned::get_version($this->stat('tree_class'), $id, $fromVersion);
         $toVersionRecord = Versioned::get_version($this->stat('tree_class'), $id, $toVersion);
-        
+
         if (!$fromVersionRecord) {
             user_error("Can't find version $fromVersion of page $id", E_USER_ERROR);
         }
-        
+
         if (!$toVersionRecord) {
             user_error("Can't find version $toVersion of page $id", E_USER_ERROR);
         }
@@ -405,23 +405,23 @@ class ContentModuleHistoryController extends ContentModuleMain
             $form = $this->getEditForm($id, null, null, true);
             $form->setActions(new FieldList());
             $form->addExtraClass('compare');
-            
+
             // Comparison views shouldn't be editable.
             // Its important to convert fields *before* loading data,
             // as the comparison output is HTML and not valid values for the various field types
             $readonlyFields = $form->Fields()->makeReadonly();
             $form->setFields($readonlyFields);
-            
+
             $form->loadDataFrom($record);
             $form->loadDataFrom(array(
                 "ID" => $id,
                 "Version" => $fromVersion,
             ));
-            
+
             foreach ($form->Fields()->dataFields() as $field) {
                 $field->dontEscape = true;
             }
-            
+
             return $form;
         }
     }

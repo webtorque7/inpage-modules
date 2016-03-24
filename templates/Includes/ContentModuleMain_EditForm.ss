@@ -8,7 +8,7 @@
 		<% end_if %>
 
 		<fieldset>
-			<% if Legend %><legend>$Legend</legend><% end_if %> 
+			<% if Legend %><legend>$Legend</legend><% end_if %>
 			<% loop Fields %>
 				$FieldHolder
 			<% end_loop %>

@@ -19,7 +19,7 @@ class ContentModuleAddController extends ContentModuleEditController
     public function AddForm()
     {
         $record = $this->currentPage();
-        
+
         $moduleTypes = array();
         foreach ($this->ModuleTypes() as $type) {
             $html = sprintf('<span class="page-icon class-%s"></span><strong class="title">%s</strong><span class="description">%s</span>',
@@ -50,16 +50,16 @@ class ContentModuleAddController extends ContentModuleEditController
                 $moduleTypes
             )
         );
-        
+
         $actions = new FieldList(
             // $resetAction = new ResetFormAction('doCancel', _t('CMSMain.Cancel', 'Cancel')),
             FormAction::create("doAdd", _t('CMSMain.Create', "Create"))
                 ->addExtraClass('ss-ui-action-constructive')->setAttribute('data-icon', 'accept')
                 ->setUseButtonTag(true)
         );
-        
+
         $this->extend('updateModuleOptions', $fields);
-        
+
         $form = new Form($this, "AddForm", $fields, $actions);
         $form->addExtraClass('cms-add-form stacked cms-content center cms-edit-form ' . $this->BaseCSSClasses());
         $form->setTemplate($this->getTemplatesWithSuffix('_EditForm'));
@@ -96,7 +96,7 @@ class ContentModuleAddController extends ContentModuleEditController
             _t('CMSMain.PageAdded', 'Successfully created module')
         );
         Session::set("FormInfo.Form_EditForm.formError.type", 'good');
-        
+
         return $this->redirect(Controller::join_links($editController->Link('show'), $record->ID));
     }
 }

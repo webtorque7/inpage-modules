@@ -321,7 +321,7 @@ class ContentModule extends DataObject implements PermissionProvider
                 $field->setForm($contentModuleField->getForm());
             }
         }
-            
+
         return $actions;
     }
 
