@@ -277,7 +277,7 @@ class ContentModule extends DataObject implements PermissionProvider
                     if (!empty($values) && !empty($values[$name])) {
                         $field->setValue($values[$name], $this);
                     } elseif (!empty($values)) {
-                        $field->setItems(null, null);
+                        $field->setValue(null);
                     } else {
                         $field->setValue(null, $this);
                     }
