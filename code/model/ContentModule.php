@@ -1,10 +1,10 @@
 <?php
+
 /**
  * Base class for modules
  *
  * @package inpage-modules
  */
-
 class ContentModule extends DataObject implements PermissionProvider
 {
 
@@ -87,7 +87,8 @@ class ContentModule extends DataObject implements PermissionProvider
         $actions = new FieldList($minorActions);
 
         // "readonly"/viewing version that isn't the current version of the record
-        $stageOrLiveRecord = Versioned::get_one_by_stage($this->class, Versioned::current_stage(), sprintf('"ContentModule"."ID" = %d', $this->ID));
+        $stageOrLiveRecord = Versioned::get_one_by_stage($this->class, Versioned::current_stage(),
+            sprintf('"ContentModule"."ID" = %d', $this->ID));
         if ($stageOrLiveRecord && $stageOrLiveRecord->Version != $this->Version) {
             //$minorActions->push(FormAction::create('email', _t('CMSMain.EMAIL', 'Email')));
             //$minorActions->push(FormAction::create('rollback', _t('CMSMain.ROLLBACK', 'Roll back to this version')));
@@ -101,7 +102,8 @@ class ContentModule extends DataObject implements PermissionProvider
         if (($cModField = ContentModuleField::curr()) && $this->exists()) {
             // "unlink"
             $minorActions->push(
-                FormAction::create($renameActions ? 'unlink_' . $this->ID : 'unlink', _t('ContentModule.BUTTONUNLINK', 'Unlink'))
+                FormAction::create($renameActions ? 'unlink_' . $this->ID : 'unlink',
+                    _t('ContentModule.BUTTONUNLINK', 'Unlink'))
                     ->setDescription(_t('ContentModule.BUTTONUNLINKDESC', 'Unlink this module from the current page'))
                     ->addExtraClass('ss-ui-action-destructive unlink')->setAttribute('data-icon', 'unlink')
             );
@@ -110,8 +112,10 @@ class ContentModule extends DataObject implements PermissionProvider
         if ($this->isPublished() && $this->canPublish() && !$this->IsDeletedFromStage && $this->canDeleteFromLive()) {
             // "unpublish"
             $minorActions->push(
-                FormAction::create($renameActions ? 'unpublish_' . $this->ID : 'unpublish', _t('ContentModule.BUTTONUNPUBLISH', 'Unpublish'))
-                    ->setDescription(_t('ContentModule.BUTTONUNPUBLISHDESC', 'Remove this module from the published site'))
+                FormAction::create($renameActions ? 'unpublish_' . $this->ID : 'unpublish',
+                    _t('ContentModule.BUTTONUNPUBLISH', 'Unpublish'))
+                    ->setDescription(_t('ContentModule.BUTTONUNPUBLISHDESC',
+                        'Remove this module from the published site'))
                     ->addExtraClass('ss-ui-action-destructive unpublish')->setAttribute('data-icon', 'unpublish')
             );
         }
@@ -120,8 +124,10 @@ class ContentModule extends DataObject implements PermissionProvider
             if ($this->isPublished() && $this->canEdit()) {
                 // "rollback"
                 $minorActions->push(
-                    FormAction::create($renameActions ? 'rollback_' . $this->ID : 'rollback', _t('ContentModule.BUTTONCANCELDRAFT', 'Cancel draft changes'))
-                        ->setDescription(_t('ContentModule.BUTTONCANCELDRAFTDESC', 'Delete your draft and revert to the currently published module'))
+                    FormAction::create($renameActions ? 'rollback_' . $this->ID : 'rollback',
+                        _t('ContentModule.BUTTONCANCELDRAFT', 'Cancel draft changes'))
+                        ->setDescription(_t('ContentModule.BUTTONCANCELDRAFTDESC',
+                            'Delete your draft and revert to the currently published module'))
                         ->addExtraClass('rollback')
                 );
             }
@@ -132,20 +138,23 @@ class ContentModule extends DataObject implements PermissionProvider
                 if ($this->ExistsOnLive) {
                     // "restore"
                     $minorActions->push(
-                        FormAction::create($renameActions ? 'revert_' . $this->ID : 'revert', _t('CMSMain.RESTORE', 'Restore'))
+                        FormAction::create($renameActions ? 'revert_' . $this->ID : 'revert',
+                            _t('CMSMain.RESTORE', 'Restore'))
                             ->addExtraClass('revert ss-ui-action-destructive')
                     );
                     if ($this->canDelete() && $this->canDeleteFromLive()) {
                         // "delete from live"
                         $minorActions->push(
-                            FormAction::create($renameActions ? 'deletefromlive_' . $this->ID : 'deletefromlive', _t('CMSMain.DELETEFP', 'Delete'))
+                            FormAction::create($renameActions ? 'deletefromlive_' . $this->ID : 'deletefromlive',
+                                _t('CMSMain.DELETEFP', 'Delete'))
                                 ->addExtraClass('deletefromlive ss-ui-action-destructive')
                         );
                     }
                 } else {
                     // "restore"
                     $minorActions->push(
-                        FormAction::create($renameActions ? 'restore_' . $this->ID : 'restore', _t('CMSMain.RESTORE', 'Restore'))
+                        FormAction::create($renameActions ? 'restore_' . $this->ID : 'restore',
+                            _t('CMSMain.RESTORE', 'Restore'))
                             ->setAttribute('data-icon', 'decline')
                             ->addExtraClass('restore')
                     );
@@ -154,14 +163,17 @@ class ContentModule extends DataObject implements PermissionProvider
                 if ($this->canDelete()) {
                     // "delete"
                     $minorActions->push(
-                        FormAction::create($renameActions ? 'delete_' . $this->ID : 'delete', _t('ContentModule.DELETE', 'Delete'))->addExtraClass('delete ss-ui-action-destructive')
+                        FormAction::create($renameActions ? 'delete_' . $this->ID : 'delete',
+                            _t('ContentModule.DELETE', 'Delete'))->addExtraClass('delete ss-ui-action-destructive')
                             ->setAttribute('data-icon', 'decline')
                     );
                 }
 
                 // "save"
                 $minorActions->push(
-                    FormAction::create($renameActions ? 'save_' . $this->ID : 'save', _t('CMSMain.SAVEDRAFT', 'Save Draft'))->setAttribute('data-icon', 'addpage')->addExtraClass('save')
+                    FormAction::create($renameActions ? 'save_' . $this->ID : 'save',
+                        _t('CMSMain.SAVEDRAFT', 'Save Draft'))->setAttribute('data-icon',
+                        'addpage')->addExtraClass('save')
                 );
             }
         }
@@ -169,7 +181,8 @@ class ContentModule extends DataObject implements PermissionProvider
         if ($this->canPublish() && !$this->IsDeletedFromStage) {
             // "publish"
             $actions->push(
-                FormAction::create($renameActions ? 'publish_' . $this->ID : 'publish', _t('ContentModule.BUTTONSAVEPUBLISH', 'Save & Publish'))
+                FormAction::create($renameActions ? 'publish_' . $this->ID : 'publish',
+                    _t('ContentModule.BUTTONSAVEPUBLISH', 'Save & Publish'))
                     ->addExtraClass('ss-ui-action-constructive publish')->setAttribute('data-icon', 'accept')
             );
         }
@@ -203,7 +216,11 @@ class ContentModule extends DataObject implements PermissionProvider
             $counter = 1;
             while (!$safe) {
                 $counter++;
-                if (ContentModule::get()->filter(array('URLSegment' => $this->URLSegment, 'ID' => $this->ID))->first()) {
+                if (ContentModule::get()->filter(array(
+                    'URLSegment' => $this->URLSegment,
+                    'ID' => $this->ID
+                ))->first()
+                ) {
                     $this->URLSegment = $original . '-' . $counter;
                 } else {
                     $safe = true;
@@ -246,56 +263,63 @@ class ContentModule extends DataObject implements PermissionProvider
     {
         if ($fields) {
             foreach ($fields as $field) {
-                /**
-             * @var $field FormField
-             */
-            $name = $field->getName();
 
-            //rename the field to tie it to the module
-            $newFieldName = "ContentModule[{$this->ID}][{$name}]";
+                if (!is_a($field, 'CompositeField')) {
+                    /**
+                     * @var $field FormField
+                     */
+                    $name = $field->getName();
 
-            //we don't rename when using for updating record
-            if ($rename) {
-                if ($field->hasMethod('setContentModuleNames')) {
-                    $field->setContentModuleNames($name, $newFieldName);
-                }
-                $field->setName($newFieldName);
-            }
+                    //rename the field to tie it to the module
+                    $newFieldName = "ContentModule[{$this->ID}][{$name}]";
 
-                $value = null;
-                if (isset($this->{$name}) || $this->hasMethod('get' . ucfirst($name))) {
-                    $value = $this->{$name};
-                } elseif ($this->hasMethod($name)) {
-                    $value = $this->{$name}();
-                }
-
-                $value = (!empty($values) && isset($values[$name])) ? $values[$name] : $value;
-
-                switch ($field->class) {
-                case 'UploadField':
-                case 'ContentModuleUploadField':
-                    if (!empty($values) && !empty($values[$name])) {
-                        $field->setValue($values[$name], $this);
-                    } elseif (!empty($values)) {
-                        $field->setValue(null);
-                    } else {
-                        $field->setValue(null, $this);
+                    //we don't rename when using for updating record
+                    if ($rename) {
+                        if ($field->hasMethod('setContentModuleNames')) {
+                            $field->setContentModuleNames($name, $newFieldName);
+                        }
+                        $field->setName($newFieldName);
                     }
-                    break;
-                default:
-                    $field->setValue($value, $this);
-                    break;
-            }
 
+                    $value = null;
+                    if (isset($this->{$name}) || $this->hasMethod('get' . ucfirst($name))) {
+                        $value = $this->{$name};
+                    } elseif ($this->hasMethod($name)) {
+                        $value = $this->{$name}();
+                    }
 
-                if ($field->hasMethod('setRecord')) {
-                    $field->setRecord($this);
+                    $value = (!empty($values) && isset($values[$name])) ? $values[$name] : $value;
+
+                    if (is_a($field, 'CheckboxField')) {
+                        if (!empty($values) && !isset($values[$name])) {
+                            $value = false;
+                        }
+                    }
+
+                    switch ($field->class) {
+                        case 'UploadField':
+                        case 'ContentModuleUploadField':
+                            if (!empty($values) && !empty($values[$name])) {
+                                $field->setValue($values[$name], $this);
+                            } elseif (!empty($values)) {
+                                $field->setValue(null);
+                            } else {
+                                $field->setValue(null, $this);
+                            }
+                            break;
+                        default:
+                            $field->setValue($value, $this);
+                            break;
+                    }
+
+                    if ($field->hasMethod('setRecord')) {
+                        $field->setRecord($this);
+                    }
                 }
-
-            //composite field
-            if ($field->hasMethod('getChildren')) {
-                $this->renameFields($field->getChildren(), $rename, $values);
-            }
+                //composite field
+                if ($field->hasMethod('getChildren')) {
+                    $this->renameFields($field->getChildren(), $values, $rename);
+                }
 
                 if ($this->form) {
                     $field->setForm($this->form);
