@@ -101,6 +101,8 @@
 							if (data.Message) {
 								statusMessage(data.Message, data.Status ? 'good' : 'bad');
 							}
+
+							contentModuleField.reloadPreview();
 						});
 				}
 			},
@@ -156,6 +158,9 @@
 			},
 			hideLoading: function () {
 				this.closest('.cms-content').removeClass('loading');
+			},
+			reloadPreview:function() {
+				$('.cms-container .cms-edit-form').trigger('aftersubmitform');
 			}
 
 		});
@@ -383,6 +388,7 @@
 						}
 						contentModuleField.hideAddFields();
 						$('#ContentModule_ModuleType').reset();
+						contentModuleField.reloadPreview();
 					});
 				}
 				else {
@@ -507,6 +513,8 @@
 				if (form.hasClass('changed') && form.find('.changed').length === 0) {
 					form.removeClass('changed');
 				}
+
+				this.getContentModuleField().reloadPreview();
 			},
 			resize: function () {
 				var form = this.find('form');
