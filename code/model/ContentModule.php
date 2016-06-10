@@ -764,7 +764,7 @@ class ContentModule extends DataObject implements PermissionProvider
     {
         if ($this->canEdit()) {
             if (!empty($fields)) {
-                foreach ($this->EditFields($fields, false) as $field) {
+                foreach ($this->EditFields($fields, false)->dataFields() as $field) {
                     $field->saveInto($this);
                 }
 
