@@ -18,13 +18,16 @@ class TextModule extends ContentModule
 
     public function getCMSFields()
     {
-        $fields = parent::getCMSFields();
+        $fields = new FieldList(
+            $rootTab = new TabSet("Root",
+                $tabMain = new Tab('Main',
+                    new TextField('ContentTitle', 'Content Title'),
+                    new HtmlEditorField('Text')
+                )
+            )
+        );
 
-        $fields->addFieldsToTab('Root.Main', array(
-                        new TextField('ContentTitle', 'Content Title'),
-                        new HtmlEditorField('Text')
-                ));
-
+        $this->extend('updateCMSFields', $fields);
         return $fields;
     }
 }
