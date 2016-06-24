@@ -363,7 +363,11 @@ class ContentModule extends DataObject implements PermissionProvider
 
     public function forTemplate()
     {
-        return $this->renderWith(array_reverse(ClassInfo::ancestry($this->class)));
+        $controller = ModuleAsController::controller_for($this);
+        $controller->setRequest(Controller::curr()->getRequest());
+        $controller->setFailover($this);
+
+        return $controller->renderWith(array_reverse(ClassInfo::ancestry($this->class)));
     }
 
     public static function content_module_types()

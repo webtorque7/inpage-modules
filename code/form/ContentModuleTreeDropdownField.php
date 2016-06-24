@@ -28,6 +28,7 @@ class ContentModuleTreeDropdownField extends TreeDropdownField
         $link = '';
         if ($cModField) {
             $link = ContentModuleField::curr()->Link('modulefield');
+
             $query = '';
             if (stripos($link, '?') !== false) {
                 $parts = explode('?', $link);
@@ -35,7 +36,15 @@ class ContentModuleTreeDropdownField extends TreeDropdownField
                 $query = '?' . $parts[1];
             }
 
-            $link = Controller::join_links($link, $this->getName(), $action, $query);
+            $name = $this->name;
+
+            if (($pos = stripos($name, '[')) !== false) {
+
+                $name = substr($name, 0, $pos);
+                $action = substr($this->name, $pos + 1, strlen($this->name) - 1 - ($pos + 1)) . 'Tree';
+            }
+
+            $link = Controller::join_links($link, $name, $action, $query);
         } else {
             $link = parent::Link($action);
         }
