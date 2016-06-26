@@ -44,4 +44,15 @@ class ModuleController extends Controller
     {
         return $this->currentController;
     }
+
+    /**
+     * Overwrite the link function from the Controller
+     *
+     * @param null $action
+     * @return mixed
+     */
+    public function Link($action = null)
+    {
+        return $this->data()->Link($action);
+    }
 }
