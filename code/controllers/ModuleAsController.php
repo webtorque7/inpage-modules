@@ -21,14 +21,14 @@ class ModuleAsController extends Controller
                     break;
                 }
             }
-            $controller = ($class !== null) ? "{$class}_Controller" : "ModuleController";
+            $controller = ($class !== null) ? "{$class}_Controller" : '';
         }
 
         if ($action && class_exists($controller . '_' . ucfirst($action))) {
             $controller = $controller . '_' . ucfirst($action);
         }
 
-        return class_exists($controller) ? Injector::inst()->create($controller, $module, $contentController) : $module;
+        return !empty($controller) && class_exists($controller) ? Injector::inst()->create($controller, $module, $contentController) : $module;
     }
 
     public static function module_controller_for_request(ContentController $contentController, SS_HTTPRequest $request, $relationship = 'ContentModules')
@@ -36,7 +36,18 @@ class ModuleAsController extends Controller
         $moduleURLSegment = $request->shift();
 
         if ($module = $contentController->data()->$relationship()->filter('URLSegment', $moduleURLSegment)->first()) {
-            return self::controller_for($module, $contentController)->handleRequest($request, new DataModel());
+            $controller = self::controller_for($module, $contentController);
+
+            //backwards compatibility support for modules handling actions directly
+            //should move to using controllers to handle actions
+            if ($controller instanceof ModuleController) {
+                return $controller->handleRequest($request, new DataModel());
+            } else {
+                $action = $request->shift();
+                if ($controller->hasMethod($action)) {
+                    return $controller->$action($request);
+                }
+            }
         }
     }
 }
