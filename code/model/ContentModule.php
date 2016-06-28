@@ -849,7 +849,12 @@ class ContentModule extends DataObject implements PermissionProvider
      */
     public function Link($action = null)
     {
-        $c = ContentController::curr()->Link('m');
+        $currentController = Controller::curr();
+        $contentController = $currentController instanceof ModuleController ?
+            $currentController->currController() :
+            $currentController;
+
+        $c = $contentController->Link('m');
         $url = $c . '/' . $this->URLSegment;
         if ($action) {
             $url .= '/' . $action;
