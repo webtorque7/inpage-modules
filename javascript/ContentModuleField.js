@@ -556,7 +556,11 @@
 					this.data('tinymce-added', true);
 					this._super();
 				} else {
+					//remove any other tinymce elements, triggered by drag and drop sorting
 					this.siblings().remove();
+
+					//remove any dropdown lists
+					$('.mceListBoxMenu[id*=' + this.attr('id') + ']').remove();
 					this._super();
 				}
 			}
