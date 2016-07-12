@@ -116,7 +116,9 @@ class ContentModule extends DataObject implements PermissionProvider
                     _t('ContentModule.BUTTONUNPUBLISH', 'Unpublish'))
                     ->setDescription(_t('ContentModule.BUTTONUNPUBLISHDESC',
                         'Remove this module from the published site'))
-                    ->addExtraClass('ss-ui-action-destructive unpublish')->setAttribute('data-icon', 'unpublish')
+                    ->addExtraClass('ss-ui-action-destructive unpublish')
+                    ->setAttribute('data-icon', 'unpublish')
+                    ->setUseButtonTag(true)
             );
         }
 
@@ -148,6 +150,8 @@ class ContentModule extends DataObject implements PermissionProvider
                             FormAction::create($renameActions ? 'deletefromlive_' . $this->ID : 'deletefromlive',
                                 _t('CMSMain.DELETEFP', 'Delete'))
                                 ->addExtraClass('deletefromlive ss-ui-action-destructive')
+                                ->setAttribute('data-icon', 'decline')
+                                ->setUseButtonTag(true)
                         );
                     }
                 } else {
@@ -157,6 +161,7 @@ class ContentModule extends DataObject implements PermissionProvider
                             _t('CMSMain.RESTORE', 'Restore'))
                             ->setAttribute('data-icon', 'decline')
                             ->addExtraClass('restore')
+                            ->setUseButtonTag(true)
                     );
                 }
             } else {
@@ -166,14 +171,16 @@ class ContentModule extends DataObject implements PermissionProvider
                         FormAction::create($renameActions ? 'delete_' . $this->ID : 'delete',
                             _t('ContentModule.DELETE', 'Delete'))->addExtraClass('delete ss-ui-action-destructive')
                             ->setAttribute('data-icon', 'decline')
+                            ->setUseButtonTag(true)
                     );
                 }
 
                 // "save"
                 $minorActions->push(
                     FormAction::create($renameActions ? 'save_' . $this->ID : 'save',
-                        _t('CMSMain.SAVEDRAFT', 'Save Draft'))->setAttribute('data-icon',
-                        'addpage')->addExtraClass('save')
+                        _t('CMSMain.SAVEDRAFT', 'Save Draft'))
+                        ->addExtraClass('save')->setAttribute('data-icon', 'disk')
+                        ->setUseButtonTag(true)
                 );
             }
         }
@@ -183,7 +190,9 @@ class ContentModule extends DataObject implements PermissionProvider
             $actions->push(
                 FormAction::create($renameActions ? 'publish_' . $this->ID : 'publish',
                     _t('ContentModule.BUTTONSAVEPUBLISH', 'Save & Publish'))
-                    ->addExtraClass('ss-ui-action-constructive publish')->setAttribute('data-icon', 'accept')
+                    ->addExtraClass('publish')
+                    ->setAttribute('data-icon', 'accept')
+                    ->setUseButtonTag(true)
             );
         }
 
@@ -364,14 +373,21 @@ class ContentModule extends DataObject implements PermissionProvider
     public function forTemplate()
     {
         $controller = ModuleAsController::controller_for($this);
-        
+
         //backwards compatibility support for Modules directly handling actions
         if ($controller instanceof ModuleController) {
             $controller->setRequest(Controller::curr()->getRequest());
             $controller->setFailover($this);
         }
 
-        return $controller->renderWith(array_reverse(ClassInfo::ancestry($this->class)));
+        $html = $controller->renderWith(array_reverse(ClassInfo::ancestry($this->class)));
+
+        //check if we are in editor mode, if so inject html to handle modules
+        if ($this->getIsEditorMode()) {
+            $html = $this->injectModuleEditor($html);
+        }
+
+        return $html;
     }
 
     public static function content_module_types()
@@ -383,7 +399,7 @@ class ContentModule extends DataObject implements PermissionProvider
 
         if ($types) {
             foreach ($types as $type) {
-                if ($type != $base && !in_array($type, singleton(get_called_class())->stat('exclude_modules'))) {
+                if ($type != $base && !in_array($type, singleton($base)->stat('exclude_modules'))) {
                     $aTypes[singleton($type)->i18n_singular_name()] = singleton($type);
                 }
             }
@@ -825,8 +841,29 @@ class ContentModule extends DataObject implements PermissionProvider
         return "Failed to delete {$this->Title}";
     }
 
-    public function doUnlink()
+    /**
+     * Unlink a module from a page, pass through an array in the format:
+     *
+     * array(
+     *     'PageID' => $pageID,
+     *     'Relationship' => 'ContentModules' //many many relationship for ContentModule
+     * )
+     * @param array $data
+     * @return string
+     */
+    public function doUnlink(array $data)
     {
+        if (!empty($data)) {
+            if (!empty($data['PageID']) && ($page = Page::get()->byID($data['PageID']))) {
+                if (isset($data['Relationship']) && $page->hasMethod($data['Relationship'])) {
+                    $page->{$data['Relationship']}()->remove($this);
+                } else {
+                    $page->ContentModules()->remove($this);
+                }
+
+                return "{$this->Title} removed successfully";
+            }
+        }
         if (isset($_REQUEST['PageID']) && ($pageID = $_REQUEST['PageID'])) {
             /**
              * @var $page Page
@@ -1071,5 +1108,42 @@ class ContentModule extends DataObject implements PermissionProvider
     public function getFixTabHeights()
     {
         return static::config()->fix_tab_heights;
+    }
+
+    public function getIsEditorMode()
+    {
+        return (bool)Controller::curr()->getRequest()->getVar('page-editor') && Permission::check('CMS_ACCESS_ContentModulePageEditor');
+    }
+
+    public function injectModuleEditor(HTMLText $html)
+    {
+        //add js/css to page to handle clicking on modules, and handle rendering controls etc
+        Requirements::javascript(INPAGE_MODULES_DIR . '/javascript/ContentModulePageEditor.ModuleHandler.js');
+        Requirements::css(INPAGE_MODULES_DIR . '/css/ContentModulePageEditor.ModuleHandler.css');
+
+        //inject editor element inside first element in module
+        $raw = $html->forTemplate();
+
+        //turn of errors because DOMDocument doesn't support html5 tags?
+        libxml_use_internal_errors(true);
+
+        $dom = new DOMDocument();
+        $dom->loadHTML($raw);
+
+        //create our editor element
+        $editor = $dom->createDocumentFragment();
+        $editor->appendXML(SSViewer::execute_template('ContentModulePageEditor_ModuleHandler', $this));
+
+        $firstNode = $dom->documentElement->childNodes->item(0)->childNodes->item(0);
+        $firstNode->appendChild($editor);
+
+        $newHTML = $dom->saveHTML();
+
+        //clear the errors
+        libxml_clear_errors();
+
+        $html->setValue($newHTML);
+
+        return $html;
     }
 }

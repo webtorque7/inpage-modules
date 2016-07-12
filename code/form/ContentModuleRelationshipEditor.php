@@ -71,7 +71,7 @@ class ContentModuleRelationshipEditor extends FormField
 
             $link = Controller::join_links($link, $this->getName(), $action, $id, $query);
         } else {
-            $link = parent::Link($action);
+            $link = Controller::join_links(parent::Link($action), $id);
         }
 
         return $link;

@@ -1,0 +1,1 @@
+<div class="content-module-page-editor-module-handler" data-module-id="$ID"></div>

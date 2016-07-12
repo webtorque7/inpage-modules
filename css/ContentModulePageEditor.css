@@ -1,0 +1,30 @@
+#content-module-page-editor-cms-form-editor { position: fixed; height: 100%; width: 50%; left: 100%; top: 0; z-index: 1001; overflow: auto; display: none; background-color: #f6f7f8; box-shadow: -2px 0 2px #CCC; }
+#content-module-page-editor-cms-form-editor .header { height: 20px; line-height: 20px; font-size: 20px; padding: 10px 20px; border-bottom: 1px solid grey; }
+#content-module-page-editor-cms-form-editor .header a { margin-right: 15px; }
+#content-module-page-editor-cms-form-editor .cms-content { width: auto; display: block; }
+#content-module-page-editor-cms-form-editor .cms-content .cms-content-header { display: none; }
+#content-module-page-editor-cms-form-editor .cms-content .cms-panel-padded { width: auto; }
+#content-module-page-editor-cms-form-editor .cms-content .cms-content-fields { display: block; }
+
+#content-module-page-editor-toolbox { background-color: rgba(0, 0, 0, 0.7); padding: 10px; min-height: 100px; position: fixed; left: 200px; top: 100px; z-index: 1000; width: 74px; }
+#content-module-page-editor-toolbox ul { display: block; margin: 0; padding: 0; font-size: 0; }
+#content-module-page-editor-toolbox ul li { display: inline-block; font-size: 32px; width: 32px; height: 32px; color: #FFF; padding: 0 0 10px 0; }
+#content-module-page-editor-toolbox ul li a { color: #FFF; }
+#content-module-page-editor-toolbox ul li:nth-child(2n) { padding: 0 0 0 10px; }
+
+.module-manager { padding: 20px; }
+.module-manager .ui-tabs .ui-tabs-nav { margin-top: 0; }
+.module-manager .module-sorter .module { border: 1px solid #000; padding: 10px; margin-bottom: 20px; position: relative; cursor: move; }
+.module-manager .module-sorter .module h4 { font-size: 20px; line-height: 20px; font-weight: normal; margin: 0; }
+.module-manager .module-sorter .module .links { position: absolute; font-size: 20px; right: 10px; top: 10px; }
+.module-manager .module-sorter .module .links a { cursor: pointer; }
+.module-manager .module-sorter .module .links a.unlink { color: red; }
+
+#Form_ModuleAddForm .optionset ul { width: 80%; }
+#Form_ModuleAddForm .optionset li { display: list-item; float: none; width: 100%; }
+#Form_ModuleAddForm .optionset li label { display: inline-block; padding-bottom: 5px; }
+#Form_ModuleAddForm .optionset li label .module-icon { background: url("../images/icon.png") no-repeat; width: 16px; height: 16px; float: none; display: inline-block; margin-right: 5px; margin-bottom: -3px; }
+#Form_ModuleAddForm .optionset li label .title { width: 200px; padding-right: 10px; float: none; display: inline-block; }
+#Form_ModuleAddForm .optionset li label .description { display: inline-block; clear: none; }
+
+[draggable=true] { -khtml-user-drag: element; }

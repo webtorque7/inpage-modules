@@ -5,9 +5,9 @@ CMSMenu::remove_menu_item('ContentModuleMain');
 CMSMenu::remove_menu_item('ContentModuleEditController');
 CMSMenu::remove_menu_item('ContentModuleSettingsController');
 CMSMenu::remove_menu_item('ContentModuleHistoryController');
-//CMSMenu::remove_menu_item('CMSPageReportsController');
 CMSMenu::remove_menu_item('ContentModuleAddController');
-//CMSMenu::remove_menu_item('CMSFileAddController');
+CMSMenu::remove_menu_item('ContentModulePageEditor');
+CMSMenu::remove_menu_item('ContentModulePageEditor_EditModule');
 
 LeftAndMain::require_css(INPAGE_MODULES_DIR . '/css/ContentModuleField.css');
 
