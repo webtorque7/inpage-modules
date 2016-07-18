@@ -128,8 +128,19 @@ class ModuleController extends Controller
         );
     }
 
-    public function setFailover($failover)
+    /**
+     * Not sure when function was introducted, for some reason it stopped working at one point so I've defined one here
+     * just in case
+     *
+     * @param ViewableData $failover
+     */
+    public function setFailover(ViewableData $failover)
     {
-        $this->failover = $failover;
+        if (method_exists(get_parent_class($this), 'setFailover')) {
+            parent::setFailover($failover);
+        } else {
+            $this->failover = $failover;
+            $this->defineMethods();
+        }
     }
 }

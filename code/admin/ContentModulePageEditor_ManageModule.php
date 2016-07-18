@@ -112,6 +112,11 @@ class ContentModulePageEditor_ManageModule extends ContentModulePageEditor
         }
     }
 
+    protected function getPageRecord($id)
+    {
+        return SiteTree::get()->byID($id);
+    }
+
     /**
      * Provides a module manager for adding/sorting modules
      *
@@ -119,14 +124,14 @@ class ContentModulePageEditor_ManageModule extends ContentModulePageEditor
      */
     public function module($request, $id = null)
     {
-        $page = $this->CurrentPage($id ? $id : $request->param('OtherID'));
+        $page = $this->getPageRecord($id ? $id : $request->param('ID'));
         $moduleComponents = ArrayList::create();
 
         //extract the ContentModule relationships
         $manyManys = $page->manyMany();
 
         if (!empty($manyManys)) foreach ($manyManys as $relationship => $class) {
-            if ($class === 'ContentModule') {
+            if ($class === 'ContentModule' || ($class instanceof ContentModule)) {
                 $moduleComponents->push(ArrayData::create(array(
                     'Page' => $page,
                     'Relationship' => $relationship,

@@ -20,6 +20,8 @@ class ContentModulePageEditor extends LeftAndMain implements PermissionProvider
 
     private static $tree_class = 'SiteTree';
 
+    private static $session_namespace = 'ContentModulePageEditor';
+
     private static $allowed_actions = array(
         'edit',
         'EditPageForm',
