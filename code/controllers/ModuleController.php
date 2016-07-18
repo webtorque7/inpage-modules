@@ -15,10 +15,15 @@ class ModuleController extends Controller
 
     protected $currentController;
 
-    public function __construct(ContentModule $dataRecord, ContentController $curr = null)
+    public function __construct(ContentModule $dataRecord, Controller $curr = null)
     {
         $this->dataRecord = $dataRecord;
-        $this->currentController = $curr;
+
+        //if we didn't get a content controller, grab the first page
+        //a hack for security controller
+        $this->currentController = $curr instanceof ContentController ?
+            $curr :
+            ModelAsController::controller_for(SiteTree::get()->first());
 
         $this->setFailover($this->dataRecord);
 

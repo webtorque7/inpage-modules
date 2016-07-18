@@ -1162,8 +1162,8 @@ class ContentModule extends DataObject implements PermissionProvider
         if (empty($raw)) return '';
 
         //add js/css to page to handle clicking on modules, and handle rendering controls etc
-        Requirements::javascript(INPAGE_MODULES_DIR . '/javascript/ContentModulePageEditor.ModuleHandler.js');
-        Requirements::css(INPAGE_MODULES_DIR . '/css/ContentModulePageEditor.ModuleHandler.css');
+        Requirements::javascript(INPAGE_MODULES_DIR . '/javascript/VisualEditor.PreviewHandler.js');
+        Requirements::css(INPAGE_MODULES_DIR . '/css/VisualEditor.PreviewHandler.css');
 
         /**
          * inject editor element inside first element in module
@@ -1177,7 +1177,7 @@ class ContentModule extends DataObject implements PermissionProvider
 
         //create our editor element
         $editor = $dom->createDocumentFragment();
-        $editor->appendXML(SSViewer::execute_template('ContentModulePageEditor_ModuleHandler', $this));
+        $editor->appendXML(SSViewer::execute_template('VisualEditor_PreviewHandler', $this));
 
         $firstNode = $dom->documentElement->childNodes->item(0)->childNodes->item(0);
         $firstNode->appendChild($editor);

@@ -6,15 +6,15 @@
  * Date: 6/07/2016
  * Time: 11:25 AM
  */
-class ContentModulePageEditor_ManageModule extends ContentModulePageEditor
+class VisualEditor_ManageModule extends VisualEditor
 {
-    private static $url_segment = 'content-modules/module-page-editor/manage';
+    private static $url_segment = 'content-modules/visual-editor/manage';
 
     private static $tree_class = 'ContentModule';
 
     private static $url_priority = 43;
 
-    private static $session_namespace = 'ContentModulePageEditorModule';
+    private static $session_namespace = 'VisualEditorModule';
 
     private static $allowed_actions = array(
         'add',
@@ -144,7 +144,7 @@ class ContentModulePageEditor_ManageModule extends ContentModulePageEditor
 
         return $this
             ->customise(array('ModuleComponents' => $moduleComponents))
-            ->renderWith('ContentModulePageEditor_ManageModules');
+            ->renderWith('VisualEditor_ManageModules');
     }
 
     /**
@@ -152,11 +152,10 @@ class ContentModulePageEditor_ManageModule extends ContentModulePageEditor
      *
      * @return SS_HTTPResponse
      */
-    public function sort() {
-        $page = $this->CurrentPage();
+    public function sort($request) {
+        $page = $this->getPageRecord($request->param('ID'));
         $relationship = $this->request->param('OtherID');
         $sort = $this->request->postVar('Sort');
-
 
         if ($page && $page->exists() && $relationship && $page->hasMethod($relationship)) {
 
@@ -341,6 +340,6 @@ class ContentModulePageEditor_ManageModule extends ContentModulePageEditor
 
     public function EditLink($id)
     {
-        return Controller::join_links(singleton('ContentModulePageEditor_EditModule')->Link('show'), $id);
+        return Controller::join_links(singleton('VisualEditor_EditModule')->Link('show'), $id);
     }
 }

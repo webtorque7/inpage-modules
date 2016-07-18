@@ -6,11 +6,11 @@
  * Date: 5/07/2016
  * Time: 3:26 PM
  */
-class ContentModulePageEditor extends LeftAndMain implements PermissionProvider
+class VisualEditor extends LeftAndMain implements PermissionProvider
 {
-    private static $url_segment = 'content-modules/module-page-editor';
+    private static $url_segment = 'content-modules/visual-editor';
 
-    private static $menu_title = 'Page Editor';
+    private static $menu_title = 'Visual Editor';
 
     private static $url_priority = 41;
 
@@ -20,7 +20,7 @@ class ContentModulePageEditor extends LeftAndMain implements PermissionProvider
 
     private static $tree_class = 'SiteTree';
 
-    private static $session_namespace = 'ContentModulePageEditor';
+    private static $session_namespace = 'VisualEditor';
 
     private static $allowed_actions = array(
         'edit',
@@ -39,13 +39,13 @@ class ContentModulePageEditor extends LeftAndMain implements PermissionProvider
     {
         parent::init();
 
-        Requirements::css(INPAGE_MODULES_DIR . '/css/ContentModulePageEditor.css');
-        Requirements::combine_files('ContentModulePageEditor.js', [
-            INPAGE_MODULES_DIR . '/javascript/ContentModulePageEditor.js',
-            INPAGE_MODULES_DIR . '/javascript/ContentModulePageEditor.Preview.js',
-            INPAGE_MODULES_DIR . '/javascript/ContentModulePageEditor.ToolBox.js',
-            INPAGE_MODULES_DIR . '/javascript/ContentModulePageEditor.Form.js',
-            INPAGE_MODULES_DIR . '/javascript/ContentModulePageEditor.ModuleManager.js'
+        Requirements::css(INPAGE_MODULES_DIR . '/css/VisualEditor.css');
+        Requirements::combine_files('VisualEditor.js', [
+            INPAGE_MODULES_DIR . '/javascript/VisualEditor.js',
+            INPAGE_MODULES_DIR . '/javascript/VisualEditor.Preview.js',
+            INPAGE_MODULES_DIR . '/javascript/VisualEditor.ToolBox.js',
+            INPAGE_MODULES_DIR . '/javascript/VisualEditor.Form.js',
+            INPAGE_MODULES_DIR . '/javascript/VisualEditor.ModuleManager.js'
         ]);
 
         //todo, get fontawesome css
@@ -102,12 +102,21 @@ class ContentModulePageEditor extends LeftAndMain implements PermissionProvider
             $id = $this->getRequest()->requestVar('ID');
         }
 
-        $page = $this->CurrentPage($id);
+        $page = $this->getCurrentPage($id);
+
+        //grab tab Root.Main from page
+        $mainFields = $page->getCMSFields()->fieldByName('Root.Main');
+
+        //remove visual editor link if it's there
+        if ($mainFields->fieldByName('VisualEditorLink')) {
+            $mainFields->removeByName('VisualEditorLink');
+        }
 
         $fields = FieldList::create(
-            TabSet::create('Root', Tab::create('Main',
-                $page->getCMSFields()->fieldByName('Root.Main')
-            )
+            TabSet::create('Root',
+                Tab::create('Main',
+                    $mainFields
+                )
             )
         );
 
@@ -132,12 +141,16 @@ class ContentModulePageEditor extends LeftAndMain implements PermissionProvider
         $fields->push($stageLinkField = new HiddenField("StageLink"));
         $fields->push(new HiddenField("TreeTitle", false, $page->TreeTitle));
 
-        if($page->ID && is_numeric( $page->ID ) ) {
+        if ($page->ID && is_numeric($page->ID)) {
             $liveLink = $page->getAbsoluteLiveLink();
-            if($liveLink) $liveLinkField->setValue($liveLink);
-            if(!$deletedFromStage) {
+            if ($liveLink) {
+                $liveLinkField->setValue($liveLink);
+            }
+            if (!$deletedFromStage) {
                 $stageLink = Controller::join_links($page->AbsoluteLink(), '?stage=Stage');
-                if($stageLink) $stageLinkField->setValue($stageLink);
+                if ($stageLink) {
+                    $stageLinkField->setValue($stageLink);
+                }
             }
         }
 
@@ -145,7 +158,7 @@ class ContentModulePageEditor extends LeftAndMain implements PermissionProvider
 
         $form
             ->loadDataFrom($page)
-            ->setTemplate('ContentModulePageEditor_EditForm')
+            ->setTemplate('VisualEditor_EditForm')
             ->addExtraClass('cms-edit-form cms-content');
 
         return $form;
@@ -215,7 +228,7 @@ class ContentModulePageEditor extends LeftAndMain implements PermissionProvider
             $id = $this->getRequest()->requestVar('ID');
         }
 
-        $page = $this->CurrentPage($id);
+        $page = $this->getCurrentPage($id);
 
         $fields = FieldList::create(
             TabSet::create('Root', Tab::create('Settings',
@@ -239,7 +252,7 @@ class ContentModulePageEditor extends LeftAndMain implements PermissionProvider
 
         $form
             ->loadDataFrom($page)
-            ->setTemplate('ContentModulePageEditor_EditForm')
+            ->setTemplate('VisualEditor_EditForm')
             ->addExtraClass('cms-edit-form cms-content');
 
         return $form;
@@ -335,7 +348,7 @@ class ContentModulePageEditor extends LeftAndMain implements PermissionProvider
     {
         $page = $this->currentPage();
         if ($page) {
-            $navigator = new ContentModulePageEditorSilverStripeNavigator($page);
+            $navigator = new VisualEditorSilverStripeNavigator($page);
             return $navigator->renderWith($this->getTemplatesWithSuffix('_SilverStripeNavigator'));
         } else {
             return false;
@@ -345,12 +358,12 @@ class ContentModulePageEditor extends LeftAndMain implements PermissionProvider
     public function providePermissions()
     {
         return array(
-            "CMS_ACCESS_ContentModulePageEditor" => array(
-                'name' => _t('ContentModulePageEditor.ACCESS', "Access to '{title}' section",
+            "CMS_ACCESS_VisualEditor" => array(
+                'name' => _t('VisualEditor.ACCESS', "Access to '{title}' section",
                     array('title' => 'Content Module Page Editor')),
                 'category' => _t('Permission.CMS_ACCESS_CATEGORY', 'CMS Access'),
                 'help' => _t(
-                    'ContentModulePageEditor.ACCESS_HELP',
+                    'VisualEditor.ACCESS_HELP',
                     'Allow using the page editor for modules.'
                 ),
                 'sort' => -99 // below "CMS_ACCESS_LeftAndMain", but above everything else

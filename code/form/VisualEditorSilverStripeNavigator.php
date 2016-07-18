@@ -6,7 +6,7 @@
  * Date: 6/07/2016
  * Time: 9:14 AM
  */
-class ContentModulePageEditorSilverStripeNavigator extends SilverStripeNavigator
+class VisualEditorSilverStripeNavigator extends SilverStripeNavigator
 {
 
     public function getItems()

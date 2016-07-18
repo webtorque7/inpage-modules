@@ -6,15 +6,15 @@
  * Date: 6/07/2016
  * Time: 11:25 AM
  */
-class ContentModulePageEditor_EditModule extends ContentModulePageEditor
+class VisualEditor_EditModule extends VisualEditor
 {
-    private static $url_segment = 'content-modules/module-page-editor/module';
+    private static $url_segment = 'content-modules/visual-editor/module';
 
     private static $tree_class = 'ContentModule';
 
     private static $url_priority = 42;
 
-    private static $session_namespace = 'ContentModulePageEditorModule.EditModule';
+    private static $session_namespace = 'VisualEditorModule.EditModule';
 
     private static $allowed_actions = array(
         'delete',
@@ -60,7 +60,7 @@ class ContentModulePageEditor_EditModule extends ContentModulePageEditor
 
         $form = Form::create($this, 'ModuleEditForm', $fields, $actions);
         $form->loadDataFrom($module)
-            ->setTemplate('ContentModulePageEditor_EditForm')
+            ->setTemplate('VisualEditor_EditForm')
             ->addExtraClass('module-edit-form cms-content');
 
         return $form;

@@ -40,6 +40,22 @@
   }
 }
 
+//position better buttons with back/reload controls
+.cms {
+  .visual-editor-form {
+    position:relative;
+
+    //not working properly yet
+    .better-buttons-utils {
+      display: none;
+      position: absolute;
+      top: 15px;
+      right: 15px;
+    }
+  }
+}
+
+
 .cms {
   .visual-editor-preview {
     width: 100%;

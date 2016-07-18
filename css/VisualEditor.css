@@ -7,6 +7,9 @@
 .visual-editor-form .cms-content .cms-panel-padded { width: auto; }
 .visual-editor-form .cms-content .cms-content-fields { display: block; }
 
+.cms .visual-editor-form { position: relative; }
+.cms .visual-editor-form .better-buttons-utils { display: none; position: absolute; top: 15px; right: 15px; }
+
 .cms .visual-editor-preview { width: 100%; height: 100%; }
 .cms .visual-editor-preview .visual-editor-preview-scroll { height: 100%; position: relative; width: 100%; background-color: #f6f7f8; }
 .cms .visual-editor-preview .visual-editor-preview-outer { background: #d5dde2; border: 1px solid transparent; border-right: 1px solid #cfd9de; width: 100%; height: 100%; }
