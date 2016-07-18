@@ -83,7 +83,7 @@ class ContentModule extends DataObject implements PermissionProvider
      */
     public function getCMSActions($renameActions = false)
     {
-        $minorActions = CompositeField::create()->setTag('fieldset')->addExtraClass('ss-ui-buttonset');
+        $minorActions = CompositeField::create()->setTag('fieldset')->setName('MajorActions')->addExtraClass('ss-ui-buttonset noborder');
         $actions = new FieldList($minorActions);
 
         // "readonly"/viewing version that isn't the current version of the record

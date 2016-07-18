@@ -1,38 +1,39 @@
-.cms-container .ContentModuleEditController .cms-edit-form .ui-tabs-nav li a, .cms-container .ContentModuleSettingsController .cms-edit-form .ui-tabs-nav li a, .cms-container .ContentModuleHistoryController .cms-edit-form .ui-tabs-nav li a {
-	font-weight: bold;
-	line-height: 16px;
-	padding: 8px 20px;
-}
+/*.cms-container .ContentModuleEditController .cms-edit-form .ui-tabs-nav li a, .cms-container .ContentModuleSettingsController .cms-edit-form .ui-tabs-nav li a, .cms-container .ContentModuleHistoryController .cms-edit-form .ui-tabs-nav li a {*/
+	/*font-weight: bold;*/
+	/*line-height: 16px;*/
+	/*padding: 8px 20px;*/
+/*}*/
 
-.cms-container .ContentModuleEditController .cms-edit-form .ui-tabs-nav .ui-state-active, .cms-container .ContentModuleEditController .cms-edit-form .ui-tabs-nav .ui-widget-content .ui-state-active, .cms-container .ContentModuleEditController .cms-edit-form .ui-tabs-nav .ui-widget-header .ui-state-active, .cms-container .ContentModuleSettingsController .cms-edit-form .ui-tabs-nav .ui-state-active, .cms-container .ContentModuleSettingsController .cms-edit-form .ui-tabs-nav .ui-widget-content .ui-state-active, .cms-container .ContentModuleSettingsController .cms-edit-form .ui-tabs-nav .ui-widget-header .ui-state-active, .cms-container .ContentModuleHistoryController .cms-edit-form .ui-tabs-nav .ui-state-active, .cms-container .ContentModuleHistoryController .cms-edit-form .ui-tabs-nav .ui-widget-content .ui-state-active, .cms-container .ContentModuleHistoryController .cms-edit-form .ui-tabs-nav .ui-widget-header .ui-state-active {
-	background: none repeat scroll 0 0 #E6EAED;
-	border: 1px solid #C0C0C2;
-	padding-bottom: 1px;
-}
-.cms-container .ContentModuleEditController .cms-edit-form .ui-tabs-nav .ui-state-default, .cms-container .ContentModuleEditController .cms-edit-form .ui-tabs-nav .ui-widget-content .ui-state-default, .cms-container .ContentModuleEditController .cms-edit-form .ui-tabs-nav .ui-widget-header .ui-state-default, .cms-container .ContentModuleSettingsController .cms-edit-form .ui-tabs-nav .ui-state-default, .cms-container .ContentModuleSettingsController .cms-edit-form .ui-tabs-nav .ui-widget-content .ui-state-default, .cms-container .ContentModuleSettingsController .cms-edit-form .ui-tabs-nav .ui-widget-header .ui-state-default, .cms-container .ContentModuleHistoryController .cms-edit-form .ui-tabs-nav .ui-state-default, .cms-container .ContentModuleHistoryController .cms-edit-form .ui-tabs-nav .ui-widget-content .ui-state-default, .cms-container .ContentModuleHistoryController .cms-edit-form .ui-tabs-nav .ui-widget-header .ui-state-default {
-	border: 1px solid #C0C0C2;
-}
-.cms-container .ContentModuleEditController .cms-edit-form .ui-tabs-nav li, .cms-container .ContentModuleSettingsController .cms-edit-form .ui-tabs-nav li, .cms-container .ContentModuleHistoryController .cms-edit-form .ui-tabs-nav li {
-	float: left;
-}
+/*.cms-container .ContentModuleEditController .cms-edit-form .ui-tabs-nav .ui-state-active, .cms-container .ContentModuleEditController .cms-edit-form .ui-tabs-nav .ui-widget-content .ui-state-active, .cms-container .ContentModuleEditController .cms-edit-form .ui-tabs-nav .ui-widget-header .ui-state-active, .cms-container .ContentModuleSettingsController .cms-edit-form .ui-tabs-nav .ui-state-active, .cms-container .ContentModuleSettingsController .cms-edit-form .ui-tabs-nav .ui-widget-content .ui-state-active, .cms-container .ContentModuleSettingsController .cms-edit-form .ui-tabs-nav .ui-widget-header .ui-state-active, .cms-container .ContentModuleHistoryController .cms-edit-form .ui-tabs-nav .ui-state-active, .cms-container .ContentModuleHistoryController .cms-edit-form .ui-tabs-nav .ui-widget-content .ui-state-active, .cms-container .ContentModuleHistoryController .cms-edit-form .ui-tabs-nav .ui-widget-header .ui-state-active {*/
+	/*background: none repeat scroll 0 0 #E6EAED;*/
+	/*border: 1px solid #C0C0C2;*/
+	/*padding-bottom: 1px;*/
+/*}*/
 
-.cms-container .ContentModuleEditController .cms-edit-form .ui-tabs-nav, .cms-container .ContentModuleSettingsController .cms-edit-form .ui-tabs-nav, .cms-container .ContentModuleHistoryController .cms-edit-form .ui-tabs-nav {
-	border-bottom: medium none;
-	float: right;
-	margin: 8px 0 -1px;
-	padding: 0 24px 0 0;
-}
+/*.cms-container .ContentModuleEditController .cms-edit-form .ui-tabs-nav .ui-state-default, .cms-container .ContentModuleEditController .cms-edit-form .ui-tabs-nav .ui-widget-content .ui-state-default, .cms-container .ContentModuleEditController .cms-edit-form .ui-tabs-nav .ui-widget-header .ui-state-default, .cms-container .ContentModuleSettingsController .cms-edit-form .ui-tabs-nav .ui-state-default, .cms-container .ContentModuleSettingsController .cms-edit-form .ui-tabs-nav .ui-widget-content .ui-state-default, .cms-container .ContentModuleSettingsController .cms-edit-form .ui-tabs-nav .ui-widget-header .ui-state-default, .cms-container .ContentModuleHistoryController .cms-edit-form .ui-tabs-nav .ui-state-default, .cms-container .ContentModuleHistoryController .cms-edit-form .ui-tabs-nav .ui-widget-content .ui-state-default, .cms-container .ContentModuleHistoryController .cms-edit-form .ui-tabs-nav .ui-widget-header .ui-state-default {*/
+	/*border: 1px solid #C0C0C2;*/
+/*}*/
+/*.cms-container .ContentModuleEditController .cms-edit-form .ui-tabs-nav li, .cms-container .ContentModuleSettingsController .cms-edit-form .ui-tabs-nav li, .cms-container .ContentModuleHistoryController .cms-edit-form .ui-tabs-nav li {*/
+	/*float: left;*/
+/*}*/
+
+/*.cms-container .ContentModuleEditController .cms-edit-form .ui-tabs-nav, .cms-container .ContentModuleSettingsController .cms-edit-form .ui-tabs-nav, .cms-container .ContentModuleHistoryController .cms-edit-form .ui-tabs-nav {*/
+	/*border-bottom: medium none;*/
+	/*float: right;*/
+	/*margin: 8px 0 -1px;*/
+	/*padding: 0 24px 0 0;*/
+/*}*/
 
 
-.cms-container .ContentModuleEditController .ss-tabset .ui-tabs-nav ~ .ui-tabs-panel, .cms-container .ContentModuleSettingsController .ss-tabset .ui-tabs-nav ~ .ui-tabs-panel, .cms-container .ContentModuleHistoryController .ss-tabset .ui-tabs-nav ~ .ui-tabs-panel {
-	background: none repeat scroll 0 0 #E6EAED;
-	border-top: 1px solid #C0C0C2;
-	clear: both;
-}
+/*.cms-container .ContentModuleEditController .ss-tabset .ui-tabs-nav ~ .ui-tabs-panel, .cms-container .ContentModuleSettingsController .ss-tabset .ui-tabs-nav ~ .ui-tabs-panel, .cms-container .ContentModuleHistoryController .ss-tabset .ui-tabs-nav ~ .ui-tabs-panel {*/
+	/*background: none repeat scroll 0 0 #E6EAED;*/
+	/*border-top: 1px solid #C0C0C2;*/
+	/*clear: both;*/
+/*}*/
 
-.cms-container .ContentModuleEditController .cms-edit-form, .cms-container .ContentModuleSettingsController .cms-edit-form, .cms-container .ContentModuleHistoryController .cms-edit-form {
-	background: none repeat scroll 0 0 #E6EAED;
-}
+/*.cms-container .ContentModuleEditController .cms-edit-form, .cms-container .ContentModuleSettingsController .cms-edit-form, .cms-container .ContentModuleHistoryController .cms-edit-form {*/
+	/*background: none repeat scroll 0 0 #E6EAED;*/
+/*}*/
 
 #ModuleType ul { padding-left: 20px; }
 #ModuleType ul li { float: none; width: 100%; padding: 9px 0 9px 15px; overflow: hidden; border-bottom-width: 2px; border-bottom: 2px groove rgba(255, 255, 255, 0.8); -webkit-border-image: url(../images/textures/bg_fieldset_elements_border.png) 2 stretch stretch; border-image: url(../images/textures/bg_fieldset_elements_border.png) 2 stretch stretch; }
