@@ -1,0 +1,5 @@
+ContentModule:
+  enable_global_modules: true #enables global header/footer
+  exclude_modules:
+    - HeaderBaseModule
+    - FooterBaseModule

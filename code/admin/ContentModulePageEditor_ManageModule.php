@@ -119,7 +119,7 @@ class ContentModulePageEditor_ManageModule extends ContentModulePageEditor
      */
     public function module($request, $id = null)
     {
-        $page = $this->CurrentPage($id);
+        $page = $this->CurrentPage($id ? $id : $request->param('OtherID'));
         $moduleComponents = ArrayList::create();
 
         //extract the ContentModule relationships
@@ -284,7 +284,7 @@ class ContentModulePageEditor_ManageModule extends ContentModulePageEditor
             $this, "AddForm", $fields, $actions
         )->setHTMLID('Form_ModuleAddForm');
 
-        $form->addExtraClass('cms-edit-form stacked cms-content ' . $this->BaseCSSClasses());
+        $form->addExtraClass('stacked cms-content ' . $this->BaseCSSClasses());
         $form->setTemplate($this->getTemplatesWithSuffix('_EditForm'));
 
         return $form;
@@ -299,9 +299,9 @@ class ContentModulePageEditor_ManageModule extends ContentModulePageEditor
             $module = new $data['ModuleType'];
             $module->write();
 
-            $page->{$relationship}()->add($module);$this->getResponseNegotiator();
+            $page->{$relationship}()->add($module);
 
-            return $this->redirect(Controller::join_links($this->Link('show'), $module->ID));
+            return $this->redirect(Controller::join_links($this->EditLink($module->ID)));
         }
 
         return ContentModuleUtilities::json_response(array(

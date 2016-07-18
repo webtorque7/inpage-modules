@@ -14,7 +14,7 @@ class ContentModulePageEditor_EditModule extends ContentModulePageEditor
 
     private static $url_priority = 42;
 
-    private static $session_namespace = 'ContentModulePageEditorModule';
+    private static $session_namespace = 'ContentModulePageEditorModule.EditModule';
 
     private static $allowed_actions = array(
         'delete',
@@ -25,6 +25,12 @@ class ContentModulePageEditor_EditModule extends ContentModulePageEditor
         'unlink',
         'unpublish',
     );
+
+
+    public function init()
+    {
+        parent::init();
+    }
 
     /**
      * Shows edit form for a module
@@ -54,7 +60,8 @@ class ContentModulePageEditor_EditModule extends ContentModulePageEditor
 
         $form = Form::create($this, 'ModuleEditForm', $fields, $actions);
         $form->loadDataFrom($module)
-            ->addExtraClass('module-edit-form');
+            ->setTemplate('ContentModulePageEditor_EditForm')
+            ->addExtraClass('module-edit-form cms-content');
 
         return $form;
     }
@@ -189,6 +196,30 @@ class ContentModulePageEditor_EditModule extends ContentModulePageEditor
     }
 
     /**
+     * Unlink action for a module
+     *
+     * @param $data
+     * @param $form
+     * @return SS_HTTPResponse
+     */
+    public function rollback($data, $form)
+    {
+        $module = $this->getRecord($data['ID']);
+
+        $message = $module->doRollback($data);
+
+        return ContentModuleUtilities::json_response(
+            array(
+                'Status' => 1,
+                'Message' => $message,
+                'Content' => $this->getModuleEditForm($data['ID'])
+                    ->forTemplate()
+                    ->forTemplate()
+            )
+        );
+    }
+
+    /**
      * Get a database record to be managed by the CMS.
      *
      * @param int $id Record ID
@@ -243,6 +274,15 @@ class ContentModulePageEditor_EditModule extends ContentModulePageEditor
         } else if(substr($id,0,3) == 'new') {
             return $this->getNewItem($id);
         }
+    }
+
+    /**
+     *
+     * @return String
+     */
+    public function BackLink()
+    {
+        return Controller::join_links($this->Link('show'), $this->currentPageID());
     }
 
 }

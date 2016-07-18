@@ -1,0 +1,6 @@
+Page:
+  extensions:
+    - ContentModule_PageExtension
+SiteConfig:
+  extensions:
+    - ContentModuleSiteConfigExtension

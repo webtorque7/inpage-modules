@@ -19,7 +19,7 @@
             sortModules: function (e, ui) {
                 var self = this,
                     modules = {'Sort': {}};
-                formEditor = this.closest('.cms-form-editor');
+                formEditor = this.closest('.visual-editor-form');
 
                 this.find('.module').each(function (index) {
                     modules.Sort[$(this).data('id')] = index;
@@ -53,7 +53,7 @@
             onclick: function (e) {
                 e.preventDefault();
 
-                this.closest('.cms-form-editor').loadForm(this.attr('href'), true);
+                this.closest('.visual-editor-form').loadForm(this.attr('href'), true);
             }
         });
 
@@ -64,7 +64,7 @@
             onclick: function (e) {
                 e.preventDefault();
 
-                this.closest('.cms-form-editor').loadForm(this.attr('href'), true);
+                this.closest('.visual-editor-form').loadForm(this.attr('href'), true);
             }
         });
 

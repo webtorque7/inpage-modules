@@ -1,19 +1,8 @@
-.content-module-page-editor-module-handler {
-    display: none;
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1000000;
-}
-
-.content-module-page-editor-module-handler.highlight {
-    border: 3px solid red;
-    display: block;
-}
-
-.content-module-page-editor-module-handler.active {
-    border: 3px solid green;
-    display: block;
-}
+.visual-editor-module-handler { display: none; position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 100000000; }
+.visual-editor-module-handler h3 { background: rgba(255, 0, 0, 0.5); padding: 5px 10px; color: #FFF; font-size: 18px; font-weight: normal; position: absolute; left: 0; top: 0; }
+.visual-editor-module-handler h3 .status { font-size: 14px; font-style: italic; display: inline-block; margin-left: 20px; }
+.visual-editor-module-handler.highlight { border: 3px solid red; display: block; }
+.visual-editor-module-handler.active { border: 3px solid green; display: block; }
+.visual-editor-module-handler.active h3 { background: rgba(0, 255, 0, 0.5); top: 100%; /* move outside so doesn't cover content */ left: auto; right: 0; }
+.visual-editor-module-handler.modified, .visual-editor-module-handler.addedtodraft { border-color: darkorange; }
+.visual-editor-module-handler.modified h3, .visual-editor-module-handler.addedtodraft h3 { background-color: rgba(255, 100, 0, 0.5); }

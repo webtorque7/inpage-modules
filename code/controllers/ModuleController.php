@@ -127,4 +127,9 @@ class ModuleController extends Controller
             )
         );
     }
+
+    public function setFailover($failover)
+    {
+        $this->failover = $failover;
+    }
 }

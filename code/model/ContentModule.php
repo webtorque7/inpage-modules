@@ -14,7 +14,7 @@ class ContentModule extends DataObject implements PermissionProvider
      */
     public $form;
 
-    protected $_currentModuleField, $test;
+    protected $_currentModuleField, $test, $_cache_statusFlags;
 
     protected static $has_url = false;
 
@@ -225,10 +225,10 @@ class ContentModule extends DataObject implements PermissionProvider
             $counter = 1;
             while (!$safe) {
                 $counter++;
-                if (ContentModule::get()->filter(array(
-                    'URLSegment' => $this->URLSegment,
-                    'ID' => $this->ID
-                ))->first()
+                if (
+                    ContentModule::get()
+                        ->filter(array('URLSegment' => $this->URLSegment))
+                        ->exclude('ID', $this->ID)->first()
                 ) {
                     $this->URLSegment = $original . '-' . $counter;
                 } else {
@@ -390,6 +390,12 @@ class ContentModule extends DataObject implements PermissionProvider
         return $html;
     }
 
+    /**
+     * Gets modules based on called class, excludes base class (calling class),
+     * any which have been specifically excluded, and any implementing HiddenClass
+     *
+     * @return array
+     */
     public static function content_module_types()
     {
         $base = get_called_class();
@@ -399,8 +405,13 @@ class ContentModule extends DataObject implements PermissionProvider
 
         if ($types) {
             foreach ($types as $type) {
-                if ($type != $base && !in_array($type, singleton($base)->stat('exclude_modules'))) {
-                    $aTypes[singleton($type)->i18n_singular_name()] = singleton($type);
+                $instance = singleton($type);
+                if (
+                    $type != $base &&
+                    ! in_array($type, singleton($base)->stat('exclude_modules')) &&
+                    ! ($instance instanceof HiddenClass)
+                ) {
+                    $aTypes[$instance->i18n_singular_name()] = $instance;
                 }
             }
         }
@@ -879,6 +890,34 @@ class ContentModule extends DataObject implements PermissionProvider
         }
     }
 
+    public function doRollback($data)
+    {
+        $this->extend('onBeforeRollback', $data['ID']);
+
+		$id = (isset($data['ID'])) ? (int) $data['ID'] : null;
+		$version = (isset($data['Version'])) ? (int) $data['Version'] : null;
+
+		$record = DataObject::get_by_id($this->stat('tree_class'), $id);
+		if($record && !$record->canEdit()) return Security::permissionFailure($this);
+
+		if($version) {
+            $record->doRollbackTo($version);
+            $message = _t(
+                'CMSMain.ROLLEDBACKVERSIONv2',
+                "Rolled back to version #%d.",
+                array('version' => $data['Version'])
+            );
+        } else {
+            $record->doRollbackTo('Live');
+            $message = _t(
+                'CMSMain.ROLLEDBACKPUBv2',"Rolled back to published version."
+            );
+        }
+
+        return $message;
+    }
+
+
     /**
      * @todo better way of handling links
      * @param null $action
@@ -1117,14 +1156,20 @@ class ContentModule extends DataObject implements PermissionProvider
 
     public function injectModuleEditor(HTMLText $html)
     {
+        $raw = $html->forTemplate();
+
+        //don't do anything if we don't have any html
+        if (empty($raw)) return '';
+
         //add js/css to page to handle clicking on modules, and handle rendering controls etc
         Requirements::javascript(INPAGE_MODULES_DIR . '/javascript/ContentModulePageEditor.ModuleHandler.js');
         Requirements::css(INPAGE_MODULES_DIR . '/css/ContentModulePageEditor.ModuleHandler.css');
 
-        //inject editor element inside first element in module
-        $raw = $html->forTemplate();
+        /**
+         * inject editor element inside first element in module
+         */
 
-        //turn of errors because DOMDocument doesn't support html5 tags?
+        //turn off errors because DOMDocument doesn't support html5 tags?
         libxml_use_internal_errors(true);
 
         $dom = new DOMDocument();
@@ -1145,5 +1190,72 @@ class ContentModule extends DataObject implements PermissionProvider
         $html->setValue($newHTML);
 
         return $html;
+    }
+
+    /**
+     * A flag provides the user with additional data about the current page status, for example a "removed from draft"
+     * status. Each page can have more than one status flag. Returns a map of a unique key to a (localized) title for
+     * the flag. The unique key can be reused as a CSS class. Use the 'updateStatusFlags' extension point to customize
+     * the flags.
+     *
+     * Example (simple):
+     *   "deletedonlive" => "Deleted"
+     *
+     * Example (with optional title attribute):
+     *   "deletedonlive" => array('text' => "Deleted", 'title' => 'This page has been deleted')
+     *
+     * @param bool $cached Whether to serve the fields from cache; false regenerate them
+     * @return array
+     */
+    public function getStatusFlags($cached = true) {
+        if(!$this->_cache_statusFlags || !$cached) {
+            $flags = array();
+            if($this->getIsDeletedFromStage()) {
+                if($this->getExistsOnLive()) {
+                    $flags['removedfromdraft'] = array(
+                        'text' => _t('ContentModule.REMOVEDFROMDRAFTSHORT', 'Removed from draft'),
+                        'title' => _t('ContentModule.REMOVEDFROMDRAFTHELP', 'Module is published, but has been deleted from draft'),
+                    );
+                } else {
+                    $flags['archived'] = array(
+                        'text' => _t('ContentModule.ARCHIVEDPAGESHORT', 'Archived'),
+                        'title' => _t('ContentModule.ARCHIVEDPAGEHELP', 'Module is removed from draft and live'),
+                    );
+                }
+            } else if($this->getIsAddedToStage()) {
+                $flags['addedtodraft'] = array(
+                    'text' => _t('ContentModule.ADDEDTODRAFTSHORT', 'Draft'),
+                    'title' => _t('ContentModule.ADDEDTODRAFTHELP', "Module has not been published yet")
+                );
+            } else if($this->getIsModifiedOnStage()) {
+                $flags['modified'] = array(
+                    'text' => _t('ContentModule.MODIFIEDONDRAFTSHORT', 'Modified'),
+                    'title' => _t('ContentModule.MODIFIEDONDRAFTHELP', 'Module has unpublished changes'),
+                );
+            }
+
+            $this->extend('updateStatusFlags', $flags);
+
+            $this->_cache_statusFlags = $flags;
+        }
+
+        return $this->_cache_statusFlags;
+    }
+
+    public function getStatusFlagsObj()
+    {
+        $return = ArrayList::create();
+
+        foreach ($this->getStatusFlags() as $status => $fields) {
+            $fields['status'] = $status;
+            $return->push(ArrayData::create($fields));
+        }
+
+        return $return;
+    }
+
+    public function getStatusFlagsKeys()
+    {
+        return implode(' ', array_keys($this->getStatusFlags()));
     }
 }

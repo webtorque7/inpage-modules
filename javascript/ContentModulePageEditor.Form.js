@@ -2,13 +2,13 @@
     $.entwine('ss', function ($) {
 
 
-        $('#content-module-page-editor-cms-form-editor').entwine({
+        $('.visual-editor-form').entwine({
             BrowseHistory: [],
 
             onadd: function () {
             },
             /**
-             * Set updateHistory to true if navigation within a form, e.g. gridfield, else we clear the history when
+             * Set updateHistory to true if navigation within a form, e.g. gridfield, otherwise we clear the history when
              * a new form is loaded
              *
              * @param url
@@ -20,6 +20,7 @@
                 $.ajax({
                     url: url,
                     method: 'GET',
+                    type: 'GET',
                     global: false,
                     success: function (data) {
                         //if navigating within a form (gridfield) update history
@@ -49,58 +50,91 @@
                     this.updateContent(form);
                     this.slideOut();
                 } else {
-                    self.updateContent(form);
-                    this.addClass('loading').animate({opacity: 0.5}, 'fast', function () {
+                    this.animate({opacity: 0.5}, 'fast', function () {
                         self.updateContent(form);
                         self.animate({opacity: 1}, 1000);
+                        self.find('.cms-panel-content').redraw();
+                        self.find('.cms-panel-content').children().redraw();
                     });
                 }
             },
             hideForm: function (callback) {
                 var self = this,
-                    width = this.outerWidth();
+                    container = $('.visual-editor'),
+                    fullWidth = container.width();
 
-                $('.preview-scroll').stop().animate({
-                    width: '100%'
-                }, 'fast');
-
-                this.stop().animate({
-                    right: width * -1
-                }, 'fast', 'easeInOutQuad', function () {
-                    self.css({
-                        left: '100%',
-                        right: 'auto'
-                    }).hide();
-
-                    //clear content when finished,
-                    // will help any handlers waiting for element to be removed
+                this.css({
+                    left: 'auto',
+                    right: 0
+                }).stop().animate({
+                    width: 0
+                }, 1000, 'easeInOutQuad', function(){
+                    self.hide();
+                    //clear content so onremove is triggered
                     self.updateContent('');
-                    if (callback) callback();
                 });
+
+                //need to adjust children as well as they are fixed width
+                $('.visual-editor-preview')
+                    .children()
+                    .stop()
+                    .animate({
+                        width: fullWidth
+                    }, 1000, 'easeInOutQuad');
+
+                $('.visual-editor-preview')
+                    .removeClass('west')
+                    .addClass('center')
+                    .stop()
+                    .animate({
+                        width: fullWidth
+                    }, 1000, 'easeInOutQuad', function(){
+                        $('.cms-container').redraw();
+                        $('.visual-editor-toolbox').trigger('previewresized');
+                    });
             },
             slideOut: function () {
-                this.css({
-                    visibility: 'hidden',
-                    display: 'block',
-                    left: 'auto'
+                var self = this,
+                    preview = $('.visual-editor-preview'),
+                    initialWidth = preview.width(),
+                    newWidth = Math.floor(initialWidth/2);
+
+                //shrink preview window
+                $('.visual-editor-preview')
+                    .stop()
+                    .removeClass('center')
+                    .addClass('west')
+                    .animate({
+                        width: newWidth
+                    }, 1000, 'easeInOutQuad', function(){
+                        $('.visual-editor-toolbox').trigger('previewresized');
+                    });
+
+                //need to adjust children as well as they are fixed width
+                $('.visual-editor-preview')
+                    .children()
+                        .stop()
+                        .animate({
+                            width: newWidth
+                        }, 1000, 'easeInOutQuad');
+
+                //expand form
+                this.stop().css({
+                    width: 0,
+                    left: 'auto',
+                    right: 0 //set right so we slide out from right side of screen
+                }).show().animate({
+                    width: newWidth
+                }, 1000, 'easeInOutQuad', function(){
+                    self.css({
+                       right: 'auto' //reset so layout can set left
+                    });
+                    $('.cms-container').redraw();
                 });
-
-                var width = this.outerWidth();
-                $('.preview-scroll').stop().animate({
-                    width: '45%'
-                }, 500);
-
-                this.css({
-                    right: width * -1,
-                    visibility: 'visible'
-                }).stop().animate({
-                    right: 0
-                }, 500, 'easeInOutQuad');
             },
             updateContent: function (content) {
                 this.find('.form').html(content);
 
-                console.log(this.getBrowseHistory());
                 //check back button
                 if (this.getBrowseHistory().length > 1) {
                     this.find('.back').show();
@@ -119,41 +153,48 @@
                 }
             },
             refreshPreview: function () {
-                $('.content-module-page-editor').trigger('previewdirty');
+                $('.visual-editor').trigger('previewdirty');
             }
 
         });
 
-        $('.cms-form-editor .header .back').entwine({
+        $('.visual-editor-form .cms-content-header .back').entwine({
             onclick: function (e) {
                 e.preventDefault();
 
-                $('.cms-form-editor').goBack();
+                $('.visual-editor-form').goBack();
             }
         });
 
-        $('.cms-form-editor .header .close').entwine({
+        $('.visual-editor-form .cms-content-header .close').entwine({
             onclick: function (e) {
                 e.preventDefault();
 
-                $('.cms-form-editor').hideForm();
+                $('.visual-editor-form').hideForm();
             }
         });
 
-        $('#content-module-page-editor-cms-form-editor .refresh').entwine({
+        $('.visual-editor-form .cms-content-header .refresh').entwine({
             onclick: function (e) {
                 e.preventDefault();
 
-                $('#content-module-page-editor-cms-form-editor').refreshPreview();
+                $('.visual-editor-form ').refreshPreview();
             }
         });
 
-        $('#content-module-page-editor-cms-form-editor form input[type=submit], #content-module-page-editor-cms-form-editor form button').entwine({
+        //need to be more specific than LeftAndMain to overwrite default behaviour
+        var buttonSelector = 'body .visual-editor-form form .Actions input[type=submit],' +
+                'body .visual-editor-form form.cms-edit-form .Actions input[type=submit],' +
+                'body .visual-editor-form form .Actions button.action,' +
+                'body .visual-editor-form form.cms-edit-form .Actions button.action';
+
+        $(buttonSelector).entwine({
             onclick: function (e) {
                 e.preventDefault();
+                e.stopImmediatePropagation();
 
                 //append action so SS correctly picks it up
-                var container = this.closest('#content-module-page-editor-cms-form-editor'),
+                var container = this.closest('.visual-editor-form'),
                     form = this.closest('form'),
                     data = form.serialize() + '&' + this.attr('name') + '=' + '1',
                     self = this;
@@ -162,9 +203,11 @@
                 $.ajax({
                     url: form.attr('action'),
                     method: 'POST',
+                    type: 'POST',
                     data: data,
                     global: false,
                     success: function (data, message, xhr) {
+
                         self.removeClass('loading');
                         if (data.Status) {
                             if (data.Message) {
@@ -174,13 +217,13 @@
                             if (data.Content) {
                                 container.updateContent(data.Content);
                             }
-                            $('#content-module-page-editor-cms-form-editor').refreshPreview();
+                            $('.visual-editor-form ').refreshPreview();
                         } else {
                             if (data.Message) {
                                 statusMessage(data.Message, 'bad');
                             } else if (data) { //we have html
                                 container.updateContent(data);
-                                $('#content-module-page-editor-cms-form-editor').refreshPreview();
+                                $('.visual-editor-form ').refreshPreview();
                             }
 
                             //handle redirects in the headers
@@ -188,6 +231,7 @@
 
                             if (url) {
                                 container.loadForm(url);
+                                $('.visual-editor-form ').refreshPreview();
                             }
                         }
                     }
@@ -195,15 +239,33 @@
             }
         });
 
-        $('#content-module-page-editor-cms-form-editor .ss-gridfield .ss-gridfield-item').entwine({
+        //need an id to override default behaviour
+        $('#visual-editor-form .ss-gridfield .ss-gridfield-item').entwine({
             onclick: function (e) {
                 e.preventDefault();
                 e.stopImmediatePropagation();
 
                 var editLink = this.find('.edit-link');
                 if (editLink.length) {
-                    this.closest('#content-module-page-editor-cms-form-editor').loadForm(editLink.attr('href'), true);
+                    this.closest('.visual-editor-form').loadForm(editLink.attr('href'), true);
                 }
+            }
+        });
+
+        $('#visual-editor-form .ss-gridfield .ss-gridfield-buttonrow a, #visual-editor-form .form a').entwine({
+            onclick: function (e) {
+
+                //don't load empty links (tabs etc)
+                if (!this.attr('href') || this.attr('href').indexOf('#') !== -1) {
+                    this._super(e);
+                    return;
+                }
+
+                e.preventDefault();
+                e.stopImmediatePropagation();
+
+                this.closest('.visual-editor-form').loadForm(this.attr('href'), true);
+
             }
         });
 
@@ -236,7 +298,7 @@
                     .addClass('active');
             },
             getPreviewModules: function () {
-                return $($('.cms-preview').find('iframe').get(0).contentDocument).find('.content-module-page-editor-module-handler');
+                return $($('.visual-editor-preview').find('iframe').get(0).contentDocument).find('.visual-editor-module-handler');
             }
         });
     });
