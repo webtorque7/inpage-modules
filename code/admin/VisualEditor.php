@@ -27,11 +27,14 @@ class VisualEditor extends LeftAndMain implements PermissionProvider
         'EditPageForm',
         'EditSettingsForm',
         'page',
-        'savePage',
+
         'publishPage',
-        'settings',
+        'publishSettings',
+
+        'savePage',
         'saveSettings',
-        'publishSettings'
+        'settings',
+        'SiteTreeForm'
     );
 
 
@@ -311,6 +314,18 @@ class VisualEditor extends LeftAndMain implements PermissionProvider
 
         return $this->getEditSettingsForm()->forTemplate();
     }
+
+    public function SiteTreeForm()
+    {
+        $fields = FieldList::create(
+            TreeDropdownField::create('SiteTreeID', '', 'SiteTree')->setValue($this->currentPageID())
+        );
+
+        $actions = FieldList::create();
+
+        return Form::create($this, 'SiteTreeForm', $fields, $actions)->addExtraClass('site-tree-form');
+    }
+
 
     public function PageEditLink()
     {

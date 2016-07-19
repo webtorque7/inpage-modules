@@ -85,7 +85,6 @@
                 var preview = $('.visual-editor-preview');
                 preview.setLoading();
                 this.on('load', function(){
-                    console.log('frame loaded');
                     preview.setFinishedLoading();
                 });
             }

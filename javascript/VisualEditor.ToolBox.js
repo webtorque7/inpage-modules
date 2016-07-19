@@ -70,5 +70,21 @@
                 $('.visual-editor-form').loadForm(this.attr('href'));
             }
         });
+
+        //stop default click running
+        $('.visual-editor-toolbox .site-tree-form a').entwine({
+            onclick: function(e) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+            }
+        });
+
+        $('.visual-editor-toolbox .site-tree-form .field input[name=SiteTreeID]').entwine({
+            onchange:function(e) {
+                var id = this.val(),
+                    url = $('.visual-editor-toolbox').data('page-url');
+                $('.cms-container').loadPanel(url + id, false, 'Content');
+            }
+        });
     });
 })(jQuery);
