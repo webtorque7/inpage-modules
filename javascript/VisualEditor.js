@@ -4,12 +4,17 @@
     $.entwine('ss', function ($) {
         $('.visual-editor').entwine({
             onadd: function () {
+                this.hideMenuPanel();
                 this._super();
-
             },
             redraw:function() {
                 this._super();
 
+            },
+            hideMenuPanel: function() {
+                setTimeout(function () {
+                    $('.cms-panel.cms-menu').togglePanel(false, false, true);
+                }, 50);
             },
             onpreviewdirty: function () {
                 this.getPreview().reload();

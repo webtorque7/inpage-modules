@@ -23,6 +23,9 @@
                     type: 'GET',
                     global: false,
                     success: function (data) {
+                        //ajaxComplete is causing this to show again
+                        $('.visual-editor').hideMenuPanel();
+
                         //if navigating within a form (gridfield) update history
                         if (updateHistory) {
                             self.getBrowseHistory().push(url);
@@ -99,13 +102,23 @@
                     initialWidth = preview.width(),
                     newWidth = Math.floor(initialWidth/2);
 
+                //show so we can get the width, max-width should limit it
+                this.css({
+                    visibility: 'hidden',
+                    display: 'block',
+                    width: newWidth
+                });
+
+                var formWidth = this.width(),
+                    previewWidth = initialWidth - formWidth;
+
                 //shrink preview window
                 $('.visual-editor-preview')
                     .stop()
                     .removeClass('center')
                     .addClass('west')
                     .animate({
-                        width: newWidth
+                        width: previewWidth
                     }, 1000, 'easeInOutQuad', function(){
                         $('.visual-editor-toolbox').trigger('previewresized');
                     });
@@ -115,16 +128,17 @@
                     .children()
                         .stop()
                         .animate({
-                            width: newWidth
+                            width: previewWidth
                         }, 1000, 'easeInOutQuad');
 
                 //expand form
                 this.stop().css({
+                    visibility: 'visible',
                     width: 0,
                     left: 'auto',
                     right: 0 //set right so we slide out from right side of screen
-                }).show().animate({
-                    width: newWidth
+                }).animate({
+                    width: formWidth
                 }, 1000, 'easeInOutQuad', function(){
                     self.css({
                        right: 'auto' //reset so layout can set left

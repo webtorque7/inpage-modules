@@ -1,4 +1,4 @@
-.visual-editor-form { position: fixed; height: 100%; left: 100%; top: 0; z-index: 1001; overflow: auto; display: none; background-color: #f6f7f8; box-shadow: -2px 0 2px #CCC; }
+.visual-editor-form { position: fixed; height: 100%; left: 100%; top: 0; z-index: 1001; max-width: 698px; overflow: auto; display: none; background-color: #f6f7f8; box-shadow: -2px 0 2px #CCC; }
 .visual-editor-form .cms-content-header { display: block; }
 .visual-editor-form .cms-content-header .cms-content-header-info { font-size: 24px; line-height: 36px; }
 .visual-editor-form .cms-content-header .cms-content-header-info a { margin-right: 15px; }
