@@ -247,7 +247,7 @@ class VisualEditor_ManageModule extends VisualEditor
     {
 
         if (!$relationship) $relationship = $this->request->requestVar('Relationship');
-        if (!$page) $page = $this->CurrentPage($this->request->requestVar('PageID'));
+        if (!$page) $page = $this->getPageRecord($this->request->requestVar('PageID'));
 
         list($parentClass, $componentClass, $parentField, $componentField, $table) = $page->manyManyComponent($relationship);
 
@@ -296,7 +296,7 @@ class VisualEditor_ManageModule extends VisualEditor
 
     public function doAdd($data, Form $form)
     {
-        $page = $this->CurrentPage($data['PageID']);
+        $page = $this->getPageRecord($data['PageID']);
         $relationship = $data['Relationship'];
 
         if (!empty($data['ModuleType']) && (singleton($data['ModuleType']) instanceof ContentModule)) {
@@ -321,7 +321,7 @@ class VisualEditor_ManageModule extends VisualEditor
      */
     public function add()
     {
-        $page = $this->CurrentPage();
+        $page = $this->getPageRecord($this->request->param('ID'));
         $relationship = $this->request->param('OtherID');
 
         if ($page && $page->exists() && $relationship && $page->hasMethod($relationship)) {
