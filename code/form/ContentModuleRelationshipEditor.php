@@ -783,83 +783,45 @@ class ContentModuleRelationshipEditor extends FormField
             return false;
         }
     }
-}
 
-class ContentModuleRelationshipEditor_Item extends ViewableData
-{
-
-    private $parent, $item, $_canEdit;
-
-    public function __construct($parent, $item)
+    /**
+     * Wraps creating a table field, if using ContentModuleField it will return a ContentModuleRelationshipEditor
+     * Otherwise returns a GridField
+     *
+     * This is mainly for backwards compatibility while transitioning to Visual Editor
+     *
+     * @param $name
+     * @param null $title
+     * @param null $relationship
+     * @param null $record
+     * @param array $options Key value pairs of options [sortField, showAdd, showAddExisting, showDelete]
+     * @static
+     * @return static|GridField
+     */
+    public static function create_table_field($name, $title = null, $relationship = null, $record = null, $options = [])
     {
-        $this->parent = $parent;
-        $this->item = $item;
-    }
+        if (ContentModuleField::curr()) {
+            $field = self::create($name, $title, $relationship, $record);
+            //set options
+            if (!empty($options['sortField'])) $field->setSortField($options['sortField']);
+            if (isset($options['showAdd'])) $field->setShowAddButton($options['showAdd']);
+            if (isset($options['showAddExisting'])) $field->setShowAddButton($options['showAddExisting']);
+            if (isset($options['showDelete'])) $field->setShowDeleteButton($options['showDelete']);
 
-    public function Fields($xmlSafe = true)
-    {
-        $list = $this->parent->FieldList();
-        foreach ($list as $fieldName => $fieldTitle) {
-            $value = "";
-
-            // This supports simple FieldName syntax
-            if (strpos($fieldName, '.') === false) {
-                $value = ($this->item->XML_val($fieldName) && $xmlSafe)
-                        ? $this->item->XML_val($fieldName)
-                        : $this->item->RAW_val($fieldName);
-                // This support the syntax fieldName = Relation.RelatedField
-            } else {
-                $fieldNameParts = explode('.', $fieldName);
-                $tmpItem = $this->item;
-                for ($j = 0; $j < sizeof($fieldNameParts); $j++) {
-                    $relationMethod = $fieldNameParts[$j];
-                    $idField = $relationMethod . 'ID';
-                    if ($j == sizeof($fieldNameParts) - 1) {
-                        if ($tmpItem) {
-                            $value = $tmpItem->$relationMethod;
-                        }
-                    } else {
-                        if ($tmpItem->hasMethod($relationMethod)) {
-                            if ($tmpItem) {
-                                $tmpItem = $tmpItem->$relationMethod();
-                            }
-                        }
-                    }
-                }
-            }
-
-
-            //escape
-            if ($escape = $this->parent->fieldEscape) {
-                foreach ($escape as $search => $replace) {
-                    $value = str_replace($search, $replace, $value);
-                }
-            }
-
-            $fields[] = new ArrayData(
-                    array(
-                            "Name" => $fieldName,
-                            "Title" => $fieldTitle,
-                            "Value" => $value,
-                    )
-            );
+            return $field;
         }
-        return new ArrayList($fields);
-    }
 
-    public function getItem()
-    {
-        return $this->item;
-    }
+        $field = GridField::create(
+            $name,
+            $title,
+            $record->{$relationship}(),
+            $config = GridFieldConfig_RelationEditor::create()
+        );
 
-    public function setCanEdit($bool)
-    {
-        $this->_canEdit = $bool;
-        return $this;
-    }
+        if (!empty($options['sortField'])) {
+            $config->addComponent(GridFieldOrderableRows::create($options['sortField']));
+        }
 
-    public function getCanEdit()
-    {
-        return $this->_canEdit;
+        return $field;
     }
 }
