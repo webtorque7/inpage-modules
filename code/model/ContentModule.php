@@ -840,11 +840,11 @@ class ContentModule extends DataObject implements PermissionProvider
      * CMS action for deleting draft version of ContentModule, returns a message
      * @return string
      */
-    public function doDelete()
+    public function doDelete($data)
     {
         if ($this->canDelete()) {
             $this->doUnpublish();
-            $this->doUnlink();
+            $this->doUnlink($data);
             $this->delete();
             return "{$this->Title} deleted successfully";
         }

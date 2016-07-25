@@ -264,7 +264,7 @@
                             var url = xhr.getResponseHeader('X-ControllerURL');
 
                             if (url) {
-                                container.loadForm(url);
+                                container.loadForm(url, true);
                                 $('.visual-editor-form ').refreshPreview();
                             }
                         }
