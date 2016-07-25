@@ -1,6 +1,9 @@
 Page:
   extensions:
     - ContentModule_PageExtension
+Page_Controller:
+  extensions:
+    - ContentModule_PageController_Extension
 SiteConfig:
   extensions:
     - ContentModuleSiteConfigExtension

@@ -611,7 +611,7 @@
                 e.preventDefault();
                 e.stopPropagation();
 
-                var name = this.attr('name');console.log(this, name);
+                var name = this.attr('name');
                 var action = name.substring(name.indexOf('_') + 1, name.lastIndexOf('_'));
 
                 this.closest('.content-module').submitModule(action);
@@ -631,7 +631,7 @@
                 e.preventDefault();
                 e.stopPropagation();
 
-                var name = this.attr('name');console.log(this, name);
+                var name = this.attr('name');
                 var action = name.substring(name.indexOf('_') + 1, name.lastIndexOf('_'));
 
                 var contentModule = this.closest('.content-module');

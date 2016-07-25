@@ -380,7 +380,7 @@ class ContentModule extends DataObject implements PermissionProvider
             $controller->setFailover($this);
         }
 
-        $html = $controller->renderWith(array_reverse(ClassInfo::ancestry($this->class)));
+        $html = $controller->renderWith($controller->getViewer(''));
 
         //check if we are in editor mode, if so inject html to handle modules
         if ($this->getIsEditorMode()) {
@@ -1187,9 +1187,7 @@ class ContentModule extends DataObject implements PermissionProvider
         //clear the errors
         libxml_clear_errors();
 
-        $html->setValue($newHTML);
-
-        return $html;
+        return DBField::create_field('HTMLText', $newHTML);
     }
 
     /**

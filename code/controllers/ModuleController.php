@@ -35,6 +35,19 @@ class ModuleController extends Controller
         parent::init();
     }
 
+    /**
+     * Return an SSViewer object to process the data
+     *
+     * Overwrite defaut viewer by disabling requirements
+     *
+     * @return SSViewer The viewer identified being the default handler for this Controller/Action combination
+     */
+    public function getViewer($action) {
+        $viewer = new SSViewer(array_reverse(ClassInfo::ancestry($this->data()->class)));
+        $viewer->includeRequirements(false);
+        return $viewer;
+    }
+
     public function handleRequest(SS_HTTPRequest $request, DataModel $model)
     {
         return parent::handleRequest($request, $model);
