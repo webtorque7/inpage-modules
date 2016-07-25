@@ -21,7 +21,7 @@ class ModuleAsController extends Controller
                     break;
                 }
             }
-            $controller = ($class !== null) ? "{$class}_Controller" : '';
+            $controller = ($class !== null) ? "{$class}_Controller" : 'ModuleController';
         }
 
         if ($action && class_exists($controller . '_' . ucfirst($action))) {

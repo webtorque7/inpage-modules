@@ -550,7 +550,7 @@
                 var insertHTML = $('<div>' + buttonsHtml + '</div>');
                 insertHTML.find('button, input').each(function () {
                     var self = $(this);
-                    console.log('fixing', this);
+
                     if (this.tagName.toLowerCase() === 'button') {
                         var buttonText = self.find('.ui-button-text');
                         if (buttonText.length) {
@@ -595,7 +595,6 @@
                     activeModule = open.closest('.content-module');
 
                 this.addClass('loading');
-                console.log(activeModule.find('[name="' + this.attr('name') + '"]'));
                 //trigger click on real button
                 activeModule.find('[name="' + this.attr('name') + '"]').trigger('click');
             }

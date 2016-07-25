@@ -1,6 +1,27 @@
 (function ($) {
     //window.debug = true;
 
+    /**
+     * Gets the components of a url
+     *
+     * @param url
+     */
+    function getURLComponents(url) {
+        var urlComponent = url,
+            queryComponent = '';
+
+        if (urlComponent.indexOf('?') !== -1) {
+            var parts = urlComponent.split('?');
+            urlComponent = parts[0];
+            queryComponent = '?' + parts[1];
+        }
+
+        return {
+            url: urlComponent,
+            query: queryComponent
+        };
+    }
+
     $.entwine('ss', function ($) {
         $('.visual-editor').entwine({
             onadd: function () {
@@ -26,7 +47,9 @@
                 this.editModule(data.ID);
             },
             editModule: function (id) {
-                var url = this.data('edit-module-url') + '/' + id;
+                var urlComponents = getURLComponents(this.data('edit-module-url')),
+                    url =  urlComponents.url + '/' + id + urlComponents.query;
+
                 $('.visual-editor-form').loadForm(url);
             }
         });

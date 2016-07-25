@@ -1,5 +1,26 @@
 (function($){
     $.entwine('ss', function($){
+        /**
+         * Gets the components of a url
+         *
+         * @param url
+         */
+        function getURLComponents(url) {
+            var urlComponent = url,
+                queryComponent = '';
+
+            if (urlComponent.indexOf('?') !== -1) {
+                var parts = urlComponent.split('?');
+                urlComponent = parts[0];
+                queryComponent = '?' + parts[1];
+            }
+
+            return {
+                url: urlComponent,
+                query: queryComponent
+            };
+        }
+
         $('.visual-editor-toolbox').entwine({
             StartX: null,
             StartY: null,
@@ -82,8 +103,13 @@
         $('.visual-editor-toolbox .site-tree-form .field input[name=SiteTreeID]').entwine({
             onchange:function(e) {
                 var id = this.val(),
-                    url = $('.visual-editor-toolbox').data('page-url');
-                $('.cms-container').loadPanel(url + id, false, 'Content');
+                    urlComponents = getURLComponents($('.visual-editor-toolbox').data('page-url'));
+
+                $('.cms-container').loadPanel(
+                    urlComponents.url + id + urlComponents.query,
+                    false,
+                    'Content'
+                );
             }
         });
     });

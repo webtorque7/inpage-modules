@@ -385,4 +385,26 @@ class VisualEditor extends LeftAndMain implements PermissionProvider
             )
         );
     }
+
+    public function Link($action = null, $id = null, $otherID = null, $otherParam = null)
+    {
+        // Handle missing url_segments
+        if($this->config()->url_segment) {
+            $segment = $this->config()->get('url_segment', Config::FIRST_SET);
+        } else {
+            $segment = $this->class;
+        };
+
+        $link = Controller::join_links(
+            $this->stat('url_base', true),
+            $segment,
+            '/', // trailing slash needed if $action is null!
+            "$action",
+            $id,
+            $otherID,
+            $otherParam
+        );
+        $this->extend('updateLink', $link);
+        return $link;
+    }
 }

@@ -1,6 +1,6 @@
 <div id="content-module-page-editor" class="visual-editor cms-content center $BaseCSSClasses" data-layout-type="border"
      data-pjax-fragment="Content"
-     data-edit-module-url="$Link('module')/show"
+     data-edit-module-url="$Link('module/show')"
 >
     <div class="cms-content-header north">
         <div class="cms-content-header-info">
@@ -18,11 +18,11 @@
         <div id="content-module-page-editor-toolbox" class="visual-editor-toolbox" draggable="true" data-page-url="$Link('edit')/">
             $SiteTreeForm
             <ul>
-                <li class="icon-modules"><a href="$Link('manage')/module/$CurrentPage.ID" title="Open module manager"><i
+                <li class="icon-modules"><a href="$Link('manage/module/', $CurrentPage.ID)" title="Open module manager"><i
                         class="fa fa-cubes" aria-hidden="true"></i></a></li>
-                <li class="icon-page"><a href="$Link('page')/$CurrentPage.ID" title="Edit page"><i
+                <li class="icon-page"><a href="$Link('page', $CurrentPage.ID)" title="Edit page"><i
                         class="fa fa-pencil-square-o" aria-hidden="true"></i></a></li>
-                <li class="icon-settings"><a href="$Link('settings')/$CurrentPage.ID" title="Edit page settings"><i
+                <li class="icon-settings"><a href="$Link('settings', $CurrentPage.ID)" title="Edit page settings"><i
                         class="fa fa-cogs" aria-hidden="true"></i></a></li>
             </ul>
         </div>

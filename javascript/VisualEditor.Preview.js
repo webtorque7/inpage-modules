@@ -103,12 +103,9 @@
 
                 this.parent().find('.active').removeClass('active');
                 this.parent().find('input[checked]').prop('checked', false);
-                console.log(this.parent().find('input[checked]').prop('checked'));
 
                 this.next('label').addClass('active');
                 this.prop('checked', true);
-
-                console.log(this.prop('checked'));
 
                 $('.visual-editor-preview').loadUrl(this.data('link'));
             }

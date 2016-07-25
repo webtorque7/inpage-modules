@@ -1,6 +1,26 @@
 (function ($) {
     $.entwine('ss', function ($) {
 
+        /**
+         * Gets the components of a url
+         *
+         * @param url
+         */
+        function getURLComponents(url) {
+            var urlComponent = url,
+                queryComponent = '';
+
+            if (urlComponent.indexOf('?') !== -1) {
+                var parts = urlComponent.split('?');
+                urlComponent = parts[0];
+                queryComponent = '?' + parts[1];
+            }
+
+            return {
+                url: urlComponent,
+                query: queryComponent
+            };
+        }
 
         $('.visual-editor-form').entwine({
             BrowseHistory: [],
