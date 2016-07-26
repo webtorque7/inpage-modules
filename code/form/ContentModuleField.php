@@ -411,15 +411,6 @@ class ContentModuleField extends FormField
                     preg_match('/ContentModule\[[0-9]{1,}\]\[([a-zA-Z0-9]{1,})\\]/i', $fieldName, $matches2);
                     $originalFieldName = (!empty($matches2[1])) ? $matches2[1] : '';
 
-                    //composite field
-                    /*if (strpos($fieldName, '[')) {
-                        $openingBracket = strpos($fieldName, '[') - 1;
-                        $closingBracket = strpos($fieldName, ']') - 1;
-                        $fieldName = substr($fieldName, 0, $openingBracket);
-                        $subFieldName = substr($fieldName, $openingBracket + 2, $closingBracket - $openingBracket + 2);
-                        echo $fieldName . ' ' . $subFieldName;exit;
-                    }*/
-
                     //find the field
                     $fields = $module->EditFields()->dataFields();
 

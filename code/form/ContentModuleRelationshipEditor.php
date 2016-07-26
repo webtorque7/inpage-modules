@@ -697,7 +697,6 @@ class ContentModuleRelationshipEditor extends FormField
             }
             $form->loadDataFrom($record);
 
-            //echo $form->getRecord()->ID;exit;
             $form->setFormAction($this->Link('ItemEditForm'));
 
             return $form;
@@ -800,7 +799,7 @@ class ContentModuleRelationshipEditor extends FormField
      */
     public static function create_table_field($name, $title = null, $relationship = null, $record = null, $options = [])
     {
-        if (ContentModuleField::curr()) {echo 'here';
+        if (ContentModuleField::curr()) {
             $field = self::create($name, $title, $relationship, $record);
             //set options
             if (!empty($options['sortField'])) $field->setSortField($options['sortField']);

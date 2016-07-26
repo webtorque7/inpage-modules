@@ -302,7 +302,6 @@ class ContentModuleUploadField extends UploadField
             return $this;
         }
 
-        //echo $this->Value();exit;
         // Get details to save
         $idList = $this->getItemIDs();
 
