@@ -91,7 +91,7 @@
                     right: 0
                 }).stop().animate({
                     width: 0
-                }, 1000, 'easeInOutQuad', function(){
+                }, 1000, 'easeInOutQuad', function () {
                     self.hide();
                     //clear content so onremove is triggered
                     self.updateContent('');
@@ -111,7 +111,7 @@
                     .stop()
                     .animate({
                         width: fullWidth
-                    }, 1000, 'easeInOutQuad', function(){
+                    }, 1000, 'easeInOutQuad', function () {
                         $('.cms-container').redraw();
                         $('.visual-editor-toolbox').trigger('previewresized');
                     });
@@ -120,7 +120,7 @@
                 var self = this,
                     preview = $('.visual-editor-preview'),
                     initialWidth = preview.width(),
-                    newWidth = Math.floor(initialWidth/2);
+                    newWidth = Math.floor(initialWidth / 2);
 
                 //show so we can get the width, max-width should limit it
                 this.css({
@@ -139,17 +139,17 @@
                     .addClass('west')
                     .animate({
                         width: previewWidth
-                    }, 1000, 'easeInOutQuad', function(){
+                    }, 1000, 'easeInOutQuad', function () {
                         $('.visual-editor-toolbox').trigger('previewresized');
                     });
 
                 //need to adjust children as well as they are fixed width
                 $('.visual-editor-preview')
                     .children()
-                        .stop()
-                        .animate({
-                            width: previewWidth
-                        }, 1000, 'easeInOutQuad');
+                    .stop()
+                    .animate({
+                        width: previewWidth
+                    }, 1000, 'easeInOutQuad');
 
                 //expand form
                 this.stop().css({
@@ -159,13 +159,32 @@
                     right: 0 //set right so we slide out from right side of screen
                 }).animate({
                     width: formWidth
-                }, 1000, 'easeInOutQuad', function(){
+                }, 1000, 'easeInOutQuad', function () {
                     self.css({
-                       right: 'auto' //reset so layout can set left
+                        right: 'auto' //reset so layout can set left
                     });
                     $('.cms-container').redraw();
+
+                    //update chosen selects
+                    self.fixSelects();
+
                 });
             },
+
+            /**
+             * Fix chosen on selects, width is wrong when initially rendered
+             */
+            fixSelects: function () {
+                this.find('.chzn-done').each(function () {
+                    var self = $(this),
+                        select = self.clone(),
+                        parent = self.parent();
+
+                    self.remove();
+                    parent.append(select);
+                });
+            },
+
             updateContent: function (content) {
                 this.find('.form').html(content);
 
@@ -218,9 +237,9 @@
 
         //need to be more specific than LeftAndMain to overwrite default behaviour
         var buttonSelector = 'body .visual-editor-form form .Actions input[type=submit],' +
-                'body .visual-editor-form form.cms-edit-form .Actions input[type=submit],' +
-                'body .visual-editor-form form .Actions button.action,' +
-                'body .visual-editor-form form.cms-edit-form .Actions button.action';
+            'body .visual-editor-form form.cms-edit-form .Actions input[type=submit],' +
+            'body .visual-editor-form form .Actions button.action,' +
+            'body .visual-editor-form form.cms-edit-form .Actions button.action';
 
         $(buttonSelector).entwine({
             onclick: function (e) {
