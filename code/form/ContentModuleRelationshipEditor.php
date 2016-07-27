@@ -825,8 +825,15 @@ class ContentModuleRelationshipEditor extends FormField
             $config->addComponent(GridFieldOrderableRows::create($options['sortField']));
         }
 
-        if (!empty($options['maxItems']) && $items->count >= $options['maxItems']) {
+        if (!empty($options['maxItems']) && $items->count() >= $options['maxItems']) {
             $config->removeComponentsByType('GridFieldAddNewButton');
+        }
+
+        if (!empty($options['showAddExisting']) && $items->count() < $options['maxItems']) {
+            $config->removeComponentsByType('GridFieldAddExistingAutocompleter');
+            $config->addComponent(new GridFieldAddExistingSearchButton());
+        } else {
+            $config->removeComponentsByType('GridFieldAddExistingAutocompleter');
         }
 
         return $field;

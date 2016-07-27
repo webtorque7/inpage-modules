@@ -305,8 +305,15 @@
             }
         });
 
+        //todo this is too generic and will catch too much, maybe whitelist known buttons which open a new page
         $('#visual-editor-form .ss-gridfield .ss-gridfield-buttonrow a, #visual-editor-form .form a').entwine({
             onclick: function (e) {
+
+                if (this.hasClass('add-existing-search')) {
+                    e.preventDefault();
+                    this._super(e);
+                    return;
+                }
 
                 //don't load empty links (tabs etc)
                 if (!this.attr('href') || this.attr('href').indexOf('#') !== -1) {
