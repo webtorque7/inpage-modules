@@ -15,7 +15,7 @@
 
         </div>
 
-        <div id="content-module-page-editor-toolbox" class="visual-editor-toolbox" draggable="true" data-page-url="$Link('edit')/">
+        <div id="content-module-page-editor-toolbox" class="visual-editor-toolbox" draggable="true" data-page-url="$Link('edit')">
             $SiteTreeForm
             <ul>
                 <li class="icon-modules"><a href="$Link('manage/module/', $CurrentPage.ID)" title="Open module manager"><i

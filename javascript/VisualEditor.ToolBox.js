@@ -106,7 +106,7 @@
                     urlComponents = getURLComponents($('.visual-editor-toolbox').data('page-url'));
 
                 $('.cms-container').loadPanel(
-                    urlComponents.url + id + urlComponents.query,
+                    urlComponents.url + '/' + id + urlComponents.query,
                     false,
                     'Content'
                 );
