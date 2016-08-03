@@ -316,6 +316,15 @@ class ContentModule extends DataObject implements PermissionProvider
                                 $field->setValue(null, $this);
                             }
                             break;
+                        case 'ContentModuleSortableUploadField':
+                            if (!empty($values) && !empty($values[$name])) {
+                                $field->setValue($values[$name], $this);
+                            } elseif (!empty($values)) {
+                                $field->setValue(null);
+                            } else {
+                                $field->setValue(null, $this);
+                            }
+                            break;
                         default:
                             $field->setValue($value, $this);
                             break;
