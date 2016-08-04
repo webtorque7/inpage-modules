@@ -582,6 +582,18 @@
             }
         });
 
+        /**
+         * prevent creating more TreeDropdownFields when module is sorted (this triggers onadd)
+         */
+        $('.content-module .TreeDropdownField').entwine({
+            onadd: function () {
+                if (!this.data('tree-initialised')) {
+                    this._super();
+                    this.data('tree-initialised', true);
+                }
+            }
+        });
+
         //global controls for active module, triggers action on active module
         var globalButtons = 'body .content-module-field .content-module-field-actions .Actions button, ' +
             'body .content-module-field .content-module-field-actions .Actions input[type=submit]';
@@ -601,7 +613,7 @@
         });
 
         var publishSaveButtons = 'body .content-module-field .content-module .Actions input[type=submit].publish, ' +
-            'body .content-module-field .content-module .Actions input[type=submit].save, '+
+            'body .content-module-field .content-module .Actions input[type=submit].save, ' +
             'body .content-module-field .content-module .Actions button.publish, ' +
             'body .content-module-field .content-module .Actions button.save';
 
