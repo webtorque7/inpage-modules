@@ -799,12 +799,13 @@ class ContentModuleRelationshipEditor extends FormField
      */
     public static function create_table_field($name, $title = null, $relationship = null, $record = null, $options = [])
     {
+
         if (ContentModuleField::curr()) {
             $field = self::create($name, $title, $relationship, $record);
             //set options
             if (!empty($options['sortField'])) $field->setSortField($options['sortField']);
             if (isset($options['showAdd'])) $field->setShowAddButton($options['showAdd']);
-            if (isset($options['showAddExisting'])) $field->setShowAddButton($options['showAddExisting']);
+            if (isset($options['showAddExisting'])) $field->setShowAddExistingButton($options['showAddExisting']);
             if (isset($options['showDelete'])) $field->setShowDeleteButton($options['showDelete']);
             if (isset($options['maxItems'])) $field->setMaxItems($options['maxItems']);
 
