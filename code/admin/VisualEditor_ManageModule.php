@@ -127,8 +127,8 @@ class VisualEditor_ManageModule extends VisualEditor
         $page = $this->getPageRecord($id ? $id : $request->param('ID'));
         $moduleComponents = ArrayList::create();
 
-        //extract the ContentModule relationships
-        $manyManys = $page->manyMany();
+        //extract the ContentModule relationships, reverse so the are in order of heirachy, lowest to highest
+        $manyManys = array_reverse($page->manyMany());
 
         if (!empty($manyManys)) foreach ($manyManys as $relationship => $class) {
             if ($class === 'ContentModule' || ($class instanceof ContentModule)) {

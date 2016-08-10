@@ -29,6 +29,8 @@ class ContentModuleField extends FormField
         'reload'
     );
 
+    private $sortField = 'Sort';
+
     public function __construct($name, $title = null, $value = null)
     {
         parent::__construct($name, $title, $value);
@@ -148,7 +150,7 @@ class ContentModuleField extends FormField
 
                 $page->{$this->getName()}()->add(
                     $module,
-                    array('Sort' => $page->{$this->getName()}()->max('Sort') + 1)
+                    array($this->sortField => $page->{$this->getName()}()->max($this->sortField) + 1)
                 );
 
                 return ContentModuleUtilities::json_response(
@@ -295,8 +297,9 @@ class ContentModuleField extends FormField
     {
         if (($id = $this->request->param('ID')) && !empty($_REQUEST['Sort'])) {
 
-            // Debug::dump($_REQUEST['Sort']);exit;
             $SQL_id = Convert::raw2sql($id);
+            $SQL_sort = Convert::raw2sql($this->sortField);
+
             foreach ($_REQUEST['Sort'] as $moduleID => $index) {
                 $SQL_moduleID = Convert::raw2sql($moduleID);
                 $SQL_index = Convert::raw2sql($index);
@@ -304,9 +307,9 @@ class ContentModuleField extends FormField
                 list($parentClass, $componentClass, $parentField, $componentField, $table) = $this->getRecord(
                 )->many_many($this->getName());
 
-                $queries[] = "UPDATE \"{$table}\" set \"Sort\" = '{$SQL_index}' WHERE \"{$parentField}\" = '{$SQL_id}' AND \"{$componentField}\" = '{$SQL_moduleID}'";
+                $queries[] = "UPDATE \"{$table}\" set \"{$SQL_sort}\" = '{$SQL_index}' WHERE \"{$parentField}\" = '{$SQL_id}' AND \"{$componentField}\" = '{$SQL_moduleID}'";
                 DB::query(
-                    "UPDATE \"{$table}\" set \"Sort\" = '{$SQL_index}' WHERE \"{$parentField}\" = '{$SQL_id}' AND \"{$componentField}\" = '{$SQL_moduleID}'"
+                    "UPDATE \"{$table}\" set \"{$SQL_sort}\" = '{$SQL_index}' WHERE \"{$parentField}\" = '{$SQL_id}' AND \"{$componentField}\" = '{$SQL_moduleID}'"
                 );
             }
 
@@ -445,9 +448,15 @@ class ContentModuleField extends FormField
                 }
             }
         }
+
         return $this->httpError(404);
     }
 
+    public function setSortField($v)
+    {
+        $this->sortField = $v;
+        return $this;
+    }
 
     public static function curr()
     {
