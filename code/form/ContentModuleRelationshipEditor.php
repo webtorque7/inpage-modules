@@ -822,6 +822,11 @@ class ContentModuleRelationshipEditor extends FormField
             $config = GridFieldConfig_RelationEditor::create()
         );
 
+        //have to explicitly add button
+        if (empty($options['showAdd'])) {
+            $config->removeComponentsByType('GridFieldAddNewButton');
+        }
+
         if (!empty($options['sortField'])) {
             $config->addComponent(GridFieldOrderableRows::create($options['sortField']));
         }
@@ -830,7 +835,11 @@ class ContentModuleRelationshipEditor extends FormField
             $config->removeComponentsByType('GridFieldAddNewButton');
         }
 
-        if (!empty($options['showAddExisting']) && $items->count() < $options['maxItems']) {
+        //only show add existing if less than maxItems
+        if (
+            !empty($options['showAddExisting']) &&
+            (empty($options['maxItems']) || $items->count() < $options['maxItems'])
+        ) {
             $config->removeComponentsByType('GridFieldAddExistingAutocompleter');
             $config->addComponent(new GridFieldAddExistingSearchButton());
         } else {
