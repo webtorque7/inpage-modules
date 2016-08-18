@@ -82,7 +82,7 @@
 
                 var modules = {'Sort': {}};
 
-                $('.content-module').each(function (index) {
+                this.find('.content-module').each(function (index) {
                     modules.Sort[$(this).data('id')] = index;
                 });
 

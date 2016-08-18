@@ -358,7 +358,7 @@ class ContentModule extends DataObject implements PermissionProvider
         return $actions;
     }
 
-    public function EditForm()
+    public function EditForm($relationship = '')
     {
         $classes = ClassInfo::ancestry($this->class);
         $formTemplates = array();
@@ -367,7 +367,7 @@ class ContentModule extends DataObject implements PermissionProvider
             $formTemplates[] = $class . 'EditForm';
         }
 
-        return $this->renderWith(array_reverse($formTemplates));
+        return $this->customise(['Relationship' => $relationship])->renderWith(array_reverse($formTemplates));
     }
 
     public function forTemplate()

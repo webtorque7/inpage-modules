@@ -41,7 +41,7 @@
         <% if $CurrentModules %>
             <div class="modules">
                 <% loop $CurrentModules %>
-                    $EditForm
+                    $EditForm($Up.Name)
                 <% end_loop %>
             </div>
 
