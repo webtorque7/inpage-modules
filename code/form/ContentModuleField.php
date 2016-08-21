@@ -181,7 +181,7 @@ class ContentModuleField extends FormField
 
                 $page->{$this->getName()}()->add(
                     $newModule,
-                    array('Sort' => $page->{$this->getName()}()->max('Sort') + 1)
+                    array($this->sortField => $page->{$this->getName()}()->max($this->sortField) + 1)
                 );
 
                 return ContentModuleUtilities::json_response(
