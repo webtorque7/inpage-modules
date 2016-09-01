@@ -14,6 +14,9 @@
                     <a class="ss-ui-button tool-button font-icon-plus add-button"
                        href="$Top.Link('add', $Page.ID, $Relationship)" aria-disabled="false"><span
                             class="ui-button-text">Add new</span></a>
+                    <a class="ss-ui-button tool-button font-icon-plus add-button"
+                       href="$Top.Link('addexisting', $Page.ID, $Relationship)" aria-disabled="false"><span
+                            class="ui-button-text">Add existing</span></a>
                 </div>
                 <p class="message info">Drag and drop the modules to sort them. Changes in order are applied to the live site immediately</p>
                 <div class="module-sorter" data-sort-url="$Top.Link('sort', $Page.ID, $Relationship)">

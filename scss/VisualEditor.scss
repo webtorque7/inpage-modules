@@ -254,6 +254,10 @@
         line-height: 20px;
         font-weight: normal;
         margin: 0;
+        width: 90%;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
       }
 
       .links {
@@ -275,16 +279,18 @@
   }
 }
 
+//add module
 #Form_ModuleAddForm {
   .optionset {
     ul {
-      width: 80%;
+      width: 90%;
     }
 
     li {
-      display: list-item;
+      vertical-align: top;
+      display: inline-block;
       float: none;
-      width: 100%;
+      width: 45%;
 
       label {
         display: inline-block;
@@ -301,16 +307,79 @@
         }
 
         .title {
-          width: 200px;
           padding-right: 10px;
           float: none;
           display: inline-block;
+          font-size: 14px;
+          clear: right;
         }
 
         .description {
-          display: inline-block;
-          clear: none;
+          display: block;
+          clear: both;
         }
+      }
+    }
+  }
+}
+
+//add existing module
+.module-manager {
+  &.module-types {
+    position: relative;
+
+    .module-type {
+      cursor: pointer;
+      margin-bottom: 20px;
+      padding: 5px 20px;
+      border: 2px solid #000;
+      position: relative;
+      p {
+        font-style: italic;
+      }
+
+      &:hover {
+        border: 2px solid green;
+      }
+    }
+
+    .existing-modules {
+      width: 100%;
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: -2px;
+      z-index: 1000;
+      background: #FFF;
+      border: 2px solid #000;
+      opacity: 0;
+
+      ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+
+        li {
+          padding: 10px 20px;
+          border-bottom: 1px solid #000;
+          font-size: 14px;
+          cursor: pointer;
+
+          &:hover {
+            background:#000;
+            color: #FFF;
+          }
+
+          &:last-child {
+            border-bottom: 0;
+          }
+        }
+      }
+
+      &.open {
+        display: block;
+        opacity: 1;
+        transition: opacity 1s ease-in-out;
       }
     }
   }

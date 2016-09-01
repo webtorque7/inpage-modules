@@ -350,12 +350,12 @@
              */
             selectPreviewModule: function () {
                 var module = this.find('input[name=ID]').val(),
-                    previewModules = this.getPreviewModules();
+                    previewModules = this.getPreviewModules(),
+                    activeModule = previewModules.filter('[data-module-id=' + module + ']');
 
-                previewModules
-                    .removeClass('active')
-                    .filter('[data-module-id=' + module + ']')
-                    .addClass('active');
+                    previewModules.removeClass('active');
+
+                    if (activeModule.length) activeModule.addClass('active');
             },
             getPreviewModules: function () {
                 return $($('.visual-editor-preview').find('iframe').get(0).contentDocument).find('.visual-editor-module-handler');
