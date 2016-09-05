@@ -97,19 +97,29 @@
             onclick: function(e) {
                 e.preventDefault();
                 e.stopImmediatePropagation();
+                this.closest('.TreeDropdownField').trigger('click');
             }
         });
 
         $('.visual-editor-toolbox .site-tree-form .field input[name=SiteTreeID]').entwine({
+            PreviousID: null,
+
+            onadd:function() {
+                //store original id so we don't trigger a page load for same id
+              this.setPreviousID(this.val());
+            },
+
             onchange:function(e) {
                 var id = this.val(),
                     urlComponents = getURLComponents($('.visual-editor-toolbox').data('page-url'));
 
-                $('.cms-container').loadPanel(
-                    urlComponents.url + '/' + id + urlComponents.query,
-                    false,
-                    'Content'
-                );
+                if (id && id != this.getPreviousID()) {
+                    $('.cms-container').loadPanel(
+                        urlComponents.url + '/' + id + urlComponents.query,
+                        false,
+                        {pjax: 'Content'}
+                    );
+                }
             }
         });
     });

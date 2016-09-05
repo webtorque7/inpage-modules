@@ -159,7 +159,7 @@
              *
              * @param keyword
              */
-            filter: function (keyword) {
+            filterByKeyword: function (keyword) {
                 var title = this.find('h4').text();
 
                 if (!keyword || keyword.length === 0) {
@@ -205,7 +205,7 @@
                 //close any open lists
                 $('.module-type .existing-modules').removeClass('open');
 
-                $('.module-types .module-type').filter(this.val());
+                $('.module-types .module-type').filterByKeyword(this.val());
             }
         });
 

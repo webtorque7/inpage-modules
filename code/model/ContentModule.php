@@ -226,9 +226,9 @@ class ContentModule extends DataObject implements PermissionProvider
             while (!$safe) {
                 $counter++;
                 if (
-                    ContentModule::get()
-                        ->filter(array('URLSegment' => $this->URLSegment))
-                        ->exclude('ID', $this->ID)->first()
+                ContentModule::get()
+                    ->filter(array('URLSegment' => $this->URLSegment))
+                    ->exclude('ID', $this->ID)->first()
                 ) {
                     $this->URLSegment = $original . '-' . $counter;
                 } else {
@@ -384,7 +384,7 @@ class ContentModule extends DataObject implements PermissionProvider
 
         //check if we are in editor mode, if so inject html to handle modules
         if ($this->getIsEditorMode()) {
-            $html = $this->injectModuleEditor($html);
+            $html = $this->injectVisualEditor($html);
         }
 
         return $html;
@@ -408,8 +408,8 @@ class ContentModule extends DataObject implements PermissionProvider
                 $instance = singleton($type);
                 if (
                     $type != $base &&
-                    ! in_array($type, singleton($base)->stat('exclude_modules')) &&
-                    ! ($instance instanceof HiddenClass)
+                    !in_array($type, singleton($base)->stat('exclude_modules')) &&
+                    !($instance instanceof HiddenClass)
                 ) {
                     $aTypes[$instance->i18n_singular_name()] = $instance;
                 }
@@ -894,13 +894,15 @@ class ContentModule extends DataObject implements PermissionProvider
     {
         $this->extend('onBeforeRollback', $data['ID']);
 
-		$id = (isset($data['ID'])) ? (int) $data['ID'] : null;
-		$version = (isset($data['Version'])) ? (int) $data['Version'] : null;
+        $id = (isset($data['ID'])) ? (int)$data['ID'] : null;
+        $version = (isset($data['Version'])) ? (int)$data['Version'] : null;
 
-		$record = DataObject::get_by_id($this->stat('tree_class'), $id);
-		if($record && !$record->canEdit()) return Security::permissionFailure($this);
+        $record = DataObject::get_by_id($this->stat('tree_class'), $id);
+        if ($record && !$record->canEdit()) {
+            return Security::permissionFailure($this);
+        }
 
-		if($version) {
+        if ($version) {
             $record->doRollbackTo($version);
             $message = _t(
                 'CMSMain.ROLLEDBACKVERSIONv2',
@@ -910,7 +912,7 @@ class ContentModule extends DataObject implements PermissionProvider
         } else {
             $record->doRollbackTo('Live');
             $message = _t(
-                'CMSMain.ROLLEDBACKPUBv2',"Rolled back to published version."
+                'CMSMain.ROLLEDBACKPUBv2', "Rolled back to published version."
             );
         }
 
@@ -1154,12 +1156,14 @@ class ContentModule extends DataObject implements PermissionProvider
         return (bool)Controller::curr()->getRequest()->getVar('page-editor') && Permission::check('CMS_ACCESS_ContentModulePageEditor');
     }
 
-    public function injectModuleEditor(HTMLText $html)
+    public function injectVisualEditor(HTMLText $html)
     {
         $raw = $html->forTemplate();
 
         //don't do anything if we don't have any html
-        if (empty($raw)) return '';
+        if (empty($raw)) {
+            return '';
+        }
 
         //add js/css to page to handle clicking on modules, and handle rendering controls etc
         Requirements::javascript(INPAGE_MODULES_DIR . '/javascript/VisualEditor.PreviewHandler.js');
@@ -1173,14 +1177,16 @@ class ContentModule extends DataObject implements PermissionProvider
         libxml_use_internal_errors(true);
 
         $dom = new DOMDocument();
-        $dom->loadHTML($raw);
+
+        //prevent DOMDocument adding html wrappers (doctype/head/body)
+        $dom->loadHTML($raw,  LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
 
         //create our editor element
         $editor = $dom->createDocumentFragment();
-        $editor->appendXML(SSViewer::execute_template('VisualEditor_PreviewHandler', $this));
+        $templateHTML = SSViewer::execute_template('VisualEditor_PreviewHandler', $this)->forTemplate();
+        $editor->appendXML($templateHTML);
 
-        $firstNode = $dom->documentElement->childNodes->item(0)->childNodes->item(0);
-        $firstNode->appendChild($editor);
+        $dom->documentElement->appendChild($editor);
 
         $newHTML = $dom->saveHTML();
 
@@ -1205,14 +1211,16 @@ class ContentModule extends DataObject implements PermissionProvider
      * @param bool $cached Whether to serve the fields from cache; false regenerate them
      * @return array
      */
-    public function getStatusFlags($cached = true) {
-        if(!$this->_cache_statusFlags || !$cached) {
+    public function getStatusFlags($cached = true)
+    {
+        if (!$this->_cache_statusFlags || !$cached) {
             $flags = array();
-            if($this->getIsDeletedFromStage()) {
-                if($this->getExistsOnLive()) {
+            if ($this->getIsDeletedFromStage()) {
+                if ($this->getExistsOnLive()) {
                     $flags['removedfromdraft'] = array(
                         'text' => _t('ContentModule.REMOVEDFROMDRAFTSHORT', 'Removed from draft'),
-                        'title' => _t('ContentModule.REMOVEDFROMDRAFTHELP', 'Module is published, but has been deleted from draft'),
+                        'title' => _t('ContentModule.REMOVEDFROMDRAFTHELP',
+                            'Module is published, but has been deleted from draft'),
                     );
                 } else {
                     $flags['archived'] = array(
@@ -1220,12 +1228,12 @@ class ContentModule extends DataObject implements PermissionProvider
                         'title' => _t('ContentModule.ARCHIVEDPAGEHELP', 'Module is removed from draft and live'),
                     );
                 }
-            } else if($this->getIsAddedToStage()) {
+            } else if ($this->getIsAddedToStage()) {
                 $flags['addedtodraft'] = array(
                     'text' => _t('ContentModule.ADDEDTODRAFTSHORT', 'Draft'),
                     'title' => _t('ContentModule.ADDEDTODRAFTHELP', "Module has not been published yet")
                 );
-            } else if($this->getIsModifiedOnStage()) {
+            } else if ($this->getIsModifiedOnStage()) {
                 $flags['modified'] = array(
                     'text' => _t('ContentModule.MODIFIEDONDRAFTSHORT', 'Modified'),
                     'title' => _t('ContentModule.MODIFIEDONDRAFTHELP', 'Module has unpublished changes'),
