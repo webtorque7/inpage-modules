@@ -26,7 +26,6 @@ class ContentModule_PageController_Extension extends Extension
         }
 
         if ($request) {
-
             $response = ModuleAsController::module_controller_for_request($this->owner, $request);
 
             if ($response) {

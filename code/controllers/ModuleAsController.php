@@ -35,7 +35,8 @@ class ModuleAsController extends Controller
     {
         $moduleURLSegment = $request->shift();
 
-        if ($module = $contentController->data()->$relationship()->filter('URLSegment', $moduleURLSegment)->first()) {
+        //can't filter by relationship as we have no way of determining it unless we pass it in the url
+        if ($module = ContentModule::get()->filter('URLSegment', $moduleURLSegment)->first()) {
             $controller = self::controller_for($module, $contentController);
 
             //backwards compatibility support for modules handling actions directly
