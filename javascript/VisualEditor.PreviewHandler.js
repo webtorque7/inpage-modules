@@ -2275,6 +2275,12 @@
     ;
 
 
+    /**
+     * TODO: Remove entwine, don't really need it. Ideally remove jquery to make more lightweight, less chance of breaking site js
+     *
+     */
+
+
     var SCROLL_POSITION_KEY = 'ContentModulePageEditor.ScrollPosition';
 
     $.entwine('ss', function ($) {
@@ -2305,12 +2311,29 @@
             getModuleContainer: function() {
                 return this.parent();
             },
+            scrollToTop: function() {
+                $('html, body').stop().animate({
+                    scrollTop: this.offset().top - 10
+                }, 500, 'swing');
+            },
             onclick:function(e) {
                 e.preventDefault();
+
+                var self = this;
 
                 $('.visual-editor-module-handler').removeClass('active');
 
                 this.addClass('active');
+                //want this to happen after the form opens, maybe a better
+                //way to handle this. Could trigger it but trying to avoid
+                //too much communication between windows
+                setTimeout(function(){
+                    self.scrollToTop();
+                }, 3000);
+
+                this.notifyAdmin();
+            },
+            notifyAdmin: function() {
                 var data = JSON.stringify({
                     target: '.visual-editor',
                     type: 'event',
