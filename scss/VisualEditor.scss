@@ -143,40 +143,48 @@
         }
 
         .treedropdownfield-panel {
-          background: #0071c4;
-          color: #FFF;
+          border-color: #0071c4;
 
           .jstree {
-            ins {
-              width: 8px;
-              background-position: -40px 20px;
-            }
 
             li {
-              font-size: 14px;
+              font-size: 13px;
 
               a {
                 border: 0;
-                font-size: 14px;
-                color: #FFF;
-                text-shadow: none;
+                font-size: 13px;
+                color: #0071c4;
+                //text-shadow: none;
 
                 &.jstree-hovered,
                 &.jstree-clicked {
-                  background: none;
-                  font-style: italic;
-                  border: 1px solid #0071c4;
-                  color: #EEE;
+                  color: #3946c4;
+                }
+
+                .badge {
+                  padding:2px;
+                  color:#000;
+                  display:inline-block;
+                  border-radius: 2px;
+
+                  &.status-modified {
+                    background-color: #F46B00;
+                    color: #FFF;
+                  }
+
+                  &.status-addedtodraft {
+                    background-color: #F46B00;
+                    color: #FFF;
+                  }
                 }
               }
             }
-
           }
         }
       }
-
     }
   }
+
 
   ul {
     display: inline-block;

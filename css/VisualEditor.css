@@ -27,11 +27,13 @@
 .visual-editor-toolbox form.site-tree-form .field div.TreeDropdownField { background: none; color: #0071c4; border: 0; border-bottom: 1px solid #0071c4; border-radius: 0; }
 .visual-editor-toolbox form.site-tree-form .field div.TreeDropdownField:focus { box-shadow: none; }
 .visual-editor-toolbox form.site-tree-form .field div.TreeDropdownField .treedropdownfield-title { width: 80%; }
-.visual-editor-toolbox form.site-tree-form .field div.TreeDropdownField .treedropdownfield-panel { background: #0071c4; color: #FFF; }
-.visual-editor-toolbox form.site-tree-form .field div.TreeDropdownField .treedropdownfield-panel .jstree ins { width: 8px; background-position: -40px 20px; }
-.visual-editor-toolbox form.site-tree-form .field div.TreeDropdownField .treedropdownfield-panel .jstree li { font-size: 14px; }
-.visual-editor-toolbox form.site-tree-form .field div.TreeDropdownField .treedropdownfield-panel .jstree li a { border: 0; font-size: 14px; color: #FFF; text-shadow: none; }
-.visual-editor-toolbox form.site-tree-form .field div.TreeDropdownField .treedropdownfield-panel .jstree li a.jstree-hovered, .visual-editor-toolbox form.site-tree-form .field div.TreeDropdownField .treedropdownfield-panel .jstree li a.jstree-clicked { background: none; font-style: italic; border: 1px solid #0071c4; color: #EEE; }
+.visual-editor-toolbox form.site-tree-form .field div.TreeDropdownField .treedropdownfield-panel { border-color: #0071c4; }
+.visual-editor-toolbox form.site-tree-form .field div.TreeDropdownField .treedropdownfield-panel .jstree li { font-size: 13px; }
+.visual-editor-toolbox form.site-tree-form .field div.TreeDropdownField .treedropdownfield-panel .jstree li a { border: 0; font-size: 13px; color: #0071c4; }
+.visual-editor-toolbox form.site-tree-form .field div.TreeDropdownField .treedropdownfield-panel .jstree li a.jstree-hovered, .visual-editor-toolbox form.site-tree-form .field div.TreeDropdownField .treedropdownfield-panel .jstree li a.jstree-clicked { color: #3946c4; }
+.visual-editor-toolbox form.site-tree-form .field div.TreeDropdownField .treedropdownfield-panel .jstree li a .badge { padding: 2px; color: #000; display: inline-block; border-radius: 2px; }
+.visual-editor-toolbox form.site-tree-form .field div.TreeDropdownField .treedropdownfield-panel .jstree li a .badge.status-modified { background-color: #F46B00; color: #FFF; }
+.visual-editor-toolbox form.site-tree-form .field div.TreeDropdownField .treedropdownfield-panel .jstree li a .badge.status-addedtodraft { background-color: #F46B00; color: #FFF; }
 .visual-editor-toolbox ul { display: inline-block; vertical-align: middle; }
 .visual-editor-toolbox ul li { display: inline-block; font-size: 30px; margin-left: 20px; }
 
