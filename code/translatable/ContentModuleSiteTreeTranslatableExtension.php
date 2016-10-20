@@ -12,7 +12,7 @@ class ContentModuleSiteTreeTranslatableExtension extends DataExtension
     {
         if ($saveTranslation) {
             //create new modules
-            $manyManys = array_reverse($page->manyMany());
+            $manyManys = array_reverse($this->owner->manyMany());
 
             if (!empty($manyManys)) {
                 foreach ($manyManys as $relationship => $class) {
@@ -21,8 +21,8 @@ class ContentModuleSiteTreeTranslatableExtension extends DataExtension
                             foreach ($original->$relationship() as $module) {
                                 //create new module
                                 $newModule = Object::create(get_class($module));
-                                $newModule->Title = $module->Title . ' - ' . Translatable::get_current_locale();
-                                $newModule->Locale = Translatable::get_current_locale();
+                                $newModule->Title = $module->Title . ' - ' . $this->owner->Locale;
+                                $newModule->Locale = $this->owner->Locale;
                                 $newModule->OriginalID = $original->ID;
                                 $newModule->write();
                                 $this->owner->$relationship()->add($newModule);
@@ -30,6 +30,7 @@ class ContentModuleSiteTreeTranslatableExtension extends DataExtension
                         }
                     }
                 }
+            }
         }
     }
 }
