@@ -77,7 +77,17 @@ class VisualEditor extends LeftAndMain implements PermissionProvider
 
     public function getCurrentPage($id = null)
     {
-        return $this->currentPage();
+        $record = $this->currentPage();
+
+        //translations
+        //todo put this in extension or somethine so it's not hardcoded
+        if (!empty($record->Locale)) {
+            if (class_exists(Translatable::class)) {
+                Translatable::set_current_locale($record->Locale);
+            }
+        }
+
+        return $record;
     }
 
     public function getEditForm($id = null, $fields = null)

@@ -122,7 +122,17 @@ class VisualEditor_ManageModule extends VisualEditor
 
     protected function getPageRecord($id)
     {
-        return SiteTree::get()->byID($id);
+        $record = SiteTree::get()->byID($id);
+
+        //translations
+        //todo put this in extension or somethine so it's not hardcoded
+        if (!empty($record->Locale)) {
+            if (class_exists(Translatable::class)) {
+                Translatable::set_current_locale($record->Locale);
+            }
+        }
+
+        return $record;
     }
 
     /**
