@@ -67,11 +67,11 @@ class ContentModule_PageExtension extends DataExtension
      */
     public function UseGlobalFooter()
     {
-        if ($this->owner->UseDefaultHeader === 'Inherit' && $this->owner->ParentID) {
+        if ($this->owner->UseDefaultFooter === 'Inherit' && $this->owner->ParentID) {
             return $this->owner->Parent()->UseGlobalFooter();
         }
 
         //defaults to true if nothing set
-        return $this->owner->UseDefaultHeader === 'No' ? false : true;
+        return $this->owner->UseDefaultFooter === 'No' ? false : true;
     }
 }
