@@ -377,7 +377,6 @@ class ContentModule extends DataObject implements PermissionProvider
         //backwards compatibility support for Modules directly handling actions
         if ($controller instanceof ModuleController) {
             $controller->setRequest(Controller::curr()->getRequest());
-            $controller->setFailover($this);
         }
 
         $html = $controller->renderWith($controller->getViewer(''));

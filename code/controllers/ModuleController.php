@@ -25,9 +25,9 @@ class ModuleController extends Controller
             $curr :
             ModelAsController::controller_for(SiteTree::get()->first());
 
-        $this->setFailover($this->dataRecord);
-
         parent::__construct();
+
+        $this->setFailover($this->dataRecord);
     }
 
     public function init()
@@ -144,21 +144,5 @@ class ModuleController extends Controller
                 'ExtraBackgroundClass' => $this->ExtraBackgroundClass()
             )
         );
-    }
-
-    /**
-     * Not sure when function was introducted, for some reason it stopped working at one point so I've defined one here
-     * just in case
-     *
-     * @param ViewableData $failover
-     */
-    public function setFailover(ViewableData $failover)
-    {
-        if (method_exists(get_parent_class($this), 'setFailover')) {
-            parent::setFailover($failover);
-        } else {
-            $this->failover = $failover;
-            $this->defineMethods();
-        }
     }
 }
