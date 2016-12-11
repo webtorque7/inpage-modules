@@ -42,6 +42,13 @@ class VisualEditor extends LeftAndMain implements PermissionProvider
     {
         parent::init();
 
+        //hack to set locale, cms sets Locale instead of locale,
+        //has to be after init, as TranslatableCMSMainExtension changes locale
+        if (class_exists('Translatable') && ($locale = $this->getRequest()->getVar('Locale'))) {
+            Translatable::set_current_locale($locale);
+        }
+
+
         Requirements::css(INPAGE_MODULES_DIR . '/css/VisualEditor.css');
         Requirements::combine_files('VisualEditor.js', [
             INPAGE_MODULES_DIR . '/javascript/VisualEditor.js',
@@ -57,7 +64,8 @@ class VisualEditor extends LeftAndMain implements PermissionProvider
         Versioned::reading_stage("Stage");
 
         //lets see if this works - we want to include js from CMSMain
-        singleton('CMSMain')->init();
+        //not sure why we needed this, but it plays havoc with the translations
+//        singleton('CMSMain')->init();
     }
 
     /**
@@ -82,7 +90,7 @@ class VisualEditor extends LeftAndMain implements PermissionProvider
         //translations
         //todo put this in extension or somethine so it's not hardcoded
         if (!empty($record->Locale)) {
-            if (class_exists(Translatable::class)) {
+            if (class_exists('Translatable')) {
                 Translatable::set_current_locale($record->Locale);
             }
         }
