@@ -75,3 +75,27 @@ public function SideBarModules() {
     return $this->getManyManyComponents('SideBarModules')->sort('Sort');
 }
 ```
+
+## Visual Editor
+
+A new feature is the visual editor. This adds the ability to edit modules while viewing the page. The editor is
+presented with a preview and can click on a module to edit. This includes header and footer modules if it has been setup.
+
+![VisualEditor](docs/images/visual-editor-1.JPG)
+![VisualEditor2](docs/images/visual-editor-2.JPG)
+![VisualEditor2](docs/images/visual-editor-3.JPG)
+![VisualEditor2](docs/images/visual-editor-4.JPG)
+
+Access to this feature needs to be added manually. A simple way of doing this is by adding a button to the page form
+
+```php
+$fields->addFieldsToTab('Root.Main', array(
+    LiteralField::create(
+        'VisualEditorLink',
+        sprintf(
+            '<p><a href="%s" class="ss-ui-button .ss-ui-button-ajax visual-editor-button">Visual Editor</a></p>',
+            Controller::join_links(singleton('VisualEditor')->Link('edit'), $this->ID)
+        )
+    )
+));
+```
