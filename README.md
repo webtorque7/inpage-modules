@@ -99,3 +99,14 @@ $fields->addFieldsToTab('Root.Main', array(
     )
 ));
 ```
+
+To use header and footer modules you must enable it in the config
+
+```yml
+ContentModule:
+  enable_global_modules: 1
+```
+
+Header modules shoule inherit from HeaderBaseModule, and footer modules should inherit from FooterBaseModule.
+The default modules can be set in the site config (Settings) in CMS. The default modules can be disabled per page
+in the Settings tab of the page.
