@@ -82,9 +82,9 @@ A new feature is the visual editor. This adds the ability to edit modules while 
 presented with a preview and can click on a module to edit. This includes header and footer modules if it has been setup.
 
 ![VisualEditor](docs/images/visual-editor-1.JPG)
-![VisualEditor2](docs/images/visual-editor-2.JPG)
-![VisualEditor2](docs/images/visual-editor-3.JPG)
-![VisualEditor2](docs/images/visual-editor-4.JPG)
+![VisualEditor2](docs/images/visual-editor-2.jpg)
+![VisualEditor3](docs/images/visual-editor-3.jpg)
+![VisualEditor4](docs/images/visual-editor-4.jpg)
 
 Access to this feature needs to be added manually. A simple way of doing this is by adding a button to the page form
 
