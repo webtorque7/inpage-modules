@@ -144,13 +144,13 @@ class ContentModuleField extends FormField
     public function addNewModule()
     {
         if (($moduleType = $this->request->param('ID')) && ($pageID = $this->request->param('OtherID'))) {
-            if (is_subclass_of($moduleType, 'ContentModule') && ($page = Page::get()->byID($pageID))) {
+            if (is_subclass_of($moduleType, 'ContentModule') && ($record = $this->getRecord())) {
                 $module = new $moduleType;
                 $module->write();
 
-                $page->{$this->getName()}()->add(
+                $record->{$this->getName()}()->add(
                     $module,
-                    array($this->sortField => $page->{$this->getName()}()->max($this->sortField) + 1)
+                    array($this->sortField => $record->{$this->getName()}()->max($this->sortField) + 1)
                 );
 
                 return ContentModuleUtilities::json_response(
@@ -176,12 +176,12 @@ class ContentModuleField extends FormField
         if (($moduleID = $this->request->param('ID')) && ($pageID = $this->request->param('OtherID'))) {
             $module = ContentModule::get()->byID($moduleID);
 
-            if ($module && ($page = Page::get()->byID($pageID))) {
+            if ($module && ($record = $this->getRecord())) {
                 $newModule = $module->duplicate(true);
 
-                $page->{$this->getName()}()->add(
+                $record->{$this->getName()}()->add(
                     $newModule,
-                    array($this->sortField => $page->{$this->getName()}()->max($this->sortField) + 1)
+                    array($this->sortField => $record->{$this->getName()}()->max($this->sortField) + 1)
                 );
 
                 return ContentModuleUtilities::json_response(
@@ -207,10 +207,10 @@ class ContentModuleField extends FormField
         if (($moduleID = $this->request->param('ID')) && ($pageID = $this->request->param('OtherID'))) {
             $module = ContentModule::get()->byID($moduleID);
 
-            if ($module && ($page = Page::get()->byID($pageID))) {
-                $page->{$this->getName()}()->add(
+            if ($module && ($record = $this->getRecord())) {
+                $record->{$this->getName()}()->add(
                     $module,
-                    array($this->sortField => $page->{$this->getName()}()->max($this->sortField) + 1)
+                    array($this->sortField => $record->{$this->getName()}()->max($this->sortField) + 1)
                 );
 
                 return ContentModuleUtilities::json_response(
@@ -254,7 +254,6 @@ class ContentModuleField extends FormField
                 }
 
                 $modules = DataObject::get($moduleType, '"Reuseable" = 1 ' . $not, '"Title" ASC');
-
 
                 //security
                 if ($modules->count()) {

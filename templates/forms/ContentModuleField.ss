@@ -44,13 +44,12 @@
                     $EditForm($Up.Name)
                 <% end_loop %>
             </div>
-
-            <div class="content-module-field-actions">
-                <div class="Actions">
-                </div>
-            </div>
         <% else %>
             <p>You haven't added any modules</p>
         <% end_if %>
+        <div class="content-module-field-actions">
+            <div class="Actions">
+            </div>
+        </div>
     </div>
 </div>
