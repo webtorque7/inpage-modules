@@ -764,7 +764,7 @@ class ContentModule extends DataObject implements PermissionProvider
      * CMS action for publishing ContentModule, returns a message
      * @return string
      */
-    public function doPublish($fields)
+    public function doPublish($fields = null)
     {
         if ($this->canPublish()) {
             //editing modules
